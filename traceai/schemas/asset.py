@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Asset schemas and MIME inspection for TraceAI."""
 
 import hashlib

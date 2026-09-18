@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Ingestion Gateway: Asset discovery, byte inspection, multimodal routing, dedup, and clearance resolution."""
 
 import asyncio

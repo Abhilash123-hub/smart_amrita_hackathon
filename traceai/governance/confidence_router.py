@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Confidence-Band Routing (B4): Tri-band decision routing and human review queue."""
 
 import logging

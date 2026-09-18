@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Scheduling Layer (A7): Continuous polling & resumable batch backfills with checkpointing."""
 
 import asyncio

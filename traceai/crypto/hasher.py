@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Cryptographic hashing utilities for byte verification."""
 
 import hashlib

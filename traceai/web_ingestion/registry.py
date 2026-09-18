@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Source Registry (A1): Persistent registry of ingestion sources with CRUD operations."""
 
 import sqlite3

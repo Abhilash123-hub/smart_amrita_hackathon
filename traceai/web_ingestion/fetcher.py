@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Fetcher Layer (A3): Static async HTTP crawler, dynamic JS renderer, and incremental caching."""
 
 import asyncio

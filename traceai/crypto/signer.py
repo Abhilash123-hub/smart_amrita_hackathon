@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Cryptographic signing and certificate verification using RSA."""
 
 import base64

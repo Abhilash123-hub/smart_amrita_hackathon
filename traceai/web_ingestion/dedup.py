@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Change-Aware Dedup (A5): Pre-fingerprint cost gate bypassing Stage 2 for previously seen assets."""
 
 import hashlib

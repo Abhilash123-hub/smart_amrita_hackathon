@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Mock corpus and dirty dataset generator for TraceAI testing and evaluation."""
 
 import json
