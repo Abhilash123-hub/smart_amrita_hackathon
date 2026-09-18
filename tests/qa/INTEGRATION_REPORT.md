@@ -85,3 +85,21 @@ The complete integration flow was verified with automated test executions and en
 ## 4. Remaining Issues
 
 - **None**: All integration layers communicate seamlessly. All 45 tests pass.
+
+
+---
+
+## 5. Canonical Demo Fixtures Verification (Member 4 Requirement)
+
+In addition to the 6 sample records in `data/sample/`, Member 4 prepared and validated 3 canonical demo fixtures in `mock_data/canonical_demo/`:
+
+1. **Clean Asset (`clean_asset.txt`)**:
+   - Original synthetic text on data provenance.
+   - Outcome: **PASSED** (Risk: `CLEAR` / `LOW`), cryptographic clearance certificate issued.
+2. **Infringing Asset (`infringing_asset.txt`)**:
+   - Paraphrased excerpt of *Moby Dick by Herman Melville* (`work_txt_001` in `mock_data/copyright_index/texts/copyright_work_001.txt`).
+   - Outcome: **BLOCKED** (Risk: `BLOCKED` / `HIGH`), similarity score `1.0 >= 0.85`, matched source: Melville.
+3. **Spoofed Asset (`spoofed_asset.txt`)**:
+   - Genuine binary PNG image saved with a misleading `.txt` extension.
+   - Magic bytes `89 50 4E 47 0D 0A 1A 0A` inspected by `sniff_mime_and_track_from_bytes`.
+   - Outcome: Sniffed as `TrackType.IMAGE` and `image/png`. Misleading `.txt` extension successfully overridden.

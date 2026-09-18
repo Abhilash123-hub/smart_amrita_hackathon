@@ -77,3 +77,14 @@
 | `IMG-001` | `905b1bc52d7ae46c` | `sha256:2729680b...` | `null` (Root) | `0.0000` | **`LOW`** |
 | `IMG-002` | `a28a95b9f0c70e9e` | `sha256:c5e7a44f...` | `IMG-001` | `0.7226` | **`MEDIUM`** |
 | `IMG-003` | `a66a5656b915cf90` | `sha256:03b7c287...` | `IMG-001` | `0.7625` | **`HIGH`** |
+
+
+---
+
+## 4. Canonical Demo Fixtures Matrix (Member 4 Requirement)
+
+| Test ID | Fixture Filename | Modality | Byte Size | SHA-256 Digest | Reference Work | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|---|---|
+| **CANON-001** | `clean_asset.txt` | `text/plain` | 657 B | `sha256:a51484a29ab4...` | Original synthetic text | **`LOW / PASSED`** | **`PASSED`** (Risk: CLEAR, Certificate issued) | **PASS** |
+| **CANON-002** | `infringing_asset.txt` | `text/plain` | 319 B | `sha256:fc2c2168273b...` | Melville: *Moby Dick* (`work_txt_001`) | **`HIGH / BLOCKED`** | **`BLOCKED`** (Similarity: 1.0, Matched Melville) | **PASS** |
+| **CANON-003** | `spoofed_asset.txt` | `image/png` (with `.txt`) | 778 B | `sha256:da903fc920ee...` | Pillow RGB graphic | **`IMAGE Track`** | **`IMAGE Track (image/png)`** sniffed via magic bytes | **PASS** |

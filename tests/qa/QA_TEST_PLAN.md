@@ -72,3 +72,14 @@ Where:
 python -m pytest tests/test_data_integration.py -v
 ```
 All 17 test methods passed with 100% success rate.
+
+
+---
+
+## 3. Canonical Demo Fixtures Specification (Member 4 Requirement)
+
+| Fixture ID | Filename | Modality | Reference / Source | Purpose | Expected Outcome | Actual Result | Status |
+|---|---|---|---|---|---|---|---|
+| **CANON-001** | `clean_asset.txt` | `text/plain` | Original synthetic educational text | Clean baseline text | `PASSED` / `CLEAR` (LOW)<br>Certificate issued | `PASSED` / `CLEAR`<br>Cert: issued | **PASS** |
+| **CANON-002** | `infringing_asset.txt` | `text/plain` | Paraphrase of `work_txt_001` (`Moby Dick by Herman Melville`) from `mock_data/copyright_index/` | Cross-encoder semantic match | `BLOCKED` / `BLOCKED` (HIGH)<br>Score >= 0.85<br>Matched to Melville | `BLOCKED`<br>Score: 1.0<br>Source: Melville | **PASS** |
+| **CANON-003** | `spoofed_asset.txt` | `image/png` (disguised as `.txt`) | Synthetic Pillow graphic | Raw binary magic-byte sniffing | `IMAGE` Track<br>`image/png` sniffed<br>Extension overridden | `IMAGE` Track<br>`image/png`<br>Sniffed: True | **PASS** |

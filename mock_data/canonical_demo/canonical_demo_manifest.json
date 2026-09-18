@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "description": "TRACEAI Canonical Demonstration Fixtures for Multimodal Ingestion, Provenance Detection, and Magic-Byte Sniffing.",
+  "disclaimer": "All risk bands (LOW, MEDIUM, HIGH, BLOCKED, PASSED) are technical demonstration indicators and software pipeline classifications. They do not constitute legal conclusions or judicial determinations of copyright infringement.",
+  "fixtures": [
+    {
+      "fixture_id": "CANON-001",
+      "filename": "clean_asset.txt",
+      "role": "Clean Asset",
+      "purpose": "Demonstrate an unencumbered, original asset that passes clearance with a cryptographic certificate.",
+      "format": "text/plain (UTF-8)",
+      "magic_bytes": "Plain text (printable ASCII/UTF-8)",
+      "size_bytes": 657,
+      "sha256": "sha256:a51484a29ab41efeb70407b7b320903aaafbab84afa3407fc68876c9b84c4248",
+      "source_reference": "Original synthetic educational text created for TRACEAI provenance compliance demonstration.",
+      "license_status": "CC0-1.0 / Public Domain Equivalent (Synthetic original)",
+      "synthetic": true,
+      "expected_evaluation": {
+        "detected_track": "TEXT",
+        "detected_mime": "text/plain",
+        "status": "PASSED",
+        "risk_band": "CLEAR (LOW)",
+        "similarity_match": null,
+        "certificate_issued": true
+      },
+      "limitations": "Demonstration text of limited length; does not represent full enterprise corpus scale."
+    },
+    {
+      "fixture_id": "CANON-002",
+      "filename": "infringing_asset.txt",
+      "role": "Infringing Asset",
+      "purpose": "Demonstrate cross-encoder semantic similarity and provenance correlation against a simulated protected reference work.",
+      "format": "text/plain (UTF-8)",
+      "magic_bytes": "Plain text (printable ASCII/UTF-8)",
+      "size_bytes": 319,
+      "sha256": "sha256:fc2c2168273b8fa57d62cb35066b025a26f4149a0b38463819b2da09bd3f73e2",
+      "source_reference": "Paraphrased excerpt of reference work_txt_001 (mock_data/copyright_index/texts/copyright_work_001.txt): Moby Dick by Herman Melville.",
+      "license_status": "Simulated Copyright Reference: mock_data/copyright_index/metadata.json marks work_txt_001 as Protected Literary Archive.",
+      "synthetic": true,
+      "expected_evaluation": {
+        "detected_track": "TEXT",
+        "detected_mime": "text/plain",
+        "status": "BLOCKED",
+        "risk_band": "BLOCKED (HIGH)",
+        "similarity_score": ">= 0.85",
+        "matched_source": "Moby Dick by Herman Melville",
+        "certificate_issued": false
+      },
+      "limitations": "Synthetic paraphrase calibrated for lexical/cross-encoder re-ranker sensitivity demonstration."
+    },
+    {
+      "fixture_id": "CANON-003",
+      "filename": "spoofed_asset.txt",
+      "role": "Spoofed Asset",
+      "purpose": "Demonstrate magic-byte and raw binary content sniffing, verifying that file format is determined by byte signatures rather than misleading extensions.",
+      "format": "image/png (disguised with .txt extension)",
+      "magic_bytes": "89 50 4E 47 0D 0A 1A 0A (Standard PNG Signature)",
+      "size_bytes": 778,
+      "sha256": "sha256:da903fc920ee31dbf753e964b27e8722b839db9f5eb2831912e51fa4e8484984",
+      "source_reference": "Synthetic 128x128 RGBA image rendered via Pillow with geometric shapes.",
+      "license_status": "CC0-1.0 / Synthetic Generated Binary",
+      "synthetic": true,
+      "expected_evaluation": {
+        "detected_track": "IMAGE",
+        "detected_mime": "image/png",
+        "extension": ".txt",
+        "status": "PASSED (as Image Track)",
+        "risk_band": "CLEAR",
+        "sniffing_verified": true
+      },
+      "limitations": "Synthetic raster graphic demonstrating magic byte detection."
+    }
+  ]
+}

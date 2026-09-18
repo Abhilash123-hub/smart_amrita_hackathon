@@ -261,3 +261,85 @@ def test_test_013_offline_sample_data_integrity():
         assert fp.exists()
         sha = data_service.compute_sha256(fp)
         assert len(sha) == 71  # 'sha256:' + 64 hex chars
+
+
+
+# -------------------------------------------------------------
+# Canonical Demo Fixtures Verification (Member 4 Requirement)
+# -------------------------------------------------------------
+def test_canonical_clean_asset_evaluation():
+    """Verify Canonical Demo Fixture 1: clean_asset.txt passes clearance (LOW / CLEAR)."""
+    manifest = data_service.load_canonical_demo_manifest()
+    clean_info = data_service.get_canonical_demo_fixture("clean_asset.txt")
+    assert clean_info is not None
+    assert clean_info["fixture_id"] == "CANON-001"
+
+    # API Scan
+    res = client.post("/api/canonical-demo/scan/clean_asset.txt")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "PASSED"
+    assert data["risk_band"] == "CLEAR"
+    assert data["detected_track"] == "TEXT"
+    assert data["detected_mime"] == "text/plain"
+    assert data["certificate_id"] is not None
+    assert data["similarity_score"] is None
+
+
+def test_canonical_infringing_asset_evaluation():
+    """Verify Canonical Demo Fixture 2: infringing_asset.txt is blocked (HIGH / BLOCKED)."""
+    manifest = data_service.load_canonical_demo_manifest()
+    infringe_info = data_service.get_canonical_demo_fixture("infringing_asset.txt")
+    assert infringe_info is not None
+    assert infringe_info["fixture_id"] == "CANON-002"
+
+    # API Scan
+    res = client.post("/api/canonical-demo/scan/infringing_asset.txt")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "BLOCKED"
+    assert data["risk_band"] == "BLOCKED"
+    assert data["detected_track"] == "TEXT"
+    assert data["detected_mime"] == "text/plain"
+    assert data["similarity_score"] is not None and data["similarity_score"] >= 0.85
+    assert "Moby Dick" in data["matched_source"]
+    assert data["certificate_id"] is None
+
+
+def test_canonical_spoofed_asset_sniffing():
+    """Verify Canonical Demo Fixture 3: spoofed_asset.txt is sniffed as IMAGE (image/png) despite .txt extension."""
+    manifest = data_service.load_canonical_demo_manifest()
+    spoofed_info = data_service.get_canonical_demo_fixture("spoofed_asset.txt")
+    assert spoofed_info is not None
+    assert spoofed_info["fixture_id"] == "CANON-003"
+
+    # Check raw bytes signature directly
+    fix_path = Path("mock_data/canonical_demo/spoofed_asset.txt")
+    raw_bytes = fix_path.read_bytes()
+    assert raw_bytes.startswith(b"\x89PNG\r\n\x1a\n")
+
+    # API Scan
+    res = client.post("/api/canonical-demo/scan/spoofed_asset.txt")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["detected_track"] == "IMAGE"
+    assert data["detected_mime"] == "image/png"
+    assert data["extension"] == ".txt"
+    assert data["magic_bytes_sniffed"] is True
+
+
+def test_canonical_demo_api_and_manifest():
+    """Verify canonical demo manifest endpoint and hash consistency."""
+    res = client.get("/api/canonical-demo")
+    assert res.status_code == 200
+    data = res.json()
+    assert "fixtures" in data
+    assert len(data["fixtures"]) == 3
+
+    # Check frontend serves with canonical demo buttons
+    ui_res = client.get("/")
+    assert ui_res.status_code == 200
+    assert "Canonical Demo Fixtures" in ui_res.text
+    assert "clean_asset.txt" in ui_res.text
+    assert "infringing_asset.txt" in ui_res.text
+    assert "spoofed_asset.txt" in ui_res.text

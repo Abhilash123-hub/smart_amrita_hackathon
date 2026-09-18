@@ -551,6 +551,45 @@ class DataService:
 """
         return html_content, "text/html"
 
+    def load_canonical_demo_manifest(self) -> Dict[str, Any]:
+        """Load canonical demo manifest from mock_data/canonical_demo/canonical_demo_manifest.json."""
+        manifest_path = REPO_ROOT / "mock_data" / "canonical_demo" / "canonical_demo_manifest.json"
+        if not manifest_path.exists():
+            raise FileNotFoundError(f"Canonical demo manifest not found: {manifest_path}")
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def get_canonical_demo_fixture(self, filename_or_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieve a specific canonical demo fixture metadata from the manifest."""
+        manifest = self.load_canonical_demo_manifest()
+        for fix in manifest.get("fixtures", []):
+            if fix.get("fixture_id") == filename_or_id or fix.get("filename") == filename_or_id:
+                return fix
+        return None
+
+    def scan_canonical_fixture(self, filename: str) -> Dict[str, Any]:
+        """Inspect and return byte-level characteristics of a canonical demo fixture."""
+        fix_path = REPO_ROOT / "mock_data" / "canonical_demo" / filename
+        if not fix_path.exists():
+            raise FileNotFoundError(f"Canonical fixture '{filename}' not found at {fix_path}")
+
+        from traceai.schemas.asset import AssetInput, TrackType
+        asset = AssetInput.from_file(fix_path)
+
+        extension = fix_path.suffix.lower()
+        magic_sniffed = (extension in [".txt", ".doc"] and asset.track != TrackType.TEXT)
+
+        return {
+            "filename": fix_path.name,
+            "path": str(fix_path),
+            "size_bytes": asset.size_bytes,
+            "sha256": asset.sha256_hash,
+            "extension": extension,
+            "detected_track": asset.track.value,
+            "detected_mime": asset.mime_type,
+            "magic_bytes_sniffed": magic_sniffed,
+        }
+
 
 # Default singleton instance
 data_service = DataService()

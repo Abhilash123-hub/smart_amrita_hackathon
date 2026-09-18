@@ -252,6 +252,62 @@ async def export_evidence_payload_endpoint(payload: Dict[str, Any], format: str 
     return JSONResponse(content=payload)
 
 
+@app.get("/api/canonical-demo")
+async def get_canonical_demo_manifest():
+    """Retrieve canonical demonstration fixtures manifest (Member 4 requirement)."""
+    try:
+        return data_service.load_canonical_demo_manifest()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.post("/api/canonical-demo/scan/{filename}")
+async def scan_canonical_demo_fixture(filename: str):
+    """Execute full Gateway evaluation on one of the 3 canonical demo fixtures."""
+    from traceai.schemas.asset import AssetInput, TrackType
+    from traceai.gateway import IngestionGateway
+
+    fixture_info = data_service.get_canonical_demo_fixture(filename)
+    if not fixture_info:
+        raise HTTPException(status_code=404, detail=f"Canonical fixture '{filename}' not found.")
+
+    fixture_path = Path("mock_data/canonical_demo") / fixture_info["filename"]
+    if not fixture_path.exists():
+        raise HTTPException(status_code=404, detail=f"Fixture file not found: {fixture_path}")
+
+    # Inspect bytes
+    asset = AssetInput.from_file(fixture_path)
+    extension = fixture_path.suffix.lower()
+    magic_sniffed = (extension in [".txt", ".doc"] and asset.track != TrackType.TEXT)
+
+    # Evaluate via Gateway
+    gw = IngestionGateway()
+    idx_dir = Path("mock_data/copyright_index")
+    eval_res = await gw._evaluate_single_asset(asset, index_dir=idx_dir if idx_dir.exists() else None)
+
+    return {
+        "fixture_id": fixture_info["fixture_id"],
+        "filename": fixture_info["filename"],
+        "role": fixture_info["role"],
+        "size_bytes": asset.size_bytes,
+        "sha256": asset.sha256_hash,
+        "extension": extension,
+        "detected_track": asset.track.value,
+        "detected_mime": asset.mime_type,
+        "magic_bytes_sniffed": magic_sniffed,
+        "status": eval_res.status.value,
+        "risk_band": eval_res.risk_band,
+        "similarity_score": eval_res.similarity_score,
+        "matched_source": eval_res.matched_source,
+        "certificate_id": eval_res.certificate_id,
+        "certificate": eval_res.certificate.model_dump() if eval_res.certificate else None,
+        "lineage": eval_res.lineage,
+        "source_reference": fixture_info.get("source_reference"),
+        "license_status": fixture_info.get("license_status"),
+        "disclaimer": "Technical demonstration risk signal; not a legal conclusion.",
+    }
+
+
 # -------------------------------------------------------------
 # Part A: Web Ingestion Endpoints (A1, A2, A3, A6, A7)
 # -------------------------------------------------------------
