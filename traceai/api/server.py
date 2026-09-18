@@ -3,13 +3,17 @@
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
+import json
+from datetime import datetime, timezone
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+from traceai.data_service import data_service
 
 from traceai.config import DEFAULT_CONFIG
 from traceai.crypto.signer import CryptoSigner
@@ -89,6 +93,163 @@ async def get_gateway_info():
         "supported_modalities": ["TEXT", "IMAGE", "AUDIO", "VIDEO", "CODE"],
         "index_version": f"v{dmca_manager.get_current_index_version()}",
     }
+
+
+# -------------------------------------------------------------
+# Member 4: Core Data Layer Integration Endpoints (Task C)
+# -------------------------------------------------------------
+@app.get("/health")
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint confirming gateway and data layer availability."""
+    records_count = len(data_service.load_records())
+    return {
+        "status": "HEALTHY",
+        "service": "TraceAI Enterprise Gateway",
+        "version": "0.2.0",
+        "data_layer_status": "READY",
+        "records_loaded": records_count,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/records")
+@app.get("/api/records")
+async def get_records(record_type: Optional[str] = None):
+    """Retrieve all sample records from the completed data layer."""
+    return {"records": data_service.list_records(record_type=record_type)}
+
+
+@app.get("/records/{record_id}")
+@app.get("/api/records/{record_id}")
+async def get_single_record(record_id: str):
+    """Retrieve a single record's metadata by record_id."""
+    record = data_service.get_record(record_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Record '{record_id}' not found in dataset.")
+    return record
+
+
+class AnalyzeRequest(BaseModel):
+    record_id: Optional[str] = None
+    query_text: Optional[str] = None
+    record_type: str = "text"
+
+
+@app.post("/analyze")
+@app.post("/api/analyze")
+async def analyze_record_endpoint(payload: AnalyzeRequest):
+    """Execute end-to-end trace: Identity (SHA-256) + Similarity + Provenance + Review Indicator."""
+    if payload.record_id:
+        record = data_service.get_record(payload.record_id)
+        if not record:
+            raise HTTPException(status_code=404, detail=f"Record '{payload.record_id}' not found.")
+        try:
+            return data_service.analyze_record(payload.record_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+    if payload.query_text:
+        query_bytes = payload.query_text.encode("utf-8")
+        sha256_hash = data_service.compute_sha256_bytes(query_bytes)
+        similar_candidates = data_service.search_similarity(query_text=payload.query_text, record_type="text")
+        max_sim = similar_candidates[0]["similarity"] if similar_candidates else 0.0
+        review = data_service.calculate_review_indicator(similarity_score=max_sim, license_verified=False, source_type="untracked")
+
+        return {
+            "record_id": "QUERY-TEXT",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "record_type": "text",
+            "file_name": "adhoc_query.txt",
+            "sha256": sha256_hash,
+            "phash": None,
+            "source": "Direct User Input",
+            "source_type": "adhoc_query",
+            "license": "Unspecified",
+            "license_verified": False,
+            "similarity_results": similar_candidates,
+            "provenance_completeness": 40.0,
+            "review_indicator": review["review_indicator"],
+            "composite_risk_score": review["composite_risk_score"],
+            "review_status": review["review_status"],
+            "scoring_breakdown": review["breakdown"],
+            "lineage": [
+                {"step": 1, "entity": "Source", "label": "Direct Input"},
+                {"step": 2, "entity": "Target", "label": "Evaluation Request"},
+            ],
+        }
+
+    raise HTTPException(status_code=400, detail="Must provide 'record_id' or 'query_text'.")
+
+
+class SimilaritySearchRequest(BaseModel):
+    record_id: Optional[str] = None
+    query_text: Optional[str] = None
+    record_type: str = "text"
+    top_k: int = 5
+
+
+@app.post("/similarity/search")
+@app.post("/api/similarity/search")
+async def search_similarity_endpoint(payload: SimilaritySearchRequest):
+    """Search nearest records in sample dataset."""
+    if payload.record_id:
+        record = data_service.get_record(payload.record_id)
+        if not record:
+            raise HTTPException(status_code=404, detail=f"Record '{payload.record_id}' not found.")
+        file_path = data_service.resolve_file_path(record)
+        results = data_service.search_similarity(
+            query_file=file_path,
+            record_type=record.get("record_type", "text"),
+            exclude_id=payload.record_id,
+        )
+    elif payload.query_text:
+        results = data_service.search_similarity(
+            query_text=payload.query_text,
+            record_type="text",
+        )
+    else:
+        raise HTTPException(status_code=400, detail="Must provide 'record_id' or 'query_text'.")
+
+    return {
+        "record_type": payload.record_type,
+        "results": results[: payload.top_k],
+        "count": len(results[: payload.top_k]),
+    }
+
+
+@app.get("/records/{record_id}/provenance")
+@app.get("/api/records/{record_id}/provenance")
+async def get_record_provenance_endpoint(record_id: str):
+    """Retrieve structured lineage graph and provenance metadata for record_id."""
+    prov = data_service.get_provenance(record_id)
+    if not prov:
+        raise HTTPException(status_code=404, detail=f"Record '{record_id}' not found in dataset.")
+    return prov
+
+
+@app.get("/records/{record_id}/evidence")
+@app.get("/api/records/{record_id}/evidence")
+async def export_record_evidence_endpoint(record_id: str, format: str = "json"):
+    """Export evidence audit record in JSON or HTML format."""
+    record = data_service.get_record(record_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Record '{record_id}' not found in dataset.")
+
+    content, mime = data_service.export_evidence(record_id, format=format)
+    if format.lower() == "html":
+        return HTMLResponse(content=content)
+    return JSONResponse(content=json.loads(content))
+
+
+@app.post("/api/evidence/export")
+async def export_evidence_payload_endpoint(payload: Dict[str, Any], format: str = "json"):
+    """Export arbitrary analysis payload into downloadable evidence package."""
+    rec_id = payload.get("record_id", "CUSTOM-ASSET")
+    if format.lower() == "html":
+        content, _ = data_service.export_evidence(rec_id, format="html")
+        return HTMLResponse(content=content)
+    return JSONResponse(content=payload)
 
 
 # -------------------------------------------------------------
