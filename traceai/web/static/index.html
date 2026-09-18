@@ -829,9 +829,10 @@
       chatContainer.appendChild(loadingDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
-      // 3. Backend Call to /api/chat
+      // 3. Backend Call to /api/chat (supports both http:// and direct file:/// previews)
+      const apiEndpoint = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8000/api/chat' : '/api/chat';
       try {
-        const res = await fetch('/api/chat', {
+        const res = await fetch(apiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text, jurisdiction: jurisdiction })
