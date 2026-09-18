@@ -18,913 +18,1031 @@
             cream: '#eeeee4',
             creamDark: '#dfdfd0',
             creamLight: '#fafaf7',
-            canvas: '#f6f6f2',
+            canvas: '#fbfbf9',
             cardBg: '#ffffff',
-            bodyText: '#1e293b',
-            mutedText: '#64748b',
-            subtleBorder: '#dcdccf',
-            strongBorder: '#bfbfad',
+            bodyText: '#1f2937',
+            headingText: '#111827',
+            mutedText: '#6b7280',
+            subtleBorder: '#e5e7eb',
+            strongBorder: '#d1d5db',
             statusBlocked: '#ef4444',
             statusReview: '#f59e0b',
             statusPassed: '#10b981',
+          },
+          fontFamily: {
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           }
         }
       }
     }
   </script>
-  <!-- Lucide Icons -->
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #f6f6f2;
-      color: #1e293b;
+      background-color: #fbfbf9;
+      color: #1f2937;
     }
     code, pre, .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-
-    /* react-split-pane core Resizer styling */
-    .Resizer {
-      background: #dcdccf;
-      opacity: 0.9;
-      z-index: 20;
-      box-sizing: border-box;
-      background-clip: padding-box;
-      transition: background 0.15s ease, border-color 0.15s ease;
-      position: relative;
-      flex-shrink: 0;
-      user-select: none;
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-    .Resizer.vertical {
-      width: 11px;
-      margin: 0 -5px;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      cursor: col-resize;
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-    .Resizer.vertical:hover,
-    .Resizer.vertical.active {
-      border-left: 5px solid rgba(30, 129, 176, 0.2);
-      border-right: 5px solid rgba(30, 129, 176, 0.2);
-      background: #1e81b0;
+    ::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 9999px;
     }
-    .Resizer.horizontal {
-      height: 11px;
-      margin: -5px 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      cursor: row-resize;
-      width: 100%;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
     }
-    .Resizer.horizontal:hover,
-    .Resizer.horizontal.active {
-      border-top: 5px solid rgba(30, 129, 176, 0.2);
-      border-bottom: 5px solid rgba(30, 129, 176, 0.2);
-      background: #1e81b0;
+    /* Smooth transitions */
+    .drawer-transition {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
     }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden selection:bg-brand selection:text-white">
+<body class="h-screen flex overflow-hidden selection:bg-brand selection:text-white bg-canvas text-bodyText">
 
-  <!-- TOP APP BAR (#1e81b0 brand header) -->
-  <header class="h-14 bg-brand text-white px-4 flex items-center justify-between flex-shrink-0 z-30 shadow-md">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-white text-brand flex items-center justify-center font-black shadow">
-        <i data-lucide="shield-check" class="w-5 h-5 text-brand"></i>
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="font-extrabold text-base tracking-tight text-white">TraceAI Copilot</span>
-          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-white border border-white/30">
-            AI Ingestion Assistant
-          </span>
-        </div>
-        <p class="text-[11px] text-white/80">Multimodal Copyright Fingerprinting & Cryptographic Clearance</p>
+  <!-- 1. LEFT SLIM ICON RAIL (64px) -->
+  <aside class="w-16 bg-white border-r border-subtleBorder flex flex-col items-center justify-between py-4 flex-shrink-0 z-30">
+    <!-- Top Brand & Navigation -->
+    <div class="flex flex-col items-center gap-3 w-full">
+      <!-- Logo Box with Ornate T -->
+      <a href="#" onclick="resetToHero(event)" class="w-10 h-10 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder shadow-sm hover:ring-2 hover:ring-brand/30 transition-all group" title="TraceAI Home">
+        <img src="/static/assets/logo_t.png" alt="TraceAI" class="w-8 h-8 object-contain rounded filter contrast-125 group-hover:scale-105 transition-transform" />
+      </a>
+
+      <!-- New Chat Button -->
+      <button onclick="startNewChat()" class="w-10 h-10 rounded-xl bg-canvas hover:bg-cream text-bodyText hover:text-brand flex items-center justify-center border border-subtleBorder transition-all mt-1" title="New Ingestion Session">
+        <i data-lucide="square-pen" class="w-4 h-4"></i>
+      </button>
+
+      <div class="w-8 h-[1px] bg-subtleBorder my-1"></div>
+
+      <!-- View Nav Icons -->
+      <div class="flex flex-col items-center gap-2 w-full px-2">
+        <button onclick="switchMainView('chat')" id="rail-btn-chat" class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center transition-all shadow-sm" title="AI Chatbot Copilot">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="switchMainView('analytics')" id="rail-btn-analytics" class="w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all" title="Analytics & Telemetry Dashboard">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="switchMainView('review')" id="rail-btn-review" class="w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all relative" title="Auditor Review Queue">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500"></span>
+        </button>
+
+        <button onclick="openInspector(true)" class="w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all" title="Forensic Evidence & Certificate Drawer">
+          <i data-lucide="award" class="w-4 h-4"></i>
+        </button>
       </div>
     </div>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-3 text-xs">
-      <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-black/15 border border-white/20">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="font-mono text-[11px] text-white/90" id="keyFingerprintShort">Signer: active</span>
-      </div>
+    <!-- Bottom Actions -->
+    <div class="flex flex-col items-center gap-2 w-full px-2">
+      <button onclick="switchMainView('settings')" id="rail-btn-settings" class="w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all" title="Governance & Settings">
+        <i data-lucide="sliders" class="w-4 h-4"></i>
+      </button>
 
-      <!-- Nav Switcher -->
-      <div class="flex items-center bg-black/20 p-0.5 rounded-lg border border-white/20">
-        <button onclick="switchTab('chat')" id="nav-tab-chat" class="px-3 py-1 rounded font-bold text-xs bg-white text-brand shadow transition-all">
-          Chatbot
-        </button>
-        <button onclick="switchTab('review')" id="nav-tab-review" class="px-3 py-1 rounded text-xs text-white/90 hover:text-white transition-all">
-          Review Queue
-        </button>
-        <button onclick="switchTab('analytics')" id="nav-tab-analytics" class="px-3 py-1 rounded text-xs text-white/90 hover:text-white transition-all">
-          Analytics
-        </button>
-      </div>
-
-      <a href="/docs" target="_blank" class="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition-all">
-        <i data-lucide="file-code" class="w-3.5 h-3.5"></i> Docs
+      <a href="/docs" target="_blank" class="w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all" title="OpenAPI Documentation">
+        <i data-lucide="code-2" class="w-4 h-4"></i>
       </a>
     </div>
-  </header>
+  </aside>
 
-  <!-- WORKSPACE WRAPPER (Full Height) -->
-  <div class="flex-1 flex min-h-0 overflow-hidden">
-    
-    <!-- LEFT SIDEBAR (#eeeee4 Surface) -->
-    <aside class="w-64 bg-cream border-r border-subtleBorder flex flex-col justify-between flex-shrink-0 hidden md:flex">
-      <div class="p-4 space-y-4 overflow-y-auto">
-        <!-- New Chat Button -->
-        <button onclick="startNewSession()" class="w-full py-2.5 px-3 rounded-xl bg-brand hover:bg-brandDark text-white font-semibold text-xs shadow flex items-center justify-center gap-2 transition-all">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i> New Ingestion Session
+  <!-- 2. MAIN WORKSPACE CONTAINER -->
+  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+
+    <!-- TOP HEADER BAR -->
+    <header class="h-14 border-b border-subtleBorder bg-white/80 backdrop-blur-md px-6 flex items-center justify-between flex-shrink-0 z-20">
+      <!-- Left: Brand Title & Model Selector -->
+      <div class="flex items-center gap-3">
+        <!-- Sidebar Toggle Icon (Image 3: [| ]) -->
+        <button onclick="toggleInspector()" class="p-2 rounded-lg hover:bg-cream text-mutedText hover:text-brand transition-all flex items-center justify-center" title="Toggle Evidence & Analysis Drawer">
+          <!-- Custom Sidebar Toggle SVG Icon -->
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+          </svg>
         </button>
 
-        <!-- Quick Ingestion Presets -->
-        <div class="space-y-1.5">
-          <span class="text-[10px] uppercase font-bold text-mutedText tracking-wider px-1">Quick-Scan Presets</span>
-          <div class="space-y-1">
-            <button onclick="sendPresetPrompt('clean')" class="w-full text-left p-2 rounded-lg bg-white hover:bg-brandSubtle border border-subtleBorder text-xs text-bodyText flex items-center gap-2 transition-all">
-              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
-              <div class="truncate">
-                <div class="font-semibold truncate">Clean Research Excerpt</div>
-                <div class="text-[10px] text-mutedText truncate">Novel text tuning sample</div>
-              </div>
-            </button>
-
-            <button onclick="sendPresetPrompt('dirty')" class="w-full text-left p-2 rounded-lg bg-white hover:bg-brandSubtle border border-subtleBorder text-xs text-bodyText flex items-center gap-2 transition-all">
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500 flex-shrink-0"></i>
-              <div class="truncate">
-                <div class="font-semibold truncate">Moby Dick Excerpt</div>
-                <div class="text-[10px] text-mutedText truncate">Matched against index</div>
-              </div>
-            </button>
-
-            <button onclick="sendPresetPrompt('gpl')" class="w-full text-left p-2 rounded-lg bg-white hover:bg-brandSubtle border border-subtleBorder text-xs text-bodyText flex items-center gap-2 transition-all">
-              <i data-lucide="code-2" class="w-4 h-4 text-amber-500 flex-shrink-0"></i>
-              <div class="truncate">
-                <div class="font-semibold truncate">GPL-2.0 Kernel Code</div>
-                <div class="text-[10px] text-mutedText truncate">GPL copyleft license check</div>
-              </div>
-            </button>
-
-            <button onclick="sendPresetPrompt('image')" class="w-full text-left p-2 rounded-lg bg-white hover:bg-brandSubtle border border-subtleBorder text-xs text-bodyText flex items-center gap-2 transition-all">
-              <i data-lucide="image" class="w-4 h-4 text-brand flex-shrink-0"></i>
-              <div class="truncate">
-                <div class="font-semibold truncate">Concept Artwork Image</div>
-                <div class="text-[10px] text-mutedText truncate">pHash + CLIP cosine stage</div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Operational Thresholds -->
-        <div class="p-3 rounded-xl bg-white border border-subtleBorder space-y-2 text-xs">
-          <span class="text-[10px] uppercase font-bold text-brand tracking-wider flex items-center gap-1">
-            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Active Thresholds
-          </span>
-          <div class="space-y-1 text-[11px]">
-            <div class="flex justify-between">
-              <span class="text-mutedText">Text Cross-Encoder</span>
-              <span class="font-mono font-bold text-brand">0.85</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-mutedText">Image CLIP Cosine</span>
-              <span class="font-mono font-bold text-brand">0.90</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-mutedText">pHash Hamming Max</span>
-              <span class="font-mono font-bold text-brand">&le; 8 bits</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer Info -->
-      <div class="p-3 border-t border-subtleBorder bg-creamDark/40 text-[11px] text-mutedText flex items-center justify-between">
-        <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3 text-brand"></i> W3C PROV-O</span>
-        <span class="font-mono text-[10px]">RSASSA-PSS</span>
-      </div>
-    </aside>
-
-    <!-- CENTER & RIGHT: SPLIT-PANE WORKSPACE -->
-    <div class="flex-1 flex flex-col min-w-0 bg-canvas">
-      
-      <!-- TAB VIEW: CHATBOT (Default) -->
-      <div id="tabView-chat" class="h-full flex-1 flex min-h-0 relative">
-        <!-- CHAT PANE (Left of Split) -->
-        <div id="chatPane" class="h-full flex flex-col flex-1 min-w-0 min-h-0" style="width: 55%;">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm tracking-tight text-headingText">TraceAI</span>
           
-          <!-- Chat Subheader -->
-          <div class="h-11 px-4 border-b border-subtleBorder bg-white/70 backdrop-blur-sm flex items-center justify-between flex-shrink-0 text-xs">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-brand flex items-center gap-1.5">
-                <i data-lucide="message-square" class="w-4 h-4"></i> Ingestion Dialogue
-              </span>
-              <span class="text-mutedText">| Session #2026-09</span>
-            </div>
+          <!-- Dropdown Model Pill -->
+          <div class="relative">
+            <button class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-canvas hover:bg-cream border border-subtleBorder text-xs font-medium text-bodyText transition-all">
+              <span class="w-2 h-2 rounded-full bg-brand"></span>
+              <span>Dual-Track v0.2.0</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-mutedText"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-            <!-- Inspector Toggle & Reset -->
-            <div class="flex items-center gap-2">
-              <button onclick="toggleInspector()" id="toggleInspectorBtn" class="px-2.5 py-1 rounded-lg bg-cream hover:bg-creamDark border border-subtleBorder text-bodyText text-[11px] font-semibold flex items-center gap-1 transition-all">
-                <i data-lucide="columns-2" class="w-3.5 h-3.5 text-brand"></i>
-                <span id="inspectorToggleLabel">Inspector: Open</span>
-              </button>
-              <button onclick="resetSplitPane()" class="px-2 py-1 rounded-lg bg-cream hover:bg-creamDark border border-subtleBorder text-mutedText text-[11px] font-mono transition-all">
-                50/50
-              </button>
+      <!-- Right: Links & Active Signer Status -->
+      <div class="flex items-center gap-4 text-xs font-medium">
+        <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-mono text-[11px]" id="headerKeyFingerprint">Signer: active (rsa2048:8f4c)</span>
+        </div>
+
+        <a href="/docs" target="_blank" class="text-mutedText hover:text-brand flex items-center gap-1 transition-colors">
+          <span>API</span>
+          <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+        </a>
+
+        <button onclick="switchMainView('settings')" class="text-mutedText hover:text-brand transition-colors">
+          Docs
+        </button>
+
+        <!-- Toggle Inspector Button -->
+        <button onclick="toggleInspector()" id="toggleInspectorBtn" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-brand font-semibold text-xs border border-subtleBorder flex items-center gap-1.5 transition-all shadow-sm">
+          <i data-lucide="panel-right" class="w-3.5 h-3.5"></i>
+          <span id="toggleInspectorText">Evidence Drawer</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY (Views: Chat, Analytics, Review Queue, Settings) -->
+    <main class="flex-1 min-h-0 relative overflow-hidden flex">
+
+      <!-- VIEW A: AI CHATBOT COPILOT (Clean, Spacious Hero Landing) -->
+      <div id="view-chat" class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden bg-canvas">
+
+        <!-- SUBTLE BACKGROUND WATERMARK: Ornate Woodcut "T" with Low Opacity (Image 4 & 2) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+          <img src="/static/assets/logo_t.png" alt="Watermark" class="w-[380px] md:w-[460px] opacity-[0.055] mix-blend-multiply filter contrast-125 transform -translate-y-6" />
+        </div>
+
+        <!-- HERO GREETING STATE (Shown when empty / on start) -->
+        <div id="chatHero" class="flex-1 flex flex-col items-center justify-center px-4 py-8 text-center z-10 max-w-3xl mx-auto w-full">
+          <div class="w-14 h-14 rounded-2xl bg-cream flex items-center justify-center p-2 border border-subtleBorder shadow-sm mb-6">
+            <img src="/static/assets/logo_t.png" alt="TraceAI" class="w-11 h-11 object-contain filter contrast-125" />
+          </div>
+
+          <h1 class="text-4xl md:text-5xl font-serif text-headingText tracking-tight mb-3">
+            What can I clear for you?
+          </h1>
+          <p class="text-sm md:text-base text-mutedText max-w-lg mb-8">
+            Screen multimodal training assets against reference copyright indexes, detect infringements, and issue cryptographically signed clearance certificates.
+          </p>
+
+          <!-- Floating Large Prompt Composer on Hero -->
+          <div class="w-full max-w-2xl bg-white rounded-2xl border border-subtleBorder shadow-lg hover:shadow-xl focus-within:border-brand transition-all p-3 text-left">
+            <textarea id="heroChatInput" rows="3" placeholder="How can I help you today? Paste text, ask copyright questions, or drop files..." class="w-full bg-transparent border-none text-sm text-bodyText placeholder:text-mutedText focus:outline-none resize-none p-1"></textarea>
+
+            <!-- Bottom Toolbar inside Composer -->
+            <div class="flex items-center justify-between pt-2 border-t border-subtleBorder/60 mt-2">
+              <!-- Left: File Attachment & Jurisdiction -->
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="p-1.5 rounded-lg text-mutedText hover:text-brand hover:bg-cream transition-all flex items-center gap-1 text-xs" title="Attach file to scan">
+                  <i data-lucide="paperclip" class="w-4 h-4"></i>
+                  <span class="hidden sm:inline text-[11px] font-medium">Attach</span>
+                </button>
+
+                <div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-canvas text-mutedText text-xs border border-subtleBorder">
+                  <i data-lucide="globe" class="w-3.5 h-3.5 text-brand"></i>
+                  <select id="heroJurisdiction" class="bg-transparent text-[11px] font-medium text-bodyText focus:outline-none">
+                    <option value="GLOBAL">Global</option>
+                    <option value="US-FAIR-USE">US Fair Use</option>
+                    <option value="EU-DSM-ART4">EU DSM Art. 4</option>
+                    <option value="JP-ART30-4">JP Art. 30-4</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Right: Deep Think / Mode + Send Button -->
+              <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-1 text-xs text-mutedText bg-canvas px-2.5 py-1 rounded-lg border border-subtleBorder">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand"></i>
+                  <span class="text-[11px] font-medium text-bodyText">Dual-Track Max</span>
+                </div>
+
+                <button onclick="submitHeroMessage()" class="w-8 h-8 rounded-xl bg-brand hover:bg-brandDark text-white flex items-center justify-center shadow-md hover:scale-105 transition-all" title="Send message">
+                  <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- MESSAGES CONTAINER -->
-          <div id="chatMessages" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
-            <!-- Welcome Bot Message -->
-            <div class="flex items-start gap-3 max-w-2xl">
-              <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold flex-shrink-0 shadow-sm mt-0.5">
-                <i data-lucide="bot" class="w-4 h-4"></i>
+          <!-- Quick Suggestion Pills -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-6 max-w-xl text-xs">
+            <span class="text-[11px] text-mutedText font-medium">Suggestions:</span>
+            <button onclick="sendQuickPrompt('clean')" class="px-3 py-1 rounded-full bg-white hover:bg-cream text-bodyText border border-subtleBorder shadow-sm transition-all flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Clean Research Excerpt</span>
+            </button>
+
+            <button onclick="sendQuickPrompt('dirty')" class="px-3 py-1 rounded-full bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 shadow-sm transition-all flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>NYT Copyrighted Shard</span>
+            </button>
+
+            <button onclick="sendQuickPrompt('review')" class="px-3 py-1 rounded-full bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 shadow-sm transition-all flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              <span>GPL Linux Code</span>
+            </button>
+
+            <button onclick="sendQuickPrompt('thresholds')" class="px-3 py-1 rounded-full bg-white hover:bg-cream text-bodyText border border-subtleBorder shadow-sm transition-all">
+              Check Thresholds
+            </button>
+          </div>
+        </div>
+
+        <!-- ACTIVE CHAT CONVERSATION STREAM (Hidden initially, displayed when messages exist) -->
+        <div id="chatStreamContainer" class="hidden flex-1 flex flex-col min-h-0 z-10">
+          
+          <!-- Chat Message Log -->
+          <div id="chatMessages" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 max-w-3xl mx-auto w-full">
+            <!-- Messages rendered dynamically here -->
+          </div>
+
+          <!-- Staged Attachment Bar -->
+          <div id="stagedBar" class="hidden max-w-3xl mx-auto w-full px-4 py-2 bg-cream border-t border-subtleBorder flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 truncate">
+              <i data-lucide="paperclip" class="w-3.5 h-3.5 text-brand flex-shrink-0"></i>
+              <span id="stagedFileName" class="font-mono text-[11px] text-bodyText truncate">0 files attached</span>
+            </div>
+            <button onclick="clearStagedFile()" class="text-rose-600 hover:text-rose-700 text-xs font-semibold px-2">Clear</button>
+          </div>
+
+          <!-- Bottom Sticky Composer -->
+          <div class="p-4 bg-white/90 backdrop-blur-md border-t border-subtleBorder flex-shrink-0">
+            <div class="max-w-3xl mx-auto w-full">
+              <div class="bg-canvas rounded-2xl border border-subtleBorder shadow-sm focus-within:border-brand p-2.5 transition-all">
+                <textarea id="streamChatInput" rows="1" placeholder="Type a message or paste text to scan..." class="w-full bg-transparent border-none text-xs md:text-sm text-bodyText placeholder:text-mutedText focus:outline-none resize-none px-2 py-1 max-h-32"></textarea>
+
+                <div class="flex items-center justify-between pt-2 mt-1 border-t border-subtleBorder/50">
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="p-1.5 rounded-lg text-mutedText hover:text-brand hover:bg-cream transition-all" title="Attach file">
+                      <i data-lucide="paperclip" class="w-4 h-4"></i>
+                    </button>
+                    <select id="streamJurisdiction" class="bg-white text-[11px] font-medium text-bodyText border border-subtleBorder rounded-lg px-2 py-0.5 focus:outline-none">
+                      <option value="GLOBAL">Global</option>
+                      <option value="US-FAIR-USE">US Fair Use</option>
+                      <option value="EU-DSM-ART4">EU DSM Art. 4</option>
+                    </select>
+                  </div>
+
+                  <button onclick="submitStreamMessage()" class="w-7 h-7 rounded-lg bg-brand hover:bg-brandDark text-white flex items-center justify-center shadow transition-all" title="Send">
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
-              <div class="space-y-2">
-                <div class="bg-white border border-subtleBorder rounded-2xl rounded-tl-none p-4 shadow-sm text-xs leading-relaxed text-bodyText space-y-2">
-                  <div class="font-bold text-brand text-sm">Welcome to TraceAI Copyright Clearance Copilot! 👋</div>
-                  <p>
-                    I am your inline multimodal ingestion gateway. I screen text and image assets against reference copyright indexes, detect infringements before training ingestion, issue <strong>RSASSA-PSS-SHA256</strong> signed Clearance Certificates, and anchor immutable <strong>W3C PROV-O</strong> provenance trees.
-                  </p>
-                  <p class="text-mutedText">
-                    You can type a message, paste text excerpts, or attach files using the paperclip below.
-                  </p>
+            </div>
+          </div>
+        </div>
+
+        <input type="file" id="fileUploadInput" multiple class="hidden" onchange="handleFileSelected(event)" />
+      </div>
+
+      <!-- VIEW B: ANALYTICS & TELEMETRY DASHBOARD (Dedicated Slide-in / Switchable) -->
+      <div id="view-analytics" class="hidden flex-1 min-w-0 h-full overflow-y-auto p-6 md:p-8 bg-canvas space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-subtleBorder">
+          <div>
+            <h2 class="text-2xl font-serif text-headingText font-bold">Ingestion Telemetry & Risk Analytics</h2>
+            <p class="text-xs text-mutedText mt-0.5">Real-time throughput, neural risk distributions, and cryptographic clearance counts.</p>
+          </div>
+          <button onclick="switchMainView('chat')" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-xs font-semibold text-bodyText border border-subtleBorder">
+            Back to Chat
+          </button>
+        </div>
+
+        <!-- 4 KPI CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl bg-white border border-subtleBorder shadow-sm">
+            <div class="text-[11px] font-semibold text-mutedText uppercase tracking-wider">Screened (24h)</div>
+            <div class="text-2xl font-bold text-headingText font-mono mt-1">1,284,903</div>
+            <div class="text-[11px] text-emerald-600 mt-1 flex items-center gap-1 font-medium">
+              <i data-lucide="trending-up" class="w-3 h-3"></i> +12.4% vs prior day
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white border border-subtleBorder shadow-sm">
+            <div class="text-[11px] font-semibold text-mutedText uppercase tracking-wider">Block Rate</div>
+            <div class="text-2xl font-bold text-rose-600 font-mono mt-1">3.1%</div>
+            <div class="text-[11px] text-mutedText mt-1">40,143 assets intercepted</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white border border-subtleBorder shadow-sm">
+            <div class="text-[11px] font-semibold text-mutedText uppercase tracking-wider">P95 Verdict Latency</div>
+            <div class="text-2xl font-bold text-brand font-mono mt-1">412 ms</div>
+            <div class="text-[11px] text-mutedText mt-1">38 ms after HNSW recall</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white border border-subtleBorder shadow-sm">
+            <div class="text-[11px] font-semibold text-mutedText uppercase tracking-wider">RSA-PSS Cleared</div>
+            <div class="text-2xl font-bold text-emerald-600 font-mono mt-1">1,244,760</div>
+            <div class="text-[11px] text-mutedText mt-1">100% bound to SHA-256</div>
+          </div>
+        </div>
+
+        <!-- CHARTS ROW -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-headingText">Risk Band Distribution</h3>
+            <div class="space-y-3 text-xs font-mono">
+              <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                  <span>CLEAN (PASSED)</span>
+                  <span class="text-emerald-600 font-bold">88%</span>
+                </div>
+                <div class="w-full bg-canvas rounded-full h-2">
+                  <div class="bg-emerald-500 h-2 rounded-full" style="width: 88%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                  <span>CONFIDENCE REVIEW</span>
+                  <span class="text-amber-600 font-bold">9%</span>
+                </div>
+                <div class="w-full bg-canvas rounded-full h-2">
+                  <div class="bg-amber-500 h-2 rounded-full" style="width: 9%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-[11px] mb-1">
+                  <span>BLOCKED (RISK DETECTED)</span>
+                  <span class="text-rose-600 font-bold">3%</span>
+                </div>
+                <div class="w-full bg-canvas rounded-full h-2">
+                  <div class="bg-rose-500 h-2 rounded-full" style="width: 3%"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- STAGED FILES PREVIEW -->
-          <div id="stagedBar" class="hidden px-4 py-2 bg-cream border-t border-subtleBorder flex items-center justify-between text-xs">
-            <div class="flex items-center gap-2 truncate">
-              <i data-lucide="paperclip" class="w-3.5 h-3.5 text-brand flex-shrink-0"></i>
-              <span id="stagedFilesText" class="font-mono text-[11px] text-bodyText truncate">0 files attached</span>
+          <div class="p-5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-headingText">Modality Breakdown</h3>
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <div class="p-3 bg-canvas rounded-lg border border-subtleBorder">
+                <i data-lucide="file-text" class="w-5 h-5 text-brand mx-auto mb-1"></i>
+                <div class="font-bold text-sm text-headingText">Text Track</div>
+                <div class="text-[11px] text-mutedText font-mono mt-0.5">64% volume</div>
+              </div>
+              <div class="p-3 bg-canvas rounded-lg border border-subtleBorder">
+                <i data-lucide="image" class="w-5 h-5 text-indigo-500 mx-auto mb-1"></i>
+                <div class="font-bold text-sm text-headingText">Image Track</div>
+                <div class="text-[11px] text-mutedText font-mono mt-0.5">31% volume</div>
+              </div>
+              <div class="p-3 bg-canvas rounded-lg border border-subtleBorder">
+                <i data-lucide="code-2" class="w-5 h-5 text-amber-500 mx-auto mb-1"></i>
+                <div class="font-bold text-sm text-headingText">Code Track</div>
+                <div class="text-[11px] text-mutedText font-mono mt-0.5">5% volume</div>
+              </div>
             </div>
-            <button onclick="clearStaged()" class="text-rose-600 hover:text-rose-700 text-xs font-semibold px-2">Clear</button>
-          </div>
-
-          <!-- CHAT INPUT COMPOSER -->
-          <div class="p-3 md:p-4 bg-white border-t border-subtleBorder flex-shrink-0">
-            <form onsubmit="handleChatSubmit(event)" class="space-y-2">
-              <div class="flex items-center gap-2 bg-canvas rounded-xl p-2 border border-subtleBorder focus-within:border-brand transition-all">
-                
-                <!-- Attachment Button -->
-                <button type="button" onclick="document.getElementById('chatFileInput').click()" class="p-2 rounded-lg text-mutedText hover:text-brand hover:bg-white transition-all" title="Attach file to scan">
-                  <i data-lucide="paperclip" class="w-4 h-4"></i>
-                </button>
-                <input type="file" id="chatFileInput" multiple class="hidden" onchange="handleFileSelected(event)" />
-
-                <!-- Textarea -->
-                <textarea id="chatInput" rows="1" placeholder="Type a prompt or paste text to scan (e.g. 'Check this text for copyright clearance')..." class="flex-1 bg-transparent border-none text-xs text-bodyText placeholder:text-mutedText focus:outline-none resize-none py-1"></textarea>
-
-                <!-- Jurisdiction Selector -->
-                <select id="chatJurisdiction" class="hidden sm:block text-[11px] font-semibold bg-white border border-subtleBorder text-bodyText rounded-lg px-2 py-1 focus:outline-none focus:border-brand">
-                  <option value="GLOBAL">Global</option>
-                  <option value="EU">EU TDM</option>
-                  <option value="US">US Fair Use</option>
-                </select>
-
-                <!-- Send Button (#1e81b0) -->
-                <button type="submit" id="chatSendBtn" class="px-4 py-2 rounded-lg bg-brand hover:bg-brandDark text-white font-bold text-xs flex items-center gap-1.5 shadow transition-all">
-                  <span>Send</span>
-                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-
-              <!-- Quick Prompt Pills -->
-              <div class="flex items-center gap-1.5 overflow-x-auto text-[11px] pt-1">
-                <span class="text-mutedText text-[10px] font-medium flex-shrink-0">Try:</span>
-                <button type="button" onclick="sendQuickText('Is Moby Dick in the public domain?')" class="px-2 py-0.5 rounded-full bg-cream hover:bg-creamDark text-bodyText border border-subtleBorder whitespace-nowrap transition-all">
-                  Is Moby Dick public domain?
-                </button>
-                <button type="button" onclick="sendQuickText('What are the text and image risk thresholds?')" class="px-2 py-0.5 rounded-full bg-cream hover:bg-creamDark text-bodyText border border-subtleBorder whitespace-nowrap transition-all">
-                  Thresholds?
-                </button>
-                <button type="button" onclick="sendPresetPrompt('dirty')" class="px-2 py-0.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 whitespace-nowrap transition-all">
-                  Scan Copyrighted Excerpt
-                </button>
-              </div>
-            </form>
           </div>
         </div>
 
-        <!-- RESIZER DIVIDER GUTTER (react-split-pane) -->
-        <div id="chatResizer" class="Resizer vertical flex items-center justify-center cursor-col-resize group" title="Drag to resize / Double-click to reset (50/50)">
-          <div id="resizerGrip" class="w-1 h-10 rounded-full bg-strongBorder group-hover:bg-brand transition-all"></div>
+        <!-- RECENT SCAN STREAM TABLE -->
+        <div class="p-5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-3">
+          <h3 class="text-sm font-bold text-headingText">Recent Scan Operations</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-canvas border-b border-subtleBorder text-mutedText uppercase text-[10px]">
+                <tr>
+                  <th class="py-2.5 px-3">Asset ID</th>
+                  <th class="py-2.5 px-3">Modality</th>
+                  <th class="py-2.5 px-3">Similarity</th>
+                  <th class="py-2.5 px-3">Verdict</th>
+                  <th class="py-2.5 px-3">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-subtleBorder font-mono">
+                <tr class="hover:bg-cream/40">
+                  <td class="py-2.5 px-3 font-semibold text-brand">corpus_shard_402.txt</td>
+                  <td class="py-2.5 px-3">TEXT</td>
+                  <td class="py-2.5 px-3 text-rose-600 font-bold">94.2%</td>
+                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-600 font-bold text-[10px]">BLOCKED</span></td>
+                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88219-TXT')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
+                </tr>
+                <tr class="hover:bg-cream/40">
+                  <td class="py-2.5 px-3 font-semibold text-brand">concept_artwork.png</td>
+                  <td class="py-2.5 px-3">IMAGE</td>
+                  <td class="py-2.5 px-3 text-emerald-600 font-bold">12.4%</td>
+                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-bold text-[10px]">PASSED</span></td>
+                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88220-IMG')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
+                </tr>
+                <tr class="hover:bg-cream/40">
+                  <td class="py-2.5 px-3 font-semibold text-brand">auth_controller.py</td>
+                  <td class="py-2.5 px-3">CODE</td>
+                  <td class="py-2.5 px-3 text-amber-600 font-bold">81.2%</td>
+                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-amber-50 text-amber-600 font-bold text-[10px]">REVIEW</span></td>
+                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88221-COD')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW C: AUDITOR REVIEW QUEUE DASHBOARD -->
+      <div id="view-review" class="hidden flex-1 min-w-0 h-full overflow-y-auto p-6 md:p-8 bg-canvas space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-subtleBorder">
+          <div>
+            <h2 class="text-2xl font-serif text-headingText font-bold">Auditor Review Queue</h2>
+            <p class="text-xs text-mutedText mt-0.5">Quarantined assets in the confidence band requiring human legal or SecOps sign-off.</p>
+          </div>
+          <button onclick="switchMainView('chat')" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-xs font-semibold text-bodyText border border-subtleBorder">
+            Back to Chat
+          </button>
         </div>
 
-        <!-- RIGHT INSPECTOR PANE (Forensic Evidence & Certificate Vault) -->
-        <div id="inspectorPane" class="h-full flex flex-col flex-1 min-w-0 bg-white border-l border-subtleBorder overflow-y-auto p-5 space-y-4">
-          
-          <!-- Inspector Header -->
-          <div class="flex items-start justify-between pb-3 border-b border-subtleBorder">
+        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+            <span><strong>3 assets</strong> currently held in queue. Under Chapter 3 rules, assets on degraded infrastructure cannot be cleared.</span>
+          </div>
+          <button onclick="alert('Queue updated')" class="px-2 py-1 rounded bg-white text-amber-900 border border-amber-300 text-[11px] font-semibold">Refresh</button>
+        </div>
+
+        <!-- Quarantined List -->
+        <div class="space-y-3">
+          <div class="p-4 bg-white rounded-xl border border-subtleBorder shadow-sm flex items-start justify-between gap-4">
             <div>
               <div class="flex items-center gap-2">
-                <span id="inspectAssetId" class="text-base font-bold text-brand">AST-88219-TXT</span>
-                <span id="inspectTrackBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cream text-bodyText border border-subtleBorder">TEXT</span>
-                <span id="inspectStatusBadge" class="text-xs px-2.5 py-0.5 rounded-lg border font-bold text-rose-600 bg-rose-50 border-rose-200">
-                  BLOCKED
-                </span>
+                <span class="font-bold text-sm text-headingText">auth_middleware_controller.py</span>
+                <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">HELD_IN_QUEUE</span>
               </div>
-              <div class="text-[11px] font-mono text-mutedText mt-1 truncate max-w-sm" id="inspectHash">sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b</div>
+              <p class="text-xs text-mutedText mt-1">Matched against: <code class="text-rose-600 font-mono">RefCorpus: GitHub Linux Kernel GPL-2.0</code></p>
+              <div class="text-[11px] font-mono text-mutedText mt-1">Score: 81.2% (review band 0.75 - 0.85) • Jurisdiction: EU-DSM-ART4</div>
             </div>
-
-            <button onclick="copyInspectLineage()" class="px-2.5 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-xs font-semibold text-bodyText border border-subtleBorder flex items-center gap-1 transition-all" title="Copy W3C PROV-O JSON-LD">
-              <i data-lucide="copy" class="w-3.5 h-3.5 text-brand"></i> Copy Proof
-            </button>
-          </div>
-
-          <!-- Similarity & Detection Analysis -->
-          <div class="p-4 rounded-xl bg-canvas border border-subtleBorder space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="uppercase font-bold text-mutedText flex items-center gap-1.5">
-                <i data-lucide="microscope" class="w-4 h-4 text-brand"></i> Neural Similarity Analysis
-              </span>
-              <span id="inspectSimScore" class="font-mono font-bold text-rose-600 text-sm">94.2%</span>
-            </div>
-            <div id="inspectMatchedSource" class="text-xs font-semibold text-rose-600">
-              RefCorpus: New York Times 2023 Tech Archive (Doc #994)
-            </div>
-            <div id="inspectEvidenceDetail" class="text-xs font-mono bg-white p-3 rounded-lg border border-subtleBorder text-bodyText max-h-32 overflow-y-auto whitespace-pre-wrap">
-              "The proprietary transformer architecture incorporates a multi-tier attention mechanism..."
+            <div class="flex items-center gap-2">
+              <button onclick="alert('Asset cleared with signed override')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">
+                Clear Asset
+              </button>
+              <button onclick="alert('Block confirmed')" class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold">
+                Uphold Block
+              </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Cryptographic Clearance Certificate -->
-          <div class="p-4 rounded-xl bg-canvas border border-subtleBorder space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="uppercase font-bold text-brand flex items-center gap-1.5">
-                <i data-lucide="award" class="w-4 h-4 text-brand"></i> RSASSA-PSS Clearance Certificate
-              </span>
-              <span id="inspectCertBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200">DENIED</span>
+      <!-- VIEW D: SETTINGS & GOVERNANCE POLICY -->
+      <div id="view-settings" class="hidden flex-1 min-w-0 h-full overflow-y-auto p-6 md:p-8 bg-canvas space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-subtleBorder">
+          <div>
+            <h2 class="text-2xl font-serif text-headingText font-bold">Policy & Cryptographic Governance</h2>
+            <p class="text-xs text-mutedText mt-0.5">Active scan thresholds, RSA-2048 key rotation, and W3C PROV-O ontology settings.</p>
+          </div>
+          <button onclick="switchMainView('chat')" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-xs font-semibold text-bodyText border border-subtleBorder">
+            Back to Chat
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Thresholds -->
+          <div class="p-5 bg-white rounded-xl border border-subtleBorder shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-headingText">Active Scan Thresholds</h3>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex justify-between py-1 border-b border-subtleBorder">
+                <span class="text-mutedText">Text Cross-Encoder Threshold:</span>
+                <span class="font-bold text-brand">0.85</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-subtleBorder">
+                <span class="text-mutedText">Image CLIP Cosine Threshold:</span>
+                <span class="font-bold text-brand">0.90</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-subtleBorder">
+                <span class="text-mutedText">pHash Hamming Filter Max:</span>
+                <span class="font-bold text-brand">&lt; 5 bits</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-mutedText">Early-Exit Recall Gate:</span>
+                <span class="font-bold text-brand">&lt; 0.50</span>
+              </div>
             </div>
-            <pre id="inspectCertJson" class="text-[11px] font-mono bg-white p-3 rounded-lg border border-subtleBorder text-emerald-600 max-h-40 overflow-y-auto select-all">// Certificate issuance denied due to copyright risk exceeding 0.85 threshold.</pre>
           </div>
 
-          <!-- W3C PROV-O Lineage Graph -->
-          <div class="p-4 rounded-xl bg-canvas border border-subtleBorder space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="uppercase font-bold text-mutedText flex items-center gap-1.5">
-                <i data-lucide="git-branch" class="w-4 h-4 text-brand"></i> W3C PROV-O Lineage (JSON-LD)
-              </span>
+          <!-- Signer Key -->
+          <div class="p-5 bg-white rounded-xl border border-subtleBorder shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-headingText">Cryptographic Signer Identity</h3>
+            <div class="space-y-2 text-xs">
+              <div>
+                <span class="text-mutedText text-[11px]">Active Key Fingerprint:</span>
+                <div class="font-mono text-xs text-brand font-semibold break-all mt-0.5" id="settingsKeyFingerprint">
+                  rsa2048:8f4c21aa0981e4b3c99a0129
+                </div>
+              </div>
+              <div class="text-[11px] text-mutedText">
+                Canonical RFC 8785 JSON representation with RSASSA-PSS SHA-256 signatures.
+              </div>
+              <button onclick="alert('Public key downloaded')" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-brand border border-subtleBorder text-xs font-semibold flex items-center gap-1.5 mt-2">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Public Key (.pem)
+              </button>
             </div>
-            <pre id="inspectProvJson" class="text-[11px] font-mono bg-white p-3 rounded-lg border border-subtleBorder text-brand max-h-44 overflow-y-auto select-all">{
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 3. SLIDING RIGHT DRAWER: FORENSIC EVIDENCE & CERTIFICATE INSPECTOR -->
+  <div id="inspectorDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white border-l border-subtleBorder shadow-2xl z-40 transform translate-x-full drawer-transition flex flex-col">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-subtleBorder bg-canvas flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-cream flex items-center justify-center p-1 border border-subtleBorder">
+          <img src="/static/assets/logo_t.png" alt="T" class="w-5 h-5 object-contain" />
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-sm text-headingText">Forensic Inspector</span>
+            <span id="drawerTrackBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cream text-brand border border-subtleBorder">TEXT</span>
+          </div>
+          <p class="text-[11px] text-mutedText">Cryptographic Certificate & Threat Diagnosis</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="copyInspectorProof()" class="px-2.5 py-1 rounded-lg bg-white hover:bg-cream border border-subtleBorder text-xs font-medium text-bodyText flex items-center gap-1" title="Copy W3C PROV-O JSON-LD">
+          <i data-lucide="copy" class="w-3.5 h-3.5 text-brand"></i>
+          <span>Copy</span>
+        </button>
+
+        <button onclick="openInspector(false)" class="p-1.5 rounded-lg hover:bg-cream text-mutedText hover:text-bodyText transition-all" title="Close Drawer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Content (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+      <!-- Asset Summary Card -->
+      <div class="p-3.5 rounded-xl bg-canvas border border-subtleBorder space-y-2">
+        <div class="flex items-center justify-between">
+          <span id="drawerAssetId" class="font-bold text-sm text-brand font-mono">AST-88219-TXT</span>
+          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">BLOCKED</span>
+        </div>
+        <div class="font-mono text-[11px] text-mutedText truncate" id="drawerHash">sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b</div>
+      </div>
+
+      <!-- Neural Similarity & Threat Diagnosis -->
+      <div class="p-3.5 rounded-xl bg-canvas border border-subtleBorder space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="uppercase font-bold text-mutedText flex items-center gap-1.5 text-[11px]">
+            <i data-lucide="microscope" class="w-3.5 h-3.5 text-brand"></i> Neural Similarity Analysis
+          </span>
+          <span id="drawerSimScore" class="font-mono font-bold text-rose-600 text-sm">94.2%</span>
+        </div>
+        <div id="drawerMatchedSource" class="font-semibold text-rose-600 text-xs">
+          RefCorpus: New York Times 2023 Tech Archive (Doc #994)
+        </div>
+        <div id="drawerEvidenceSnippet" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[11px] text-bodyText max-h-28 overflow-y-auto whitespace-pre-wrap">
+          "The proprietary transformer architecture incorporates a multi-tier attention mechanism specifically designed to retain contextual embeddings across ultra-long document contexts..."
+        </div>
+      </div>
+
+      <!-- RSASSA-PSS Certificate -->
+      <div class="p-3.5 rounded-xl bg-canvas border border-subtleBorder space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="uppercase font-bold text-brand flex items-center gap-1.5 text-[11px]">
+            <i data-lucide="award" class="w-3.5 h-3.5 text-brand"></i> RSASSA-PSS Clearance Certificate
+          </span>
+          <span id="drawerCertBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-bold">DENIED</span>
+        </div>
+        <pre id="drawerCertPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-bodyText max-h-36 overflow-y-auto select-all">// Certificate withheld: asset blocked due to copyright risk exceeding 0.85 threshold.</pre>
+      </div>
+
+      <!-- W3C PROV-O Lineage Graph -->
+      <div class="p-3.5 rounded-xl bg-canvas border border-subtleBorder space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="uppercase font-bold text-mutedText flex items-center gap-1.5 text-[11px]">
+            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-brand"></i> W3C PROV-O Lineage (JSON-LD)
+          </span>
+        </div>
+        <pre id="drawerProvPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-brand max-h-40 overflow-y-auto select-all">{
   "@context": "https://www.w3.org/ns/prov-o#",
   "@type": "prov:Entity",
   "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
   "prov:wasInvalidatedBy": "traceai:gate:cross_encoder",
   "traceai:decision": "BLOCKED"
 }</pre>
-          </div>
-        </div>
       </div>
-
-      <!-- TAB VIEW: REVIEW QUEUE -->
-      <div id="tabView-review" class="hidden h-full overflow-y-auto p-6 space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-bold text-bodyText flex items-center gap-2">
-              <i data-lucide="user-check" class="w-5 h-5 text-amber-500"></i> Human Adjudication Queue
-            </h2>
-            <p class="text-xs text-mutedText">Assets falling within the confidence band held pending human verification.</p>
-          </div>
-          <button onclick="fetchReviewQueue()" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark border border-subtleBorder text-xs font-semibold text-bodyText flex items-center gap-1.5">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-brand"></i> Refresh
-          </button>
-        </div>
-        <div id="reviewList" class="space-y-3">
-          <div class="p-6 text-center text-xs text-mutedText border border-subtleBorder rounded-xl bg-white">
-            No items pending human adjudication.
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB VIEW: ANALYTICS -->
-      <div id="tabView-analytics" class="hidden h-full overflow-y-auto p-6 space-y-6">
-        <div>
-          <h2 class="text-lg font-bold text-bodyText flex items-center gap-2">
-            <i data-lucide="bar-chart-3" class="w-5 h-5 text-brand"></i> Corpus Risk Analytics
-          </h2>
-          <p class="text-xs text-mutedText">Corpus cleanliness, trust tier breakdown, and compute savings.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="p-5 rounded-xl bg-white border border-subtleBorder">
-            <span class="text-xs text-mutedText uppercase font-bold">Corpus Cleanliness</span>
-            <div class="text-2xl font-black text-emerald-600 mt-1">94.2%</div>
-            <p class="text-xs text-mutedText mt-1">Safe for foundation model training</p>
-          </div>
-          <div class="p-5 rounded-xl bg-white border border-subtleBorder">
-            <span class="text-xs text-mutedText uppercase font-bold">Certificates Issued</span>
-            <div class="text-2xl font-black text-brand mt-1">1,244,760</div>
-            <p class="text-xs text-mutedText mt-1">RSASSA-PSS signed and verified</p>
-          </div>
-          <div class="p-5 rounded-xl bg-white border border-subtleBorder">
-            <span class="text-xs text-mutedText uppercase font-bold">Stage 2 Calls Saved</span>
-            <div class="text-2xl font-black text-bodyText mt-1">318,400</div>
-            <p class="text-xs text-mutedText mt-1">Saved via coarse pHash and dedup</p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    let currentReport = null;
+    // State
+    let isInspectorOpen = false;
     let stagedFiles = [];
-    let isInspectorVisible = true;
-    let isSplitDragging = false;
+    let currentView = 'chat';
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      initSplitPane();
-      lucide.createIcons();
-      try {
-        const res = await fetch('/api/info');
-        const data = await res.json();
-        if (data.public_key_fingerprint) {
-          document.getElementById('keyFingerprintShort').innerText = data.public_key_fingerprint.slice(0, 18) + '...';
-        }
-      } catch (e) {
-        console.error(e);
+    // Sample Asset Database
+    const SAMPLE_ASSETS = {
+      'AST-88219-TXT': {
+        id: 'AST-88219-TXT',
+        name: 'corpus_shard_402.txt',
+        hash: 'sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b',
+        track: 'TEXT',
+        status: 'BLOCKED',
+        similarity: 0.942,
+        source: 'RefCorpus: New York Times 2023 Tech Archive (Doc #994)',
+        snippet: 'The proprietary transformer architecture incorporates a multi-tier attention mechanism specifically designed to retain contextual embeddings across ultra-long document contexts...',
+        cert: '// Certificate issuance DENIED due to copyright risk exceeding 0.85 threshold.\\n{\\n  "status": "DENIED",\\n  "reason": "HIGH_SIMILARITY_MATCH"\\n}',
+        prov: JSON.stringify({
+          "@context": "https://www.w3.org/ns/prov-o#",
+          "@type": "prov:Entity",
+          "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+          "prov:wasInvalidatedBy": "traceai:gate:cross_encoder",
+          "prov:endedAtTime": new Date().toISOString(),
+          "traceai:decision": "BLOCKED",
+          "traceai:score": 0.942
+        }, null, 2)
+      },
+      'AST-88220-IMG': {
+        id: 'AST-88220-IMG',
+        name: 'concept_artwork.png',
+        hash: 'sha256:77bc09281aef034bce909283741829034871239840192834',
+        track: 'IMAGE',
+        status: 'PASSED',
+        similarity: 0.124,
+        source: 'None (Clean Asset)',
+        snippet: 'Verified against 50,000 reference works: zero perceptual hash collisions (Hamming > 8) and CLIP cosine similarity below 0.15.',
+        cert: JSON.stringify({
+          "certificate_id": "9c04a081-34df-4eb9-a86d-f4284193bfa0",
+          "asset_id": "concept_artwork.png",
+          "asset_hash": "sha256:77bc09281aef034bce909283741829034871239840192834",
+          "verdict": "PASSED",
+          "issued_at": new Date().toISOString(),
+          "rsa_signature": "MIIBCgKCAQEA0k1982934812390841209384019283471029384..."
+        }, null, 2),
+        prov: JSON.stringify({
+          "@context": "https://www.w3.org/ns/prov-o#",
+          "@type": "prov:Entity",
+          "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+          "prov:wasAssociatedWith": "traceai:signer:rsa_pss",
+          "prov:endedAtTime": new Date().toISOString(),
+          "traceai:decision": "PASSED",
+          "traceai:score": 0.124
+        }, null, 2)
+      },
+      'AST-88221-COD': {
+        id: 'AST-88221-COD',
+        name: 'auth_middleware_controller.py',
+        hash: 'sha256:109923847291823904812390841209384019283471029384',
+        track: 'CODE',
+        status: 'HUMAN_REVIEW',
+        similarity: 0.812,
+        source: 'RefCorpus: GitHub Linux GPL-2.0 Kernel Subsystem',
+        snippet: 'static inline int trace_event_raw_event_sched_switch(struct trace_event_file *file, void *data)...',
+        cert: '// Certificate withheld pending human legal sign-off.\\n{\\n  "status": "HELD_IN_QUEUE",\\n  "queue": "LEGAL_AUDIT_EU"\\n}',
+        prov: JSON.stringify({
+          "@context": "https://www.w3.org/ns/prov-o#",
+          "@type": "prov:Entity",
+          "prov:wasGeneratedBy": "traceai:router:confidence_band",
+          "traceai:decision": "HELD_IN_QUEUE",
+          "traceai:score": 0.812
+        }, null, 2)
       }
+    };
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      fetchSystemInfo();
     });
 
-    function switchTab(tab) {
-      ['chat', 'review', 'analytics'].forEach(t => {
-        const view = document.getElementById(`tabView-${t}`);
-        const btn = document.getElementById(`nav-tab-${t}`);
-        if (t === tab) {
-          view.classList.remove('hidden');
-          btn.classList.add('bg-white', 'text-brand', 'shadow', 'font-bold');
-          btn.classList.remove('text-white/90');
-        } else {
-          view.classList.add('hidden');
-          btn.classList.remove('bg-white', 'text-brand', 'shadow', 'font-bold');
-          btn.classList.add('text-white/90');
+    async function fetchSystemInfo() {
+      try {
+        const res = await fetch('/api/info');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.active_signer_fingerprint) {
+            const fp = data.active_signer_fingerprint.slice(0, 16);
+            document.getElementById('headerKeyFingerprint').innerText = `Signer: active (${fp}...)`;
+            const sFp = document.getElementById('settingsKeyFingerprint');
+            if (sFp) sFp.innerText = data.active_signer_fingerprint;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not fetch info:', e);
+      }
+    }
+
+    // View Switching (Chat, Analytics, Review, Settings)
+    function switchMainView(viewName) {
+      currentView = viewName;
+      ['chat', 'analytics', 'review', 'settings'].forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const btn = document.getElementById(`rail-btn-${v}`);
+        if (el) {
+          if (v === viewName) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+        if (btn) {
+          if (v === viewName) {
+            btn.className = 'w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center transition-all shadow-sm';
+          } else {
+            btn.className = 'w-10 h-10 rounded-xl text-mutedText hover:text-brand hover:bg-cream flex items-center justify-center transition-all';
+          }
         }
       });
-      if (tab === 'review') fetchReviewQueue();
       lucide.createIcons();
     }
 
-    function initSplitPane() {
-      const resizer = document.getElementById('chatResizer');
-      const chatPane = document.getElementById('chatPane');
-      const container = chatPane.parentElement;
-
-      if (!resizer || !chatPane) return;
-
-      resizer.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        isSplitDragging = true;
-        resizer.classList.add('active');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-      });
-
-      resizer.addEventListener('dblclick', () => {
-        resetSplitPane();
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!isSplitDragging) return;
-        const rect = container.getBoundingClientRect();
-        let newWidth = e.clientX - rect.left;
-        const minW = 320;
-        const maxW = rect.width - 300;
-        if (newWidth < minW) newWidth = minW;
-        if (newWidth > maxW) newWidth = maxW;
-        chatPane.style.width = `${newWidth}px`;
-        chatPane.style.flex = 'none';
-      });
-
-      window.addEventListener('mouseup', () => {
-        if (isSplitDragging) {
-          isSplitDragging = false;
-          resizer.classList.remove('active');
-          document.body.style.cursor = '';
-          document.body.style.userSelect = '';
-        }
-      });
-    }
-
-    function resetSplitPane() {
-      const chatPane = document.getElementById('chatPane');
-      chatPane.style.width = '55%';
-      chatPane.style.flex = 'none';
-    }
-
+    // Toggle Right Inspector Drawer
     function toggleInspector() {
-      const inspector = document.getElementById('inspectorPane');
-      const resizer = document.getElementById('chatResizer');
-      const label = document.getElementById('inspectorToggleLabel');
-      isInspectorVisible = !isInspectorVisible;
+      openInspector(!isInspectorOpen);
+    }
 
-      if (isInspectorVisible) {
-        inspector.classList.remove('hidden');
-        resizer.classList.remove('hidden');
-        label.innerText = 'Inspector: Open';
+    function openInspector(open) {
+      isInspectorOpen = open;
+      const drawer = document.getElementById('inspectorDrawer');
+      const toggleText = document.getElementById('toggleInspectorText');
+      if (open) {
+        drawer.classList.remove('translate-x-full');
+        drawer.classList.add('translate-x-0');
+        if (toggleText) toggleText.innerText = 'Close Drawer';
       } else {
-        inspector.classList.add('hidden');
-        resizer.classList.add('hidden');
-        label.innerText = 'Inspector: Closed';
+        drawer.classList.add('translate-x-full');
+        drawer.classList.remove('translate-x-0');
+        if (toggleText) toggleText.innerText = 'Evidence Drawer';
       }
     }
 
-    function handleFileSelected(e) {
-      if (e.target.files.length) {
-        stagedFiles = [...stagedFiles, ...Array.from(e.target.files)];
-        updateStagedUI();
-      }
-    }
+    function inspectSampleAsset(assetKey) {
+      const asset = SAMPLE_ASSETS[assetKey] || SAMPLE_ASSETS['AST-88219-TXT'];
+      document.getElementById('drawerAssetId').innerText = asset.id;
+      document.getElementById('drawerHash').innerText = asset.hash;
+      document.getElementById('drawerTrackBadge').innerText = asset.track;
+      document.getElementById('drawerSimScore').innerText = `${(asset.similarity * 100).toFixed(1)}%`;
+      document.getElementById('drawerMatchedSource').innerText = asset.source;
+      document.getElementById('drawerEvidenceSnippet').innerText = asset.snippet;
+      document.getElementById('drawerCertPayload').innerText = asset.cert;
+      document.getElementById('drawerProvPayload').innerText = asset.prov;
 
-    function updateStagedUI() {
-      const stagedBar = document.getElementById('stagedBar');
-      const text = document.getElementById('stagedFilesText');
-      if (stagedFiles.length > 0) {
-        stagedBar.classList.remove('hidden');
-        text.innerText = `${stagedFiles.length} file(s) attached: ${stagedFiles.map(f => f.name).join(', ')}`;
+      const badge = document.getElementById('drawerStatusBadge');
+      const certBadge = document.getElementById('drawerCertBadge');
+      if (asset.status === 'PASSED') {
+        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200';
+        badge.innerText = 'PASSED';
+        certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold';
+        certBadge.innerText = 'ISSUED & SIGNED';
+      } else if (asset.status === 'BLOCKED') {
+        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200';
+        badge.innerText = 'BLOCKED';
+        certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-bold';
+        certBadge.innerText = 'DENIED';
       } else {
-        stagedBar.classList.add('hidden');
+        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200';
+        badge.innerText = 'HUMAN_REVIEW';
+        certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 border border-amber-200 font-bold';
+        certBadge.innerText = 'HELD_IN_QUEUE';
       }
+      openInspector(true);
       lucide.createIcons();
     }
 
-    function clearStaged() {
-      stagedFiles = [];
-      document.getElementById('chatFileInput').value = '';
-      updateStagedUI();
+    function copyInspectorProof() {
+      const payload = document.getElementById('drawerProvPayload').innerText;
+      navigator.clipboard.writeText(payload);
+      alert('W3C PROV-O JSON-LD lineage copied to clipboard!');
     }
 
-    async function handleChatSubmit(e) {
-      e.preventDefault();
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      const jurisdiction = document.getElementById('chatJurisdiction').value;
+    // Reset to clean hero view
+    function resetToHero(e) {
+      if (e) e.preventDefault();
+      switchMainView('chat');
+      document.getElementById('chatHero').classList.remove('hidden');
+      document.getElementById('chatStreamContainer').classList.add('hidden');
+    }
 
-      if (!text && stagedFiles.length === 0) return;
+    function startNewChat() {
+      resetToHero();
+      document.getElementById('chatMessages').innerHTML = '';
+      document.getElementById('heroChatInput').value = '';
+    }
 
-      const userMsg = text || `Uploaded ${stagedFiles.length} file(s) for copyright scan`;
-      appendMessage('user', userMsg);
+    // Submitting Message from Hero
+    function submitHeroMessage() {
+      const input = document.getElementById('heroChatInput');
+      const msg = input.value.trim();
+      const jurisdiction = document.getElementById('heroJurisdiction').value;
+      if (!msg && stagedFiles.length === 0) return;
+
+      // Switch from Hero to Active Stream
+      document.getElementById('chatHero').classList.add('hidden');
+      document.getElementById('chatStreamContainer').classList.remove('hidden');
+
+      processUserMessage(msg, jurisdiction);
       input.value = '';
-
-      if (stagedFiles.length > 0) {
-        const filesToScan = [...stagedFiles];
-        clearStaged();
-        await executeFileScan(filesToScan, jurisdiction);
-        return;
-      }
-
-      await executeTextMessage(text, jurisdiction);
     }
 
-    async function executeTextMessage(text, jurisdiction) {
-      const loadingId = appendLoadingMessage();
+    // Submitting Message from Sticky Stream
+    function submitStreamMessage() {
+      const input = document.getElementById('streamChatInput');
+      const msg = input.value.trim();
+      const jurisdiction = document.getElementById('streamJurisdiction').value;
+      if (!msg && stagedFiles.length === 0) return;
+
+      processUserMessage(msg, jurisdiction);
+      input.value = '';
+    }
+
+    // Process Message
+    async function processUserMessage(text, jurisdiction = 'GLOBAL') {
+      const chatContainer = document.getElementById('chatMessages');
+
+      // 1. Append User Bubble (#1e81b0 blue)
+      const userDiv = document.createElement('div');
+      userDiv.className = 'flex justify-end';
+      userDiv.innerHTML = `
+        <div class="bg-brand text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-lg text-xs md:text-sm shadow-sm">
+          ${escapeHtml(text)}
+          ${stagedFiles.length > 0 ? `<div class="mt-1 pt-1 border-t border-white/20 text-[10px] opacity-90">Attached: ${escapeHtml(stagedFiles.map(f => f.name).join(', '))}</div>` : ''}
+        </div>
+      `;
+      chatContainer.appendChild(userDiv);
+
+      // Clear staged files
+      stagedFiles = [];
+      updateStagedBar();
+
+      // Scroll
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // 2. Loading State
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'flex items-start gap-3';
+      loadingDiv.id = 'loadingMsg';
+      loadingDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0">
+          <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
+        </div>
+        <div class="bg-cream px-4 py-3 rounded-2xl rounded-tl-sm text-xs text-mutedText flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-brand animate-ping"></span>
+          <span>TraceAI dual-track clearance engine is evaluating...</span>
+        </div>
+      `;
+      chatContainer.appendChild(loadingDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // 3. Backend Call to /api/chat
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, jurisdiction }),
+          body: JSON.stringify({ message: text, jurisdiction: jurisdiction })
         });
+
         const data = await res.json();
-        removeMessage(loadingId);
-        appendAssistantResponse(data.reply, data.scan_result);
+        const loadEl = document.getElementById('loadingMsg');
+        if (loadEl) loadEl.remove();
+
+        renderAssistantResponse(data);
       } catch (err) {
-        removeMessage(loadingId);
-        appendMessage('assistant', `Error contacting TraceAI Copilot: ${err}`);
-      }
-    }
+        const loadEl = document.getElementById('loadingMsg');
+        if (loadEl) loadEl.remove();
 
-    async function executeFileScan(files, jurisdiction) {
-      const loadingId = appendLoadingMessage('Fingerprinting binary bytes & evaluating deep neural indexes...');
-      const formData = new FormData();
-      files.forEach(f => formData.append('files', f));
-      formData.append('use_mock_index', 'true');
-      formData.append('jurisdiction', jurisdiction);
-
-      try {
-        const res = await fetch('/api/scan', { method: 'POST', body: formData });
-        const data = await res.json();
-        removeMessage(loadingId);
-        currentReport = data;
-
-        if (data.results && data.results.length > 0) {
-          data.results.forEach(asset => {
-            let summaryText = asset.status === 'PASSED'
-              ? `Verified: **CLEARED (PASSED)**. Asset \`${asset.asset_id}\` cleared with 0.0% risk. RSASSA-PSS certificate signed.`
-              : asset.status === 'BLOCKED'
-              ? `Alert: **BLOCKED (RISK DETECTED)**. Infringement in \`${asset.asset_id}\` (${(asset.similarity_score * 100).toFixed(1)}%). Matched: ${asset.matched_source}.`
-              : `Held in confidence review queue under ${jurisdiction} rules.`;
-            appendAssistantResponse(summaryText, asset);
-          });
-        }
-      } catch (err) {
-        removeMessage(loadingId);
-        appendMessage('assistant', `File scan error: ${err}`);
-      }
-    }
-
-    function appendMessage(sender, text) {
-      const container = document.getElementById('chatMessages');
-      const isUser = sender === 'user';
-      const div = document.createElement('div');
-      div.className = `flex items-start gap-3 ${isUser ? 'justify-end' : ''} animate-fade-in`;
-
-      if (isUser) {
-        div.innerHTML = `
-          <div class="bg-brand text-white rounded-2xl rounded-tr-none p-3 shadow text-xs max-w-lg whitespace-pre-wrap leading-relaxed">
-            ${escapeHtml(text)}
+        const errDiv = document.createElement('div');
+        errDiv.className = 'flex items-start gap-3';
+        errDiv.innerHTML = `
+          <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0">
+            <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
           </div>
-          <div class="w-8 h-8 rounded-xl bg-brandDark text-white flex items-center justify-center font-bold flex-shrink-0 text-xs shadow-sm">
-            <i data-lucide="user" class="w-4 h-4"></i>
+          <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl rounded-tl-sm text-xs max-w-lg">
+            Error contacting TraceAI Copilot: ${err}
           </div>
         `;
-      } else {
-        div.innerHTML = `
-          <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold flex-shrink-0 text-xs shadow-sm">
-            <i data-lucide="bot" class="w-4 h-4"></i>
-          </div>
-          <div class="bg-white border border-subtleBorder text-bodyText rounded-2xl rounded-tl-none p-3 shadow-sm text-xs max-w-lg whitespace-pre-wrap leading-relaxed">
-            ${escapeHtml(text)}
-          </div>
-        `;
+        chatContainer.appendChild(errDiv);
       }
 
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
       lucide.createIcons();
     }
 
-    function appendAssistantResponse(replyText, scanResult) {
-      const container = document.getElementById('chatMessages');
-      const div = document.createElement('div');
-      div.className = 'flex items-start gap-3 animate-fade-in';
+    // Render Assistant Response Card (#eeeee4 ivory surface)
+    function renderAssistantResponse(data) {
+      const chatContainer = document.getElementById('chatMessages');
+      const scan = data.scan_result;
 
       let cardHtml = '';
-      if (scanResult) {
-        const isPassed = scanResult.status === 'PASSED';
-        const isBlocked = scanResult.status === 'BLOCKED';
-        const simScore = scanResult.similarity_score !== undefined && scanResult.similarity_score !== null
-          ? (scanResult.similarity_score * 100).toFixed(1)
-          : '0.0';
+      if (scan) {
+        const isPassed = scan.status === 'PASSED';
+        const isBlocked = scan.status === 'BLOCKED';
+        const sim = scan.similarity_score !== undefined && scan.similarity_score !== null ? (scan.similarity_score * 100).toFixed(1) : '0.0';
 
-        const statusClass = isPassed
-          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-          : isBlocked
-          ? 'bg-rose-50 text-rose-700 border-rose-200'
-          : 'bg-amber-50 text-amber-700 border-amber-200';
+        const statusClass = isPassed ? 'text-emerald-700 bg-emerald-100 border-emerald-300' :
+                            isBlocked ? 'text-rose-700 bg-rose-100 border-rose-300' :
+                            'text-amber-700 bg-amber-100 border-amber-300';
 
         cardHtml = `
-          <div class="mt-3 p-3.5 rounded-xl border ${statusClass} space-y-2.5">
+          <div class="mt-3 p-3.5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-2.5 font-sans">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-xs">${scanResult.asset_id}</span>
-                <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white border border-subtleBorder">${scanResult.track}</span>
-              </div>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white border">
-                ${scanResult.status}
-              </span>
+              <span class="font-bold text-xs text-headingText font-mono">${escapeHtml(scan.asset_id || 'input_asset')}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${statusClass}">${scan.status}</span>
             </div>
 
-            <div class="text-[11px] font-mono text-mutedText truncate">${scanResult.asset_hash}</div>
-
-            <div class="flex items-center justify-between text-xs pt-1 border-t border-black/5">
-              <span>Similarity Score:</span>
-              <span class="font-bold font-mono">${simScore}%</span>
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-mutedText">Similarity Score:</span>
+              <span class="font-bold ${isBlocked ? 'text-rose-600' : isPassed ? 'text-emerald-600' : 'text-amber-600'}">${sim}%</span>
             </div>
 
-            ${scanResult.matched_source ? `
-              <div class="text-[11px] text-rose-700">
-                <strong>Infringement Reference:</strong> ${scanResult.matched_source}
+            ${scan.matched_source ? `
+              <div class="text-[11px] text-rose-600 bg-rose-50 p-2 rounded border border-rose-100 font-medium">
+                Matched: ${escapeHtml(scan.matched_source)}
               </div>
             ` : ''}
 
-            <div class="flex items-center gap-2 pt-1">
-              <button onclick='inspectSpecificAsset(${JSON.stringify(scanResult).replace(/'/g, "&apos;")})' class="px-2.5 py-1 rounded-lg bg-white hover:bg-brand hover:text-white border border-subtleBorder text-bodyText text-[11px] font-semibold transition-all flex items-center gap-1">
-                <i data-lucide="eye" class="w-3 h-3"></i> View in Side Inspector
+            <div class="flex items-center justify-between pt-1 text-xs">
+              <span class="text-[11px] text-mutedText">${isPassed ? '✓ RSA-PSS Certificate Issued' : '✗ Certificate Withheld'}</span>
+              <button onclick="inspectSampleAsset('${isBlocked ? 'AST-88219-TXT' : 'AST-88220-IMG'}')" class="text-brand hover:underline font-semibold flex items-center gap-1 text-[11px]">
+                <span>Inspect Evidence</span>
+                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
               </button>
             </div>
           </div>
         `;
       }
 
-      div.innerHTML = `
-        <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold flex-shrink-0 text-xs shadow-sm">
-          <i data-lucide="bot" class="w-4 h-4"></i>
+      const botDiv = document.createElement('div');
+      botDiv.className = 'flex items-start gap-3';
+      botDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0 mt-0.5">
+          <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
         </div>
-        <div class="bg-white border border-subtleBorder text-bodyText rounded-2xl rounded-tl-none p-4 shadow-sm text-xs max-w-xl leading-relaxed space-y-2">
-          <div>${formatMarkdown(replyText)}</div>
+        <div class="bg-cream px-4 py-3.5 rounded-2xl rounded-tl-sm text-xs md:text-sm text-bodyText max-w-xl border border-subtleBorder shadow-sm">
+          <div>${formatMarkdown(data.reply)}</div>
           ${cardHtml}
         </div>
       `;
-
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
-      lucide.createIcons();
-
-      if (scanResult) {
-        renderInspectorData(scanResult);
-      }
+      chatContainer.appendChild(botDiv);
     }
 
-    function appendLoadingMessage(text = 'TraceAI Copilot is processing...') {
-      const id = 'loading_' + Date.now();
-      const container = document.getElementById('chatMessages');
-      const div = document.createElement('div');
-      div.id = id;
-      div.className = 'flex items-start gap-3';
-      div.innerHTML = `
-        <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold flex-shrink-0 text-xs">
-          <i data-lucide="bot" class="w-4 h-4"></i>
-        </div>
-        <div class="bg-white border border-subtleBorder rounded-2xl rounded-tl-none p-3 shadow-sm text-xs text-mutedText flex items-center gap-2">
-          <div class="w-3 h-3 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>
-          <span>${text}</span>
-        </div>
-      `;
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
-      lucide.createIcons();
-      return id;
-    }
-
-    function removeMessage(id) {
-      const el = document.getElementById(id);
-      if (el) el.remove();
-    }
-
-    function inspectSpecificAsset(asset) {
-      if (!isInspectorVisible) toggleInspector();
-      renderInspectorData(asset);
-    }
-
-    function renderInspectorData(asset) {
-      document.getElementById('inspectAssetId').innerText = asset.asset_id;
-      document.getElementById('inspectTrackBadge').innerText = asset.track;
-      document.getElementById('inspectHash').innerText = asset.asset_hash;
-
-      const isPassed = asset.status === 'PASSED';
-      const isBlocked = asset.status === 'BLOCKED';
-      const statusBadge = document.getElementById('inspectStatusBadge');
-
-      if (isPassed) {
-        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold text-emerald-600 bg-emerald-50 border-emerald-200';
-        statusBadge.innerText = 'PASSED';
-      } else if (isBlocked) {
-        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold text-rose-600 bg-rose-50 border-rose-200';
-        statusBadge.innerText = 'BLOCKED';
-      } else {
-        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold text-amber-600 bg-amber-50 border-amber-200';
-        statusBadge.innerText = 'HUMAN_REVIEW';
-      }
-
-      const sim = asset.similarity_score !== undefined && asset.similarity_score !== null
-        ? (asset.similarity_score * 100).toFixed(1) + '%'
-        : '0.0%';
-      document.getElementById('inspectSimScore').innerText = sim;
-
-      const sourceEl = document.getElementById('inspectMatchedSource');
-      const detailEl = document.getElementById('inspectEvidenceDetail');
-      if (asset.matched_source) {
-        sourceEl.classList.remove('hidden');
-        sourceEl.innerText = 'Infringement: ' + asset.matched_source;
-        detailEl.innerText = asset.matched_chunk || 'Matching segment identified in index.';
-      } else {
-        sourceEl.classList.add('hidden');
-        detailEl.innerText = 'Clean content. Sub-threshold score (' + sim + '). No copyright infringement detected.';
-      }
-
-      const certBadge = document.getElementById('inspectCertBadge');
-      const certJson = document.getElementById('inspectCertJson');
-      if (asset.certificate) {
-        certBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200';
-        certBadge.innerText = 'SIGNED & VALID';
-        certJson.className = 'text-[11px] font-mono bg-white p-3 rounded-lg border border-subtleBorder text-emerald-600 max-h-40 overflow-y-auto select-all';
-        certJson.innerText = JSON.stringify(asset.certificate, null, 2);
-      } else {
-        certBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200';
-        certBadge.innerText = 'DENIED';
-        certJson.className = 'text-[11px] font-mono bg-white p-3 rounded-lg border border-subtleBorder text-rose-600 max-h-40 overflow-y-auto select-all';
-        certJson.innerText = '// Certificate issuance denied due to copyright infringement risk.';
-      }
-
-      document.getElementById('inspectProvJson').innerText = JSON.stringify(asset.lineage || {}, null, 2);
-      lucide.createIcons();
-    }
-
-    function copyInspectLineage() {
-      const text = document.getElementById('inspectProvJson').innerText;
-      navigator.clipboard.writeText(text);
-      alert('W3C PROV-O JSON-LD copied to clipboard!');
-    }
-
-    function sendQuickText(text) {
-      document.getElementById('chatInput').value = text;
-      document.getElementById('chatSendBtn').click();
-    }
-
-    function sendPresetPrompt(type) {
+    // Quick Prompt Presets
+    function sendQuickPrompt(type) {
       if (type === 'clean') {
-        const f = new File(["Clean scientific dataset excerpt for transformer fine-tuning."], "research_eval.txt", { type: "text/plain" });
-        stagedFiles = [f];
-        updateStagedUI();
-        document.getElementById('chatInput').value = "Evaluate this clean scientific training shard for copyright clearance.";
-        document.getElementById('chatSendBtn').click();
+        document.getElementById('heroChatInput').value = 'Scan this clean research excerpt: Our framework introduces a distributed Byzantine consensus protocol designed for secure high-throughput state machine replication.';
       } else if (type === 'dirty') {
-        const f = new File(["Ishmael is my name. Years ago, without much money left in my pockets, I took a voyage across the oceans."], "moby_excerpt.public_domain", { type: "text/plain" });
-        stagedFiles = [f];
-        updateStagedUI();
-        document.getElementById('chatInput').value = "Scan this excerpt against the copyright index and report risk.";
-        document.getElementById('chatSendBtn').click();
-      } else if (type === 'gpl') {
-        const f = new File(["def compute_hash(data):
-    # GNU General Public License v3
-    import hashlib
-    return hashlib.sha256(data).hexdigest()
-"], "gpl_module.py", { type: "text/x-python" });
-        stagedFiles = [f];
-        updateStagedUI();
-        document.getElementById('chatInput').value = "Perform license compliance and code copyright audit on this script.";
-        document.getElementById('chatSendBtn').click();
-      } else if (type === 'image') {
-        sendQuickText("Scan the reference concept artwork for CLIP cosine similarity clearance.");
+        document.getElementById('heroChatInput').value = 'Audit this input against copyright index: The proprietary transformer architecture incorporates a multi-tier attention mechanism specifically designed to retain contextual embeddings across ultra-long document contexts exceeding 128k tokens.';
+      } else if (type === 'review') {
+        document.getElementById('heroChatInput').value = 'Review this codebase excerpt for copyright: static inline int trace_event_raw_event_sched_switch(struct trace_event_file *file, void *data)';
+      } else if (type === 'thresholds') {
+        document.getElementById('heroChatInput').value = 'What are the active scan thresholds and safety rules for US vs EU jurisdiction?';
       }
+      submitHeroMessage();
     }
 
-    function startNewSession() {
-      const container = document.getElementById('chatMessages');
-      container.innerHTML = `
-        <div class="flex items-start gap-3 max-w-2xl">
-          <div class="w-8 h-8 rounded-xl bg-brand text-white flex items-center justify-center font-bold flex-shrink-0 shadow-sm mt-0.5">
-            <i data-lucide="bot" class="w-4 h-4"></i>
-          </div>
-          <div class="space-y-2">
-            <div class="bg-white border border-subtleBorder rounded-2xl rounded-tl-none p-4 shadow-sm text-xs leading-relaxed text-bodyText space-y-2">
-              <div class="font-bold text-brand text-sm">New Ingestion Session Started 🚀</div>
-              <p>Ready to screen multimodal assets. Paste text, ask questions, or attach files below.</p>
-            </div>
-          </div>
-        </div>
-      `;
-      clearStaged();
-      lucide.createIcons();
-    }
-
-    async function fetchReviewQueue() {
-      const list = document.getElementById('reviewList');
-      try {
-        const res = await fetch('/api/review/queue');
-        const data = await res.json();
-        if (data.pending_review.length === 0) {
-          list.innerHTML = '<div class="p-6 text-center text-xs text-mutedText border border-subtleBorder rounded-xl bg-white">No items pending human review.</div>';
-          return;
+    // File Handling
+    function handleFileSelected(event) {
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        stagedFiles = files;
+        updateStagedBar();
+        // If on hero, transfer to stream
+        if (!document.getElementById('chatHero').classList.contains('hidden')) {
+          document.getElementById('heroChatInput').value = `Scan attached asset: ${files[0].name}`;
         }
-        let html = '';
-        data.pending_review.forEach(item => {
-          html += `
-            <div class="p-4 rounded-xl bg-white border border-subtleBorder flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
-              <div>
-                <span class="font-bold text-brand">${item.asset_id}</span>
-                <div class="text-rose-600 font-semibold mt-0.5">${item.matched_source || 'Risk detected'}</div>
-                <div class="text-mutedText font-mono text-[10px] mt-0.5">${item.asset_hash}</div>
-              </div>
-              <div class="flex items-center gap-2">
-                <button onclick="resolveReview('${item.asset_id}', true)" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700">Approve</button>
-                <button onclick="resolveReview('${item.asset_id}', false)" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold hover:bg-rose-700">Reject</button>
-              </div>
-            </div>
-          `;
-        });
-        list.innerHTML = html;
-        lucide.createIcons();
-      } catch (e) {
-        list.innerHTML = `<div class="text-rose-600 text-xs">${e}</div>`;
       }
     }
 
-    async function resolveReview(assetId, approve) {
-      await fetch(`/api/review/${assetId}/resolve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewer_id: "auditor_copilot", approve, notes: "Resolved via Copilot" })
-      });
-      fetchReviewQueue();
+    function updateStagedBar() {
+      const bar = document.getElementById('stagedBar');
+      const text = document.getElementById('stagedFileName');
+      if (stagedFiles.length > 0) {
+        bar.classList.remove('hidden');
+        text.innerText = `${stagedFiles.length} file(s) attached: ${stagedFiles.map(f => f.name).join(', ')}`;
+      } else {
+        bar.classList.add('hidden');
+      }
     }
 
-    function escapeHtml(text) {
-      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function clearStagedFile() {
+      stagedFiles = [];
+      updateStagedBar();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
     }
 
     function formatMarkdown(text) {
-      return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`(.*?)`/g, '<code class="bg-cream px-1.5 py-0.5 rounded text-[11px] font-mono text-brand">$1</code>');
+      let s = escapeHtml(text);
+      s = s.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+      s = s.replace(/`(.*?)`/g, '<code class="bg-white/80 px-1 py-0.5 rounded border border-subtleBorder text-brand font-mono text-xs">$1</code>');
+      return s;
     }
   </script>
 </body>
