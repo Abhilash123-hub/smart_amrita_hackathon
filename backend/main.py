@@ -11,14 +11,17 @@ app = FastAPI(
     version="0.1.0"
 )
 
+# CORS configuration with preflight caching for low-latency React interaction
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    max_age=3600,
 )
 
+# Mount gateway routing modules
 app.include_router(health_router)
 app.include_router(analyze_router)
 app.include_router(certificate_router)
