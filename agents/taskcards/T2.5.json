@@ -1,0 +1,23 @@
+{
+  "id": "T2.5",
+  "phase": "Phase 2 - Evidence, Crypto and Lineage",
+  "title": "Verification endpoint and attorney flow",
+  "objective": "Verify RSA signature and hash from certificate and original bytes without exposing tenant data.",
+  "agent_steps": [
+    "POST /v1/verify: multipart certificate + file; re-hash, verify signature, return verdict.",
+    "Public key distribution endpoint with key rotation metadata.",
+    "Document attorney workflow: download key, hash locally, submit, receive proof."
+  ],
+  "files": [
+    "src/traceai/api.py",
+    "docs/attorney-verification.md"
+  ],
+  "acceptance_criteria": [
+    "Round-trip verification succeeds for sampled certificate.",
+    "Verification of tampered file fails with precise reason code.",
+    "No cross-tenant information leaks through error messages."
+  ],
+  "verification": "pytest tests/test_verify_endpoint.py -q",
+  "depends_on": ["T2.1"],
+  "status": "merged"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "T3.5",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Evidence Locker and Lineage Explorer",
+  "objective": "Evidence browsing with side-by-side crop comparison; lineage graph visualization.",
+  "agent_steps": [
+    "Evidence list with filters and detail split view.",
+    "Lineage Explorer: query by asset hash or source domain; render E-A-A graph.",
+    "Graph interactions: zoom, node focus, path highlight, PNG export."
+  ],
+  "files": [
+    "ui/src/app/(shell)/evidence/**",
+    "ui/src/app/(shell)/lineage/**"
+  ],
+  "acceptance_criteria": [
+    "Split view renders ingested vs source with bounding box overlay.",
+    "Domain lineage query returns fixture subgraph within 3 seconds.",
+    "Graph export includes score and hash annotations."
+  ],
+  "verification": "cd ui && pnpm e2e -- --grep evidence,lineage",
+  "depends_on": [
+    "T3.2"
+  ],
+  "status": "merged"
+}

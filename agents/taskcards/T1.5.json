@@ -1,0 +1,22 @@
+{
+  "id": "T1.5",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "CLIP deep compare",
+  "objective": "Embed candidates with clip-vit-base-patch32; block when cosine similarity exceeds 0.90.",
+  "agent_steps": [
+    "Implement CLIP embedding for PIL images; normalize and search image index.",
+    "Compare against top neighbors; threshold from config only.",
+    "Record per-image latency and device placement."
+  ],
+  "files": [
+    "src/traceai/pipelines/image_track.py"
+  ],
+  "acceptance_criteria": [
+    "All 10 dirty-image assets (85-95% crops) are blocked at default threshold.",
+    "Clean images pass with similarity well under 0.8.",
+    "No image reaches CLIP unless pHash recalled it."
+  ],
+  "verification": "pytest tests/test_image_track.py -q",
+  "depends_on": ["T1.4"],
+  "status": "merged"
+}

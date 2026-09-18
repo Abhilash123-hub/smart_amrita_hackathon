@@ -1,0 +1,26 @@
+{
+  "id": "T0.4",
+  "phase": "Phase 0 - Foundation and Contracts",
+  "title": "Docker-compose development stack",
+  "objective": "One-command dev environment: API, worker, Redis, Postgres, and local index builder job.",
+  "agent_steps": [
+    "Write docker-compose.yml with api, worker, redis, postgres services and healthchecks.",
+    "Volume-mount the repository for hot reload; pin image digests where practical.",
+    "Add a Makefile: make dev, make lint, make test, make index-build.",
+    "Verify the stack comes up clean from a fresh clone."
+  ],
+  "files": [
+    "docker-compose.yml",
+    "docker/Dockerfile.api",
+    "docker/Dockerfile.workers",
+    "Makefile"
+  ],
+  "acceptance_criteria": [
+    "docker compose up -d reaches healthy state for all services in under 90 seconds.",
+    "make test executes inside the worker container against the live stack.",
+    "A fresh-clone bring-up succeeds without manual steps."
+  ],
+  "verification": "docker compose up -d && docker compose ps",
+  "depends_on": ["T0.1"],
+  "status": "merged"
+}

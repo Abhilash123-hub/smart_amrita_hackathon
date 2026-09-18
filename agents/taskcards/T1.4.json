@@ -1,0 +1,23 @@
+{
+  "id": "T1.4",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "pHash coarse filter over Redis",
+  "objective": "Compute perceptual hashes and match against Redis dictionary at Hamming distance < 5.",
+  "agent_steps": [
+    "Implement phash_index: load dictionary, query by Hamming distance, add.",
+    "Batch-load 50-image seed dictionary at worker start.",
+    "Metric: fraction of images filtered at stage 1 (target above 90% on clean sets)."
+  ],
+  "files": [
+    "src/traceai/pipelines/image_track.py",
+    "src/traceai/db/redis_cache.py"
+  ],
+  "acceptance_criteria": [
+    "Recompressed and lightly color-shifted copies of seed images are recalled.",
+    "Unrelated images pass with zero GPU invocations.",
+    "Dictionary round-trips through Redis without loss."
+  ],
+  "verification": "pytest tests/test_image_track.py -q -k phash",
+  "depends_on": ["T0.2"],
+  "status": "merged"
+}

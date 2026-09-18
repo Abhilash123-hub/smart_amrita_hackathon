@@ -1,0 +1,24 @@
+{
+  "id": "T0.2",
+  "phase": "Phase 0 - Foundation and Contracts",
+  "title": "Pydantic schema contracts",
+  "objective": "Freeze the data contracts every later module consumes: AssetInput, IngestRequest, ScanResult, ClearanceCertificate, EvidenceRecord.",
+  "agent_steps": [
+    "Implement the five models in src/traceai/core/models.py exactly as specified in the build guide.",
+    "Add strict validation: mime allowlist, hash format sha256:<64 hex>, score ranges 0..1.",
+    "Write contract tests covering valid, boundary, and rejected payloads.",
+    "Export the OpenAPI schema artifact for the UI team."
+  ],
+  "files": [
+    "src/traceai/core/models.py",
+    "tests/test_models.py"
+  ],
+  "acceptance_criteria": [
+    "All five models import cleanly and serialize round-trip to JSON.",
+    "Invalid license enums, malformed hashes, and out-of-range scores raise ValidationError.",
+    "Contract tests pass and OpenAPI exports without error."
+  ],
+  "verification": "pytest tests/test_models.py -q",
+  "depends_on": ["T0.1"],
+  "status": "merged"
+}

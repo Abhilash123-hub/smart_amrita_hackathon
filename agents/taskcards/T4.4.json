@@ -1,0 +1,25 @@
+{
+  "id": "T4.4",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Secrets, keys and KMS wiring",
+  "objective": "Move signing keys to KMS/Vault with rotation metadata; applications reference, never read, key material.",
+  "agent_steps": [
+    "External Secrets Operator binds KMS-backed secrets to pod envs.",
+    "Signing service requests PSS signatures from KMS; key never leaves.",
+    "Rotation runbook: new key id in certificates, old key verifies historical artifacts."
+  ],
+  "files": [
+    "deploy/secrets/**",
+    "src/traceai/core/kms_signer.py"
+  ],
+  "acceptance_criteria": [
+    "No private key material exists in images, volumes, or env dumps.",
+    "Certificates record key id; both current and previous keys verify.",
+    "Secret rotation drill completes without downtime."
+  ],
+  "verification": "pytest tests/test_kms_signer.py -q",
+  "depends_on": [
+    "T2.1"
+  ],
+  "status": "merged"
+}

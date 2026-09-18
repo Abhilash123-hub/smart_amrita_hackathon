@@ -1,0 +1,24 @@
+{
+  "id": "T3.3",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Scan Console screen",
+  "objective": "Live telemetry view: KPI cards, risk distribution, live scan stream table, throughput sparkline.",
+  "agent_steps": [
+    "Implement five regions from mock with recorded fixtures.",
+    "KPI cards subscribe to /v1/metrics/summary; stream table to WebSocket feed.",
+    "Verdict badges use status color semantics of Chapter 13."
+  ],
+  "files": [
+    "ui/src/app/(shell)/console/**"
+  ],
+  "acceptance_criteria": [
+    "Fixture replay matches mock layout within spacing tolerance.",
+    "Live mode updates stream table without full-page re-render.",
+    "Empty, loading, and error states implemented per Chapter 14 spec."
+  ],
+  "verification": "cd ui && pnpm e2e -- --grep console",
+  "depends_on": [
+    "T3.2"
+  ],
+  "status": "merged"
+}

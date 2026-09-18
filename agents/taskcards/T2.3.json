@@ -1,0 +1,23 @@
+{
+  "id": "T2.3",
+  "phase": "Phase 2 - Evidence, Crypto and Lineage",
+  "title": "Audit log persistence",
+  "objective": "Append-only Postgres audit log for every verdict, with monthly partitions.",
+  "agent_steps": [
+    "Migrate audit_events partitioned by month; insert on every scan completion.",
+    "Expose query endpoints: by batch, by asset hash, by time range.",
+    "Never update or delete: corrections are compensating events."
+  ],
+  "files": [
+    "migrations/0002_audit_events.sql",
+    "src/traceai/db/audit.py"
+  ],
+  "acceptance_criteria": [
+    "All integration-test scans appear in audit log with full payloads.",
+    "Partition pruning is observable in EXPLAIN for range queries.",
+    "Update/delete attempts fail at DB role level."
+  ],
+  "verification": "pytest tests/test_audit.py -q",
+  "depends_on": ["T2.1"],
+  "status": "merged"
+}

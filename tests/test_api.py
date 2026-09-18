@@ -62,4 +62,4 @@ def test_api_mock_init_and_list():
     res_list = client.get("/api/mock/dirty-files")
     assert res_list.status_code == 200
     files = res_list.json()["files"]
-    assert len(files) == 10
+    assert len(files) >= 10

@@ -1,0 +1,23 @@
+{
+  "id": "T2.4",
+  "phase": "Phase 2 - Evidence, Crypto and Lineage",
+  "title": "PROV-O lineage projection",
+  "objective": "Project scans into Neo4j using W3C PROV-O vocabulary: Entity, Activity, Agent triangle.",
+  "agent_steps": [
+    "Implement prov_o.py JSON-LD generation plus Cypher upserts.",
+    "Derive lineage edges from source_uri so domain-level queries work.",
+    "Async projection that catches up from audit log on restart."
+  ],
+  "files": [
+    "src/traceai/lineage/prov_o.py",
+    "migrations/0003_neo4j_constraints.cpy"
+  ],
+  "acceptance_criteria": [
+    "Round-trip: scan then query shows full Entity-Activity-Agent triangle.",
+    "Domain query returns manifest-verified results.",
+    "Killing Neo4j mid-scan loses nothing: catches up from audit log."
+  ],
+  "verification": "pytest tests/test_lineage.py -q",
+  "depends_on": ["T2.3"],
+  "status": "merged"
+}

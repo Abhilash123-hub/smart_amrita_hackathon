@@ -1,0 +1,24 @@
+{
+  "id": "T1.1",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Sliding-window chunker",
+  "objective": "Split documents into 256-token chunks with 50-token overlap using bi-encoder tokenizer.",
+  "agent_steps": [
+    "Implement chunk_text(text, size=256, overlap=50) with token-level windows.",
+    "Return chunk metadata: offsets, token counts, parent asset id.",
+    "Property test: reassembling windows covers the document; no chunk exceeds 256 tokens."
+  ],
+  "files": [
+    "src/traceai/pipelines/text_track.py",
+    "tests/test_chunker.py"
+  ],
+  "acceptance_criteria": [
+    "A 10,000-token document yields ceil((10000-50)/(256-50)) windows, all within size.",
+    "A sentence deliberately placed across a boundary appears fully in at least one chunk."
+  ],
+  "verification": "pytest tests/test_chunker.py -q",
+  "depends_on": [
+    "T0.2"
+  ],
+  "status": "merged"
+}

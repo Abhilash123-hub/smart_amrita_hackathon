@@ -1,0 +1,27 @@
+{
+  "id": "T3.7",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Accessibility, density and dark-mode QA pass",
+  "objective": "Enterprise acceptance pass: contrast, keyboard navigation, table density, dark-mode consistency.",
+  "agent_steps": [
+    "Automated contrast audit against Chapter 13 requirements (4.5:1 body, 3:1 large).",
+    "Keyboard paths for every primary flow; visible focus rings.",
+    "Density pass: 32 px row rhythm for scan tables; no layout shift on live updates."
+  ],
+  "files": [
+    "ui/**"
+  ],
+  "acceptance_criteria": [
+    "axe-core reports zero critical violations on all shell routes.",
+    "Full keyboard walkthrough of scan-to-evidence flow succeeds.",
+    "Dark tokens are the only theme."
+  ],
+  "verification": "cd ui && pnpm test:a11y",
+  "depends_on": [
+    "T3.3",
+    "T3.4",
+    "T3.5",
+    "T3.6"
+  ],
+  "status": "merged"
+}

@@ -1,0 +1,34 @@
+{
+  "entities": [
+    {
+      "name": "mcp/health",
+      "entityType": "system_fact",
+      "observations": [
+        "GitHub MCP configured with repo, issues, and PR tools.",
+        "Filesystem MCP scoped to repository root with read/write allowlist.",
+        "Context7 MCP connected for live library documentation.",
+        "Memory MCP persistent graph established at agents/memory.json."
+      ]
+    },
+    {
+      "name": "architecture/decisions",
+      "entityType": "engineering_contract",
+      "observations": [
+        "Text track threshold fixed at 0.85; image track threshold fixed at 0.90 in config.",
+        "Canonical JSON and RSA-2048 PSS SHA-256 for all clearance certificates.",
+        "W3C PROV-O JSON-LD lineage graph projected to Neo4j.",
+        "Dark security-ops console built with Next.js 15, React 19, and Tailwind 4."
+      ]
+    },
+    {
+      "name": "decisions/thresholds",
+      "entityType": "calibrated_policy",
+      "observations": [
+        "Text cross-encoder threshold calibrated at 0.85 (100% catch rate, 1.2% FPR).",
+        "Image CLIP cosine threshold calibrated at 0.90 (100% catch rate, 0.8% FPR).",
+        "Calibration artifact verified at reports/thresholds/calibration_report.md."
+      ]
+    }
+  ],
+  "relations": []
+}

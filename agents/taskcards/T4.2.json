@@ -1,0 +1,27 @@
+{
+  "id": "T4.2",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "ONNX export and Triton deployment",
+  "objective": "Export MiniLM, Cross-Encoder, and CLIP to ONNX; serve via Triton with dynamic batching.",
+  "agent_steps": [
+    "Export scripts with parity tests: ONNX vs PyTorch outputs within 1e-3 cosine.",
+    "Triton model repository with dynamic batching (window 8 ms).",
+    "Workers call Triton via gRPC; PyTorch path retained as fallback flag."
+  ],
+  "files": [
+    "scripts/export_onnx.py",
+    "deploy/triton/**",
+    "src/traceai/db/inference.py"
+  ],
+  "acceptance_criteria": [
+    "Parity tests pass on 1k samples for all three models.",
+    "Triton p95 batch latency beats local PyTorch by at least 3x under load.",
+    "Fallback flag restores Phase 1 behavior without redeploy."
+  ],
+  "verification": "pytest tests/test_inference_parity.py -q",
+  "depends_on": [
+    "T1.3",
+    "T1.5"
+  ],
+  "status": "merged"
+}

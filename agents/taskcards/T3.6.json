@@ -1,0 +1,25 @@
+{
+  "id": "T3.6",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Certificate Registry and Attorney Portal",
+  "objective": "Registry with search and export bundles; standalone attorney portal for cryptographic verification.",
+  "agent_steps": [
+    "Registry table over /v1/certificates with copy-uuid, export bundle actions.",
+    "Attorney portal: upload certificate + file, run /v1/verify, show proof result.",
+    "Portal is separately deployable and themed for external legal use."
+  ],
+  "files": [
+    "ui/src/app/(shell)/certificates/**",
+    "ui-portal/**"
+  ],
+  "acceptance_criteria": [
+    "Export bundle contains certificate JSON, public key, and instructions.",
+    "Portal verifies good certificate and rejects tampered one with reason.",
+    "Portal works against read-only API credential."
+  ],
+  "verification": "cd ui && pnpm e2e -- --grep certificates",
+  "depends_on": [
+    "T3.2"
+  ],
+  "status": "merged"
+}

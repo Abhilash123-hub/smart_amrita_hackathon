@@ -41,3 +41,13 @@ hf_cache/
 data/
 output/
 scan_results*.json
+
+# Testing & Caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Next.js
+node_modules/
+.next/
+out/

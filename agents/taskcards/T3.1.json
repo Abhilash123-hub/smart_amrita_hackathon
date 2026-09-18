@@ -1,0 +1,24 @@
+{
+  "id": "T3.1",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Next.js 15 scaffold and design tokens",
+  "objective": "Initialize ui/ workspace with Tailwind 4 and shadcn/ui; encode Chapter 13 tokens.",
+  "agent_steps": [
+    "Create Next.js 15 app router project with TypeScript strict mode.",
+    "Encode full token table as CSS custom properties.",
+    "Set up shadcn/ui with dark-only theme; add TanStack Query and Recharts."
+  ],
+  "files": [
+    "ui/**"
+  ],
+  "acceptance_criteria": [
+    "Tokens route renders every token with contrast values.",
+    "All grays and accents match Chapter 13 hex values exactly.",
+    "pnpm build passes with zero type errors."
+  ],
+  "verification": "cd ui && pnpm build && pnpm test",
+  "depends_on": [
+    "T2.5"
+  ],
+  "status": "merged"
+}

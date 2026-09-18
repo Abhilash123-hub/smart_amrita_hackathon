@@ -1,0 +1,25 @@
+{
+  "id": "T0.5",
+  "phase": "Phase 0 - Foundation and Contracts",
+  "title": "Dirty-dataset generator and reference seed",
+  "objective": "Build the adversarial fixture: assets labeled public domain but paraphrased or cropped, plus seed copyrighted corpus for the local index.",
+  "agent_steps": [
+    "Implement scripts/generate_dirty_dataset.py: 30% synonym replacement for text; 85-95% crop, LANCZOS resize, autocontrast for images.",
+    "Seed 50 text and 50 image public-domain-reference assets; build the FAISS HNSW indexes and pHash dictionary.",
+    "Emit a manifest linking each dirty asset to its true source for assertion in tests.",
+    "Wire generation into CI fixtures so integration tests are reproducible."
+  ],
+  "files": [
+    "scripts/generate_dirty_dataset.py",
+    "scripts/build_reference_index.py",
+    "tests/fixtures/**"
+  ],
+  "acceptance_criteria": [
+    "Generator output: 10 dirty text + 10 dirty image files with manifest.",
+    "Naive exact-hash matching catches zero dirty assets (proves evasion).",
+    "Reference indexes build deterministically from a fixed seed."
+  ],
+  "verification": "python scripts/generate_dirty_dataset.py --check && pytest tests/fixtures -q",
+  "depends_on": ["T0.2"],
+  "status": "merged"
+}

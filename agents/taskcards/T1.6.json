@@ -1,0 +1,22 @@
+{
+  "id": "T1.6",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Evidence crops with OpenCV",
+  "objective": "For blocked images, generate visual proof: bounding box around highest-correlation region.",
+  "agent_steps": [
+    "Implement template-match localization between ingested image and matched source.",
+    "Render side-by-side evidence PNG with scores and hashes burned into the margin.",
+    "Store under evidence locker layout from Phase 2 (content-addressed path)."
+  ],
+  "files": [
+    "src/traceai/pipelines/evidence.py"
+  ],
+  "acceptance_criteria": [
+    "Evidence artifact renders for every blocked dirty image.",
+    "Bounding box overlaps true inserted region in manifest.",
+    "Artifact bytes are deterministic for identical inputs."
+  ],
+  "verification": "pytest tests/test_evidence_crops.py -q",
+  "depends_on": ["T1.5"],
+  "status": "merged"
+}

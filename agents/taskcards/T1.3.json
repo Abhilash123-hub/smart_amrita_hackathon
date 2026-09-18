@@ -1,0 +1,24 @@
+{
+  "id": "T1.3",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Cross-Encoder re-ranker with early exit",
+  "objective": "Score pairs with ms-marco-MiniLM-L-6-v2; block when exceeding threshold; early exit < 0.5.",
+  "agent_steps": [
+    "Implement two-stage scan() matching specification.",
+    "Format pairs [CLS] chunk [SEP] candidate [SEP]; batch predict.",
+    "Early exit: if best recall similarity is under 0.5, return PASSED with score 0.",
+    "Emit structured scan logs: gate, candidates, scores, decision, latency."
+  ],
+  "files": [
+    "src/traceai/pipelines/text_track.py",
+    "tests/test_text_track.py"
+  ],
+  "acceptance_criteria": [
+    "All 10 dirty-text assets are flagged; verbatim and paraphrase alike.",
+    "Clean holdout assets pass with best scores under 0.6.",
+    "Early-exit path demonstrably skips cross-encoder calls (assert via spy)."
+  ],
+  "verification": "pytest tests/test_text_track.py -q",
+  "depends_on": ["T1.2"],
+  "status": "merged"
+}

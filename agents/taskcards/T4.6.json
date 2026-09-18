@@ -1,0 +1,26 @@
+{
+  "id": "T4.6",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Load test to SLO certification",
+  "objective": "Prove Table 2.2: 10k assets/minute sustained with p95 verdict latency under 500 ms.",
+  "agent_steps": [
+    "Locust/k6 scenario replaying realistic mixed MIME batches.",
+    "Run 60-minute soak; capture latency, throughput, error budget burn.",
+    "Tune HPA and Triton batching; document certified configuration."
+  ],
+  "files": [
+    "load/**",
+    "reports/load-certification.md"
+  ],
+  "acceptance_criteria": [
+    "Sustained 10k/min for 60 minutes with p95 under 500 ms and error rate under 0.1%.",
+    "No unbounded queue growth; autoscaling events documented.",
+    "Certification report signed off as Phase 4 exit gate."
+  ],
+  "verification": "k6 run load/soak.js --quiet",
+  "depends_on": [
+    "T4.3",
+    "T4.5"
+  ],
+  "status": "merged"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "T4.7",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Plugin ecosystem and registry API",
+  "objective": "Ship traceai-hf dataset wrapper, PyTorch DataLoader hook, and public Fingerprint Registry API.",
+  "agent_steps": [
+    "traceai-hf package: wraps load_dataset, scans streams, attaches certificates.",
+    "DataLoader hook with at-rest and in-flight modes.",
+    "Registry API: rightsholder auth, submission workflow, attestation status, revocation."
+  ],
+  "files": [
+    "packages/traceai-hf/**",
+    "src/traceai/registry/**"
+  ],
+  "acceptance_criteria": [
+    "Wrapper blocks dirty HuggingFace fixture end-to-end with evidence.",
+    "Registry submissions appear in reference index within one cycle.",
+    "Revocation removes works from matching within same cycle."
+  ],
+  "verification": "pytest packages/traceai-hf/tests -q && pytest tests/test_registry.py -q",
+  "depends_on": [
+    "T1.7",
+    "T2.5"
+  ],
+  "status": "merged"
+}

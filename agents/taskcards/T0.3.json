@@ -1,0 +1,24 @@
+{
+  "id": "T0.3",
+  "phase": "Phase 0 - Foundation and Contracts",
+  "title": "Configuration layer with audited thresholds",
+  "objective": "Centralize settings in Pydantic Settings with thresholds loaded from config, never hardcoded, with change history recorded.",
+  "agent_steps": [
+    "Implement config.py: env-prefixed TRACEAI_, typed fields, .env support.",
+    "Load text_block_threshold (0.85) and image_block_threshold (0.90) from config only.",
+    "Add a thresholds history table migration stub in Postgres for audited changes.",
+    "Forbid literals: add a ruff rule that flags 0.85/0.90 outside config/tests."
+  ],
+  "files": [
+    "src/traceai/config.py",
+    "migrations/0001_thresholds_history.sql"
+  ],
+  "acceptance_criteria": [
+    "Changing TRACEAI_TEXT_BLOCK_THRESHOLD changes behavior without code edits.",
+    "grep confirms no threshold literals outside config, tests, and docs.",
+    "Doctor command reports effective thresholds and their config source."
+  ],
+  "verification": "traceai doctor --show-config",
+  "depends_on": ["T0.2"],
+  "status": "merged"
+}

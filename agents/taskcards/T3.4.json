@@ -1,0 +1,25 @@
+{
+  "id": "T3.4",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "Batch Monitor and Queues screens",
+  "objective": "Operational drill-down: batch lists with progress, per-asset status, retry actions; worker health.",
+  "agent_steps": [
+    "Batch table with server-side pagination over /v1/batches.",
+    "Batch detail: assets with verdicts, elapsed time, retry buttons.",
+    "Queues view: depth, in-flight, worker heartbeats from /v1/ops endpoints."
+  ],
+  "files": [
+    "ui/src/app/(shell)/batches/**",
+    "ui/src/app/(shell)/ops/**"
+  ],
+  "acceptance_criteria": [
+    "Retry action re-enqueues and UI reflects state change within 2 seconds.",
+    "Batch detail renders 10k-asset batches with virtualized table.",
+    "All mutations require operator scope."
+  ],
+  "verification": "cd ui && pnpm e2e -- --grep batches",
+  "depends_on": [
+    "T3.2"
+  ],
+  "status": "merged"
+}

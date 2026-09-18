@@ -1,0 +1,25 @@
+{
+  "id": "T4.3",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Kubernetes manifests and GitOps",
+  "objective": "Deploy full topology: API HPA on CPU, workers HPA on queue depth, StatefulSets with PVs.",
+  "agent_steps": [
+    "Author manifests for every tier in Figure 12.1.",
+    "HPA policies: API on 70% CPU; workers on Redis queue depth.",
+    "Pre-baked worker images with model weights; zero cold-start downloads."
+  ],
+  "files": [
+    "deploy/k8s/**",
+    "docker/Dockerfile.workers"
+  ],
+  "acceptance_criteria": [
+    "Fresh cluster bring-up from manifests reaches healthy in under 10 minutes.",
+    "Worker pod start to first scanned asset is under 20 seconds.",
+    "Rolling update of workers drops zero in-flight tasks."
+  ],
+  "verification": "kubectl apply -k deploy/k8s/overlays/prod && kubectl get pods -A",
+  "depends_on": [
+    "T0.4"
+  ],
+  "status": "merged"
+}

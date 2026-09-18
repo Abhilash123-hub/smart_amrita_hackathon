@@ -1,0 +1,27 @@
+{
+  "id": "T0.1",
+  "phase": "Phase 0 - Foundation and Contracts",
+  "title": "Repository scaffold and governed workspace",
+  "objective": "Create the exact repository layout from Section 5.2 with AGENTS.md, rules files, and MCP configuration operational.",
+  "agent_steps": [
+    "Materialize the Section 5.2 tree; add pyproject.toml with ruff, pytest, and coverage config.",
+    "Write AGENTS.md and the four rules files verbatim from Chapter 7.",
+    "Install .mcp.json from Section 6.3 and run the four-server smoke test.",
+    "Protect main: require the CI workflow and a Verifier review."
+  ],
+  "files": [
+    "AGENTS.md",
+    "agents/**",
+    ".mcp.json",
+    "pyproject.toml",
+    "src/traceai/__init__.py"
+  ],
+  "acceptance_criteria": [
+    "Tree matches Section 5.2 with no extra top-level entries.",
+    "ruff check . passes on an empty-but-configured package.",
+    "All four MCP servers answer a health call from a live agent session."
+  ],
+  "verification": "traceai doctor && ruff check .",
+  "depends_on": [],
+  "status": "merged"
+}

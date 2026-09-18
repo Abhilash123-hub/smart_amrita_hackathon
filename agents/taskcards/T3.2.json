@@ -1,0 +1,24 @@
+{
+  "id": "T3.2",
+  "phase": "Phase 3 - Enterprise Dashboard UI",
+  "title": "App shell: nav, topbar, live status",
+  "objective": "Build application shell from mock: left nav groups, topbar with environment badge.",
+  "agent_steps": [
+    "Implement shell layout with exact nav sections of Chapter 14.",
+    "Global search routes: asset hash, batch id, certificate uuid.",
+    "Environment badge always visible with wrong-env guard."
+  ],
+  "files": [
+    "ui/src/app/(shell)/**"
+  ],
+  "acceptance_criteria": [
+    "Navigation matches mock structurally at 1440 and 1920 widths.",
+    "Search resolves known fixture asset, batch, and certificate.",
+    "Shell renders in under 200 ms TTFB locally."
+  ],
+  "verification": "cd ui && pnpm e2e -- --grep shell",
+  "depends_on": [
+    "T3.1"
+  ],
+  "status": "merged"
+}

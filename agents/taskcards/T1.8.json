@@ -1,0 +1,24 @@
+{
+  "id": "T1.8",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Threshold calibration harness",
+  "objective": "Prove defaults: sweep thresholds over labeled calibration set, emit ROC summaries.",
+  "agent_steps": [
+    "Build calibration set: dirty corpus plus graded near-miss paraphrases and crops.",
+    "Sweep text 0.70-0.95 and image 0.80-0.97 in 0.01 steps; capture catch rate and FPR.",
+    "Generate calibration report artifact for human review.",
+    "Record decision and metric table in Memory under decisions/thresholds."
+  ],
+  "files": [
+    "scripts/calibrate_thresholds.py",
+    "reports/thresholds/*.md"
+  ],
+  "acceptance_criteria": [
+    "Report shows defaults on the knee of ROC with FPR under 2%.",
+    "Any default change lands as a config PR referencing report.",
+    "Decision and metric table recorded in Memory."
+  ],
+  "verification": "python scripts/calibrate_thresholds.py --report-only",
+  "depends_on": ["T1.7"],
+  "status": "merged"
+}

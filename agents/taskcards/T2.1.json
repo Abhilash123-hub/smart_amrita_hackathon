@@ -1,0 +1,23 @@
+{
+  "id": "T2.1",
+  "phase": "Phase 2 - Evidence, Crypto and Lineage",
+  "title": "Evidence layer with RSA-PSS signing",
+  "objective": "Implement hash_asset_bytes and issue_clearance_certificate: canonical JSON, RSA-2048 PSS.",
+  "agent_steps": [
+    "Implement src/traceai/core/crypto.py with key loading abstraction.",
+    "Canonicalize payloads (sort_keys, separators) before signing; verify() counterpart included.",
+    "Unit tests cover tamper detection: any byte change breaks verification."
+  ],
+  "files": [
+    "src/traceai/core/crypto.py",
+    "tests/test_crypto.py"
+  ],
+  "acceptance_criteria": [
+    "Sign-verify round-trip passes; flipped payload bits fail verification.",
+    "Private key never appears in logs, errors, or test fixtures.",
+    "Signature uses PSS with MGFSHA256 and MAX_LENGTH salt."
+  ],
+  "verification": "pytest tests/test_crypto.py -q",
+  "depends_on": ["T0.2"],
+  "status": "merged"
+}

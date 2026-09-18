@@ -1,0 +1,25 @@
+{
+  "id": "T4.1",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Milvus migration behind IndexStore",
+  "objective": "Swap FAISS for Milvus 2.5 HNSW collections with per-tenant namespaces.",
+  "agent_steps": [
+    "Implement MilvusIndexStore against same five-method interface.",
+    "Backfill job: stream reference corpus into collections; dual-run against FAISS.",
+    "Shadow-verify: identical top-5 on 10k query sample before cutover."
+  ],
+  "files": [
+    "src/traceai/db/milvus_store.py",
+    "scripts/backfill_index.py"
+  ],
+  "acceptance_criteria": [
+    "Contract tests pass for both backends from one suite.",
+    "Shadow run shows recall agreement above 99.5% on sample.",
+    "Cutover is a config flip; rollback rehearsed."
+  ],
+  "verification": "pytest tests/test_index_store.py -q --backend both",
+  "depends_on": [
+    "T1.2"
+  ],
+  "status": "merged"
+}

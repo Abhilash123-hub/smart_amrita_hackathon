@@ -1,0 +1,25 @@
+{
+  "id": "T1.7",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Gateway wiring and batch scan end-to-end",
+  "objective": "Connect FastAPI ingest, dispatch, and both tracks so POST /v1/ingest returns per-asset verdicts.",
+  "agent_steps": [
+    "Implement POST /v1/ingest with IngestRequest validation and idempotency keys.",
+    "Task fan-out by MIME; collect results into batch status endpoint.",
+    "traceai scan CLI: local directory in, verdict table out.",
+    "Integration test drives the full loop."
+  ],
+  "files": [
+    "src/traceai/api.py",
+    "src/traceai/cli.py",
+    "src/traceai/worker.py"
+  ],
+  "acceptance_criteria": [
+    "End-to-end integration test flags 100% of dirty dataset through HTTP path.",
+    "Re-submitting same batch does not double-scan (idempotency verified).",
+    "CLI and API produce identical verdicts for same input directory."
+  ],
+  "verification": "pytest tests/test_integration.py -q",
+  "depends_on": ["T1.3", "T1.6"],
+  "status": "merged"
+}

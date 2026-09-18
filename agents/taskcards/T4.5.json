@@ -1,0 +1,26 @@
+{
+  "id": "T4.5",
+  "phase": "Phase 4 - Production Hardening and Scale",
+  "title": "Observability stack and SLO dashboards",
+  "objective": "Prometheus, Grafana, Loki, Sentry, and OpenTelemetry traces wired to degradation behaviors.",
+  "agent_steps": [
+    "Instrument scan latency histograms, queue depth, GPU utilization, verdict counters.",
+    "Trace one asset end-to-end: gateway to certificate, span per plane.",
+    "SLO dashboards for Table 2.2 requirements with alert rules."
+  ],
+  "files": [
+    "deploy/observability/**",
+    "src/traceai/telemetry.py"
+  ],
+  "acceptance_criteria": [
+    "p95 scan latency alert fires in staged overload test.",
+    "A single trace shows every plane for one asset with attributes.",
+    "Degraded-index drill surfaces on dashboard within one minute."
+  ],
+  "verification": "pytest tests/test_telemetry.py -q",
+  "depends_on": [
+    "T1.7",
+    "T2.3"
+  ],
+  "status": "merged"
+}

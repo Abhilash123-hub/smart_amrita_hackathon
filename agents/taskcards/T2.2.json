@@ -1,0 +1,23 @@
+{
+  "id": "T2.2",
+  "phase": "Phase 2 - Evidence, Crypto and Lineage",
+  "title": "Evidence locker storage layout",
+  "objective": "Content-addressed, write-once S3/MinIO layout for blocked-asset proof bundles.",
+  "agent_steps": [
+    "Implement locker paths: evidence/<asset_hash[:2]>/<asset_hash>/ with crop, score snapshot, match metadata.",
+    "Enable object lock (WORM) in production profile; document retention period.",
+    "Local MinIO service added to docker-compose with same API surface."
+  ],
+  "files": [
+    "src/traceai/db/evidence_locker.py",
+    "docker-compose.yml"
+  ],
+  "acceptance_criteria": [
+    "Re-writing same evidence key raises; objects are immutable.",
+    "Evidence URIs recorded on ScanResult resolve to retrievable bundles.",
+    "Retention policy documented and enforced by bucket config."
+  ],
+  "verification": "pytest tests/test_evidence_locker.py -q",
+  "depends_on": ["T2.1"],
+  "status": "merged"
+}

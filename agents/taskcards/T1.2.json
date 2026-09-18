@@ -1,0 +1,23 @@
+{
+  "id": "T1.2",
+  "phase": "Phase 1 - Fingerprinting Engine",
+  "title": "Bi-encoder recall over FAISS HNSW",
+  "objective": "Embed chunks with all-MiniLM-L6-v2 and recall top-K=5 neighbors using inner-product search.",
+  "agent_steps": [
+    "Wrap IndexStore interface: add, search, save, load (FAISS backend).",
+    "Build IndexHNSWFlat with inner product metric; normalize at write and query time.",
+    "Encode in batches; expose per-chunk latency metrics."
+  ],
+  "files": [
+    "src/traceai/db/index_store.py",
+    "src/traceai/pipelines/text_track.py"
+  ],
+  "acceptance_criteria": [
+    "Querying a verbatim chunk returns its source at rank 1 with similarity above 0.9.",
+    "p95 recall-stage latency is under 50 ms per chunk on CPU for seed index.",
+    "Index snapshots save and reload bit-identically."
+  ],
+  "verification": "pytest tests/test_index_store.py -q",
+  "depends_on": ["T1.1"],
+  "status": "merged"
+}
