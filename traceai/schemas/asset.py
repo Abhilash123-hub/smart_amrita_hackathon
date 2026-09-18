@@ -12,6 +12,9 @@ class TrackType(str, Enum):
     """Processing track for ingested assets."""
     TEXT = "TEXT"
     IMAGE = "IMAGE"
+    AUDIO = "AUDIO"
+    VIDEO = "VIDEO"
+    CODE = "CODE"
     UNSUPPORTED = "UNSUPPORTED"
 
 
@@ -35,26 +38,72 @@ def sniff_mime_and_track_from_bytes(file_path: Path, header_bytes: bytes) -> tup
     if header_bytes.startswith(b"II*\x00") or header_bytes.startswith(b"MM\x00*"):
         return TrackType.IMAGE, "image/tiff"
 
-    # 2. Text inspection: check if decodable as UTF-8 or ASCII without binary null bytes
-    # If 0x00 is present in the first few KB, it's generally binary
+    # 2. Audio magic signatures
+    if header_bytes.startswith(b"RIFF") and len(header_bytes) >= 12 and header_bytes[8:12] == b"WAVE":
+        return TrackType.AUDIO, "audio/wav"
+    if header_bytes.startswith(b"ID3") or header_bytes.startswith(b"\xff\xfb") or header_bytes.startswith(b"\xff\xf3"):
+        return TrackType.AUDIO, "audio/mpeg"
+    if header_bytes.startswith(b"fLaC"):
+        return TrackType.AUDIO, "audio/flac"
+    if header_bytes.startswith(b"OggS"):
+        return TrackType.AUDIO, "audio/ogg"
+
+    # 3. Video magic signatures
+    if len(header_bytes) >= 8 and header_bytes[4:8] == b"ftyp":
+        return TrackType.VIDEO, "video/mp4"
+    if header_bytes.startswith(b"\x1aE\xdf\xa3"):
+        return TrackType.VIDEO, "video/webm"
+    if header_bytes.startswith(b"RIFF") and len(header_bytes) >= 12 and header_bytes[8:12] == b"AVI ":
+        return TrackType.VIDEO, "video/x-msvideo"
+
+    # 4. Source Code inspection
+    suffix = file_path.suffix.lower()
+    code_suffixes = {
+        ".py": "text/x-python",
+        ".js": "application/javascript",
+        ".ts": "application/typescript",
+        ".jsx": "text/jsx",
+        ".tsx": "text/tsx",
+        ".go": "text/x-go",
+        ".rs": "text/rust",
+        ".cpp": "text/x-c++src",
+        ".c": "text/x-csrc",
+        ".h": "text/x-chdr",
+        ".java": "text/x-java-source",
+    }
+    if suffix in code_suffixes:
+        return TrackType.CODE, code_suffixes[suffix]
+
+    # 5. Text & Code content inspection
     if b"\x00" not in header_bytes:
         try:
-            header_bytes.decode("utf-8")
+            text_peek = header_bytes.decode("utf-8", errors="ignore")
+            # Heuristic for code vs plain text
+            code_keywords = ["def ", "class ", "function ", "import ", "export ", "fn ", "package ", "public static void"]
+            if any(kw in text_peek for kw in code_keywords):
+                return TrackType.CODE, "text/x-code"
             return TrackType.TEXT, "text/plain"
-        except UnicodeDecodeError:
+        except Exception:
             pass
 
-    # 3. Fallback to extension check if magic bytes inconclusive
+    # 6. Fallback to extension check
     guessed_type, _ = mimetypes.guess_type(str(file_path))
     if guessed_type:
         if guessed_type.startswith("image/"):
             return TrackType.IMAGE, guessed_type
+        if guessed_type.startswith("audio/"):
+            return TrackType.AUDIO, guessed_type
+        if guessed_type.startswith("video/"):
+            return TrackType.VIDEO, guessed_type
         if guessed_type.startswith("text/") or guessed_type in {"application/json", "application/xml"}:
             return TrackType.TEXT, guessed_type
 
-    suffix = file_path.suffix.lower()
     if suffix in {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}:
         return TrackType.IMAGE, f"image/{suffix.lstrip('.')}"
+    if suffix in {".mp3", ".wav", ".flac", ".ogg"}:
+        return TrackType.AUDIO, f"audio/{suffix.lstrip('.')}"
+    if suffix in {".mp4", ".mkv", ".avi", ".webm", ".mov"}:
+        return TrackType.VIDEO, f"video/{suffix.lstrip('.')}"
     if suffix in {".txt", ".md", ".json", ".csv", ".log"}:
         return TrackType.TEXT, "text/plain"
 
@@ -70,6 +119,14 @@ class AssetInput(BaseModel):
     mime_type: str = Field(description="MIME type determined by byte inspection")
     size_bytes: int = Field(description="Total file size in bytes")
     sha256_hash: str = Field(description="Prefixed SHA-256 digest: 'sha256:<hex>'")
+
+    # Additive web ingestion & provenance fields (A1, A2, A4)
+    source_url: Optional[str] = Field(default=None, description="Original source web URL if ingested from web")
+    http_headers: Optional[dict[str, str]] = Field(default=None, description="HTTP response headers at scrape time")
+    source_id: Optional[str] = Field(default=None, description="Registered source ID from Source Registry")
+    source_trust_tier: Optional[str] = Field(default=None, description="Trust tier (licensed-partner|public-web-unknown|high-risk-domain)")
+    prefilter_decision: Optional[dict] = Field(default=None, description="PreFilterResult from compliance pre-filter")
+    crawl_timestamp: Optional[str] = Field(default=None, description="Timestamp when the asset was fetched")
 
     @classmethod
     def from_file(cls, path: Path | str, base_dir: Optional[Path | str] = None) -> "AssetInput":

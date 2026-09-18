@@ -13,6 +13,7 @@ class AssetStatus(str, Enum):
     """Clearance resolution status of an ingested asset."""
     PASSED = "PASSED"
     BLOCKED = "BLOCKED"
+    HUMAN_REVIEW = "HUMAN_REVIEW"
     ERROR = "ERROR"
 
 
@@ -60,6 +61,10 @@ class AssetEvaluation(BaseModel):
         default=None,
         description="Additional debug or stage match diagnostics",
     )
+    risk_band: Optional[str] = Field(
+        default=None,
+        description="Confidence band: CLEAR, HUMAN_REVIEW, or BLOCKED",
+    )
 
     def to_minimal_dict(self) -> dict[str, Any]:
         """Export the exact minimal JSON structure required by TraceAI spec."""
@@ -80,6 +85,7 @@ class ScanSummary(BaseModel):
     total_assets: int = 0
     passed_count: int = 0
     blocked_count: int = 0
+    review_count: int = 0
     error_count: int = 0
     duration_seconds: float = 0.0
 

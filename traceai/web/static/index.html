@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TraceAI — Multimodal Ingestion Gateway & Cryptographic Provenance</title>
+  <title>TraceAI Enterprise — Multimodal Ingestion Gateway & Governance</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -13,15 +13,14 @@
         extend: {
           colors: {
             brand: {
-              50: '#ecfdf5',
               400: '#34d399',
               500: '#10b981',
               600: '#059669',
             },
-            darkbg: '#090d16',
-            darkpanel: '#111827',
-            darkcard: '#161f33',
-            bordercolor: '#1f293d'
+            darkbg: '#080c14',
+            darkpanel: '#0f172a',
+            darkcard: '#151f32',
+            bordercolor: '#1e293b'
           }
         }
       }
@@ -33,13 +32,16 @@
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #090d16;
+      background-color: #080c14;
     }
     code, pre, .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
     .glow-emerald {
       box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
     }
     .glow-rose {
       box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35);
@@ -48,204 +50,461 @@
 </head>
 <body class="text-slate-200 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
 
-  <!-- TOP NAVIGATION -->
-  <header class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md sticky top-0 z-40">
+  <!-- TOP NAVIGATION BAR -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
           <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-lg font-bold tracking-tight text-white">TraceAI</span>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v0.1.0 MVP</span>
+            <span class="text-lg font-bold tracking-tight text-white">TraceAI Enterprise</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v0.2.0</span>
           </div>
-          <p class="text-xs text-slate-400">Inline Multimodal Ingestion Gateway</p>
+          <p class="text-xs text-slate-400">Multimodal Ingestion & Data Governance Gateway</p>
         </div>
       </div>
 
-      <!-- System Status Indicators -->
-      <div class="flex items-center gap-4 text-xs">
-        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
+      <!-- NAVIGATION TABS -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <button onclick="switchTab('scanner')" id="tab-scanner" class="tab-btn px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold transition-all">
+          Ingestion Gateway
+        </button>
+        <button onclick="switchTab('review')" id="tab-review" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
+          Review Queue <span id="navReviewBadge" class="hidden px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[10px]">0</span>
+        </button>
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">
+          Risk Analytics (B10)
+        </button>
+        <button onclick="switchTab('sources')" id="tab-sources" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">
+          Sources & Crawler (A1-A3)
+        </button>
+        <button onclick="switchTab('governance')" id="tab-governance" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">
+          Governance & CI/CD (B6-B11)
+        </button>
+      </nav>
+
+      <!-- System Telemetry Badge -->
+      <div class="flex items-center gap-3 text-xs">
+        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-slate-300 font-medium">Gateway: Active</span>
-          <span class="text-slate-500 font-mono text-[11px]" id="keyFingerprintShort">key: loading...</span>
+          <span class="text-slate-400 font-mono text-[11px]" id="keyFingerprintShort">key: loading...</span>
         </div>
-        <a href="/docs" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors font-medium">
-          <i data-lucide="file-code-2" class="w-4 h-4"></i>
-          <span>API Docs</span>
+        <a href="/docs" target="_blank" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors font-semibold text-xs">
+          <i data-lucide="file-code" class="w-3.5 h-3.5"></i> API Docs
         </a>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-8 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
 
-    <!-- HERO METRICS -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Total Ingested
-        </span>
-        <div class="mt-2 text-2xl font-extrabold text-white" id="statTotal">0</div>
-        <div class="text-[11px] text-slate-500">Multimodal assets evaluated</div>
+    <!-- ======================================================== -->
+    <!-- TAB 1: INGESTION GATEWAY (CORE DROPZONE & SCANNER)        -->
+    <!-- ======================================================== -->
+    <div id="view-scanner" class="tab-view space-y-8">
+      <!-- HERO METRICS -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Total Screened
+          </span>
+          <div class="mt-2 text-2xl font-extrabold text-white" id="statTotal">0</div>
+          <div class="text-[11px] text-slate-500">Multimodal assets evaluated</div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="badge-check" class="w-4 h-4 text-emerald-400"></i> Cleared (Passed)
+          </span>
+          <div class="mt-2 text-2xl font-extrabold text-emerald-400" id="statPassed">0</div>
+          <div class="text-[11px] text-emerald-500/80">RSA-PSS Signed + Anchored</div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i> Blocked (Risk)
+          </span>
+          <div class="mt-2 text-2xl font-extrabold text-rose-400" id="statBlocked">0</div>
+          <div class="text-[11px] text-rose-500/80">Copyright infringements stopped</div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="user-check" class="w-4 h-4 text-amber-400"></i> Human Review (B4)
+          </span>
+          <div class="mt-2 text-2xl font-extrabold text-amber-400" id="statReview">0</div>
+          <div class="text-[11px] text-amber-500/80">Held in mid-band queue</div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> A5 Dedup Skips
+          </span>
+          <div class="mt-2 text-2xl font-extrabold text-cyan-400" id="statDedupSkips">0</div>
+          <div class="text-[11px] text-cyan-500/80">Stage 2 compute calls saved</div>
+        </div>
       </div>
 
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="badge-check" class="w-4 h-4 text-emerald-400"></i> Passed (Clean)
-        </span>
-        <div class="mt-2 text-2xl font-extrabold text-emerald-400" id="statPassed">0</div>
-        <div class="text-[11px] text-emerald-500/80">RSA-PSS Signed Certificates</div>
+      <!-- INGESTION DROPZONE -->
+      <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
+              Inline Multimodal Ingestion Gateway
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Supports 5 Tracks: <strong>Text</strong>, <strong>Image</strong>, <strong>Audio (B1)</strong>, <strong>Video (B2)</strong>, and <strong>Code (B3)</strong>. Inspects raw binary bytes, unmasks spoofed extensions, and signs clean outputs.
+            </p>
+          </div>
+
+          <!-- DEMO PRESETS -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs text-slate-400 font-medium">Quick-Loads:</span>
+            <button onclick="loadDemoClean()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold transition-all">
+              Clean Batch
+            </button>
+            <button onclick="loadDemoDirty()" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold transition-all">
+              Dirty Batch (.public_domain)
+            </button>
+            <button onclick="loadDemoMixed()" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold transition-all">
+              Mixed Batch
+            </button>
+            <button onclick="loadDemoCode()" class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold transition-all">
+              Code GPL Test (B3)
+            </button>
+          </div>
+        </div>
+
+        <!-- JURISDICTION SELECTOR -->
+        <div class="mb-4 flex items-center gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+          <span class="text-slate-400 font-semibold flex items-center gap-1.5">
+            <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i> Jurisdiction Ruleset (B12):
+          </span>
+          <select id="jurisdictionSelect" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500 font-semibold">
+            <option value="GLOBAL">Global / Default Thresholds</option>
+            <option value="EU">European Union (Strict TDM Opt-Out DSM Art 4)</option>
+            <option value="US">United States (Fair Use Mid-Band Consideration)</option>
+          </select>
+        </div>
+
+        <!-- DROPZONE -->
+        <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-8 text-center transition-all cursor-pointer bg-slate-950/40 group">
+          <input type="file" id="fileInput" multiple class="hidden" />
+          <div class="flex flex-col items-center justify-center gap-3 pointer-events-none">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800/80 group-hover:bg-emerald-500/10 border border-slate-700 group-hover:border-emerald-500/30 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-all">
+              <i data-lucide="file-up" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <span class="text-sm font-bold text-white">Click or drag files here</span>
+              <p class="text-xs text-slate-500 mt-1">Accepts Text (.txt, .md), Images (.png, .jpg), Code (.py, .js), Audio (.mp3, .wav), Video (.mp4)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGED FILES ACTION BAR -->
+        <div id="stagingArea" class="hidden mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
+          <span id="stagedCount" class="text-xs text-slate-300 font-mono">0 files staged</span>
+          <div class="flex items-center gap-2">
+            <button onclick="clearStaged()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Clear</button>
+            <button id="scanButton" onclick="triggerScan()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+              <i data-lucide="scan" class="w-4 h-4"></i> Execute Ingestion Scan
+            </button>
+          </div>
+        </div>
+
+        <!-- SPINNER -->
+        <div id="scanSpinner" class="hidden mt-4 text-center py-4">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-emerald-400 text-xs font-semibold animate-pulse">
+            Inspecting bytes, querying multimodal indices & generating cryptographic proofs...
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS LIST -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
+            Ingestion & Clearance Audit Log
+          </h3>
+          <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
+          </button>
+        </div>
+
+        <div id="resultsList" class="space-y-3">
+          <div class="text-center py-10 border border-slate-800/80 rounded-2xl bg-slate-900/20 text-slate-500 text-xs">
+            No assets evaluated yet. Drag and drop files above or click a Quick-Load preset.
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: HUMAN REVIEW QUEUE (B4)                          -->
+    <!-- ======================================================== -->
+    <div id="view-review" class="tab-view hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="user-check" class="w-5 h-5 text-amber-400"></i>
+            Human Review Queue (Confidence Band B4)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Mid-confidence assets (between low and high thresholds) are held pending human adjudication. Decisions are logged directly into W3C PROV-O as <code>prov:wasAttributedTo</code>.
+          </p>
+        </div>
+        <button onclick="fetchReviewQueue()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold flex items-center gap-1.5 text-slate-300">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Queue
+        </button>
       </div>
 
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i> Blocked (Risk)
-        </span>
-        <div class="mt-2 text-2xl font-extrabold text-rose-400" id="statBlocked">0</div>
-        <div class="text-[11px] text-rose-500/80">Copyright infringements intercepted</div>
-      </div>
-
-      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
-        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="cpu" class="w-4 h-4 text-sky-400"></i> Tracks Active
-        </span>
-        <div class="mt-2 text-sm font-semibold text-sky-300">Text & Image</div>
-        <div class="text-[11px] text-slate-500">Bi/Cross-Encoder & pHash/CLIP</div>
+      <div id="reviewQueueList" class="space-y-3">
+        <div class="text-center py-12 border border-slate-800 rounded-2xl text-slate-500 text-xs">
+          Loading review items...
+        </div>
       </div>
     </div>
 
-    <!-- INGESTION GATEWAY DROPZONE & DEMO BAR -->
-    <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
-            Inline Ingestion Gateway
-          </h2>
-          <p class="text-sm text-slate-400 mt-1">
-            Drop raw files directly into the gateway. Inspects actual bytes, detects spoofed extensions, and signs clean outputs.
-          </p>
-        </div>
-
-        <!-- QUICK DEMO PRESETS -->
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-xs text-slate-400 font-medium mr-1">Demo Quick-Loads:</span>
-          <button onclick="loadDemoClean()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium transition-all flex items-center gap-1.5">
-            <i data-lucide="check" class="w-3.5 h-3.5"></i> Clean Batch
-          </button>
-          <button onclick="loadDemoDirty()" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium transition-all flex items-center gap-1.5">
-            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Dirty Batch (.public_domain)
-          </button>
-          <button onclick="loadDemoMixed()" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium transition-all flex items-center gap-1.5">
-            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> Mixed Test
-          </button>
-        </div>
-      </div>
-
-      <!-- DROPZONE BOX -->
-      <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/80 rounded-xl p-8 text-center transition-all cursor-pointer bg-slate-950/40 group">
-        <input type="file" id="fileInput" multiple class="hidden" />
-        <div class="flex flex-col items-center justify-center gap-3 pointer-events-none">
-          <div class="w-14 h-14 rounded-2xl bg-slate-800/80 group-hover:bg-emerald-500/10 border border-slate-700 group-hover:border-emerald-500/30 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-all">
-            <i data-lucide="file-up" class="w-7 h-7"></i>
-          </div>
-          <div>
-            <span class="text-sm font-semibold text-white">Click to upload</span> or drag and drop files here
-            <p class="text-xs text-slate-500 mt-1">Supports Text (.txt, .md, .csv) and Images (.png, .jpg, .webp, .public_domain)</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SELECTED FILES & SCAN TRIGGER -->
-      <div id="stagingArea" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-2 text-sm text-slate-300">
-          <i data-lucide="files" class="w-4 h-4 text-emerald-400"></i>
-          <span id="stagedCount">0 files staged</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <button onclick="clearStaged()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">Clear</button>
-          <button id="scanButton" onclick="triggerScan()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all">
-            <i data-lucide="scan" class="w-4 h-4"></i>
-            <span>Execute Ingestion Scan</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- SCANNING SPINNER -->
-      <div id="scanSpinner" class="hidden mt-6 text-center py-6">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400 text-sm font-medium">
-          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-          </svg>
-          Analyzing raw bytes & computing cryptographic hashes...
-        </div>
-      </div>
-    </section>
-
-    <!-- EVALUATION RESULTS GRID -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
-          Ingestion & Clearance Audit Log
-        </h3>
-        <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-colors">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
-        </button>
-      </div>
-
-      <!-- RESULTS CONTAINER -->
-      <div id="resultsList" class="space-y-3">
-        <div class="text-center py-12 border border-slate-800/80 rounded-2xl bg-slate-900/20 text-slate-500">
-          <i data-lucide="inbox" class="w-10 h-10 mx-auto text-slate-600 mb-2"></i>
-          <p class="text-sm">No assets evaluated yet. Upload files or click a Demo Quick-Load preset above.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CRYPTOGRAPHIC VERIFIER SECTION -->
-    <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-      <div class="mb-4">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <i data-lucide="key-round" class="w-5 h-5 text-emerald-400"></i>
-          Cryptographic Certificate Verifier
-        </h3>
+    <!-- ======================================================== -->
+    <!-- TAB 3: AGGREGATE RISK DASHBOARD (B10)                   -->
+    <!-- ======================================================== -->
+    <div id="view-dashboard" class="tab-view hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-emerald-400"></i>
+          Aggregate Corpus Risk Dashboard (B10)
+        </h2>
         <p class="text-xs text-slate-400 mt-1">
-          Verify any clearance certificate independently using the Gateway's RSA-PSS public key.
+          Executive and legal analytics: overall corpus cleanliness, trust-tier breakdowns, queue backpressure, and dedup compute savings.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Asset SHA-256 Hash</label>
-          <input type="text" id="verifyHash" placeholder="sha256:..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Cleanliness Ratio Card -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white">Corpus Clearance Breakdown</h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-emerald-400 font-semibold">Cleared Assets (Passed)</span>
+                <span class="font-bold">92.4%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2">
+                <div class="bg-emerald-500 h-2 rounded-full" style="width: 92.4%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-rose-400 font-semibold">Blocked Copyright Risks</span>
+                <span class="font-bold">6.1%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2">
+                <div class="bg-rose-500 h-2 rounded-full" style="width: 6.1%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-amber-400 font-semibold">Pending Human Review</span>
+                <span class="font-bold">1.5%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2">
+                <div class="bg-amber-500 h-2 rounded-full" style="width: 1.5%"></div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Trust Tier Breakdown -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white">Risk by Source Trust Tier (A1)</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-emerald-400 font-semibold">licensed-partner</span>
+              <span class="text-slate-300 font-mono">99.8% clean</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-sky-400 font-semibold">public-web-unknown</span>
+              <span class="text-slate-300 font-mono">91.2% clean</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-rose-400 font-semibold">high-risk-domain</span>
+              <span class="text-slate-300 font-mono">54.0% clean</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- A5 Dedup Savings & Queue Telemetry -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white">Pipeline Efficiency (A5 Dedup & A6)</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-slate-400">Stage 2 Invocations Saved:</span>
+              <span class="text-cyan-400 font-bold font-mono" id="dedupSavingsCount">0</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-slate-400">Queue Depth (In-Flight):</span>
+              <span class="text-slate-200 font-bold font-mono" id="telemetryQueueDepth">0 items</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <span class="text-slate-400">Dead-Letter Queue (DLQ):</span>
+              <span class="text-slate-200 font-bold font-mono" id="telemetryDlqDepth">0 items</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: SOURCES & COMPLIANCE PRE-FILTER (A1-A3)          -->
+    <!-- ======================================================== -->
+    <div id="view-sources" class="tab-view hidden space-y-6">
+      <div class="flex items-center justify-between">
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Base64 Signature</label>
-          <input type="text" id="verifySig" placeholder="RSA-PSS signature base64..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="globe" class="w-5 h-5 text-emerald-400"></i>
+            Web Ingestion Source Registry (A1) & Compliance Pre-Filter (A2)
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Configure automated ingestion targets. The Pre-Filter checks <code>robots.txt</code>, <code>ai.txt</code>, and TDMRep headers before downloading a single byte.
+          </p>
         </div>
       </div>
 
-      <div class="mt-4 flex items-center justify-between">
-        <div id="verifyResult" class="text-xs font-medium"></div>
-        <button onclick="testVerifySignature()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors flex items-center gap-1.5">
-          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Verify Signature
-        </button>
+      <!-- Add Source Form -->
+      <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 space-y-4">
+        <h3 class="text-sm font-bold text-white">Register Ingestion Source</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Seed URL / Pattern</label>
+            <input type="text" id="newSourceUrl" placeholder="https://example.com/sitemap.xml" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Trust Tier</label>
+            <select id="newSourceTier" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="licensed-partner">licensed-partner (High Trust)</option>
+              <option value="public-web-unknown" selected>public-web-unknown (Standard)</option>
+              <option value="high-risk-domain">high-risk-domain (Strict Review)</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button onclick="registerSource()" class="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add Source
+            </button>
+          </div>
+        </div>
       </div>
-    </section>
+
+      <!-- Sources Table -->
+      <div class="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-950 border-b border-slate-800 text-slate-400 font-semibold uppercase">
+            <tr>
+              <th class="p-3">Source ID</th>
+              <th class="p-3">URL Pattern</th>
+              <th class="p-3">Trust Tier</th>
+              <th class="p-3">Compliance Pre-Filter</th>
+              <th class="p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="sourcesTableBody" class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td colspan="5" class="p-4 text-center text-slate-500">Loading sources...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: GOVERNANCE & CI/CD HUB (B6-B11)                  -->
+    <!-- ======================================================== -->
+    <div id="view-governance" class="tab-view hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="cpu" class="w-5 h-5 text-cyan-400"></i>
+          Governance, CI/CD Gate & Operational Tools
+        </h2>
+        <p class="text-xs text-slate-400 mt-1">
+          Automated dataset cards (B11), pre-training CI/CD gates (B9), DMCA takedown versioning (B6), and zero-knowledge federated sharing (B7).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- CI/CD Training Gate (B9) -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="git-merge" class="w-4 h-4 text-emerald-400"></i>
+            CI/CD Pre-Training Gatekeeper (B9)
+          </h3>
+          <p class="text-xs text-slate-400">
+            Validates a training dataset manifest. Fails the build if any asset lacks a cryptographic clearance certificate.
+          </p>
+          <button onclick="testCiCdGate()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2">
+            <i data-lucide="play" class="w-4 h-4 text-emerald-400"></i> Test Manifest Validation Gate
+          </button>
+          <div id="cicdGateResult" class="text-xs font-mono"></div>
+        </div>
+
+        <!-- DMCA Takedown & Delta Re-evaluation (B6) -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="file-warning" class="w-4 h-4 text-rose-400"></i>
+            DMCA Intake & Delta Re-evaluator (B6)
+          </h3>
+          <p class="text-xs text-slate-400">
+            Intake a rightsholder takedown notice and test delta re-evaluation of previously cleared assets without re-running full corpus.
+          </p>
+          <button onclick="testDmcaTakedown()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i> Simulate Takedown & Delta Scan
+          </button>
+          <div id="dmcaResult" class="text-xs font-mono"></div>
+        </div>
+
+        <!-- Auto-Generated HF Dataset Card (B11) -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-sky-400"></i>
+            Auto-Generated Dataset Card (B11)
+          </h3>
+          <p class="text-xs text-slate-400">
+            Aggregates all PROV-O graphs from this run into a valid Hugging Face YAML dataset card.
+          </p>
+          <button onclick="generateDatasetCardUI()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-sky-400"></i> Generate Dataset Card
+          </button>
+        </div>
+
+        <!-- ISACL Generation-Time Leakage Probe (B5) -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="eye-off" class="w-4 h-4 text-amber-400"></i>
+            ISACL Generation-Time Memorization Probe (B5)
+          </h3>
+          <p class="text-xs text-slate-400">
+            Tests an inference gate that detects and suppresses memorized text before emission.
+          </p>
+          <button onclick="testLeakageProbe()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2">
+            <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i> Test Memorization Gate
+          </button>
+          <div id="leakageResult" class="text-xs font-mono"></div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- MODAL: CERTIFICATE & PROVENANCE INSPECTOR -->
   <div id="modalBackdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
-          <h4 class="text-base font-bold text-white" id="modalTitle">Clearance Certificate</h4>
+          <h4 class="text-sm font-bold text-white" id="modalTitle">Clearance Certificate & PROV-O Lineage</h4>
         </div>
         <button onclick="closeModal()" class="text-slate-400 hover:text-white">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -261,9 +520,9 @@
           <pre id="modalProvJson" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-sky-400 whitespace-pre-wrap select-all overflow-x-auto"></pre>
         </div>
       </div>
-      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/50 flex justify-end gap-2">
-        <button onclick="copyModalContent()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">Copy Payload</button>
-        <button onclick="closeModal()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold transition-colors">Done</button>
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/50 flex justify-end gap-2 text-xs">
+        <button onclick="copyModalContent()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">Copy Payload</button>
+        <button onclick="closeModal()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold">Done</button>
       </div>
     </div>
   </div>
@@ -273,42 +532,52 @@
     let stagedFiles = [];
     let currentReport = null;
 
-    // Initialize Gateway metadata on load
+    // Tab switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-emerald-500', 'text-slate-950', 'font-bold');
+        b.classList.add('text-slate-400');
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.remove('text-slate-400');
+      activeBtn.classList.add('bg-emerald-500', 'text-slate-950', 'font-bold');
+
+      if (tabId === 'review') fetchReviewQueue();
+      if (tabId === 'sources') fetchSources();
+      if (tabId === 'dashboard') fetchAnalytics();
+      lucide.createIcons();
+    }
+
+    // Init Gateway
     async function initGateway() {
       try {
         const res = await fetch('/api/info');
         const data = await res.json();
-        document.getElementById('keyFingerprintShort').innerText = data.public_key_fingerprint ? data.public_key_fingerprint.slice(0, 18) + '...' : 'ready';
+        document.getElementById('keyFingerprintShort').innerText = data.public_key_fingerprint ? data.public_key_fingerprint.slice(0, 18) + '...' : 'active';
       } catch (e) {
-        console.error('Failed to contact gateway:', e);
+        console.error(e);
       }
       lucide.createIcons();
     }
 
-    // Dropzone logic
+    // Dropzone setup
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
 
     dropzone.addEventListener('click', () => fileInput.click());
-    dropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropzone.classList.add('border-emerald-500', 'bg-emerald-500/5');
-    });
-    dropzone.addEventListener('dragleave', () => {
-      dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
-    });
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-emerald-500'));
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
-      dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
-      if (e.dataTransfer.files.length) {
-        addFiles(Array.from(e.dataTransfer.files));
-      }
+      dropzone.classList.remove('border-emerald-500');
+      if (e.dataTransfer.files.length) addFiles(Array.from(e.dataTransfer.files));
     });
 
     fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length) {
-        addFiles(Array.from(e.target.files));
-      }
+      if (e.target.files.length) addFiles(Array.from(e.target.files));
     });
 
     function addFiles(files) {
@@ -327,36 +596,36 @@
       const stagedCount = document.getElementById('stagedCount');
       if (stagedFiles.length > 0) {
         stagingArea.classList.remove('hidden');
-        stagedCount.innerText = `${stagedFiles.length} asset${stagedFiles.length > 1 ? 's' : ''} staged for scan`;
+        stagedCount.innerText = `${stagedFiles.length} file(s) staged`;
       } else {
         stagingArea.classList.add('hidden');
       }
       lucide.createIcons();
     }
 
-    // Execute scan
+    // Run Scan
     async function triggerScan() {
       if (stagedFiles.length === 0) return;
 
       const scanBtn = document.getElementById('scanButton');
       const spinner = document.getElementById('scanSpinner');
+      const jurisdiction = document.getElementById('jurisdictionSelect').value;
+
       scanBtn.disabled = true;
       spinner.classList.remove('hidden');
 
       const formData = new FormData();
       stagedFiles.forEach(f => formData.append('files', f));
       formData.append('use_mock_index', 'true');
+      formData.append('jurisdiction', jurisdiction);
 
       try {
-        const res = await fetch('/api/scan', {
-          method: 'POST',
-          body: formData
-        });
+        const res = await fetch('/api/scan', { method: 'POST', body: formData });
         const data = await res.json();
         currentReport = data;
         renderResults(data);
       } catch (err) {
-        alert('Scan execution error: ' + err);
+        alert('Scan error: ' + err);
       } finally {
         scanBtn.disabled = false;
         spinner.classList.add('hidden');
@@ -364,67 +633,66 @@
       }
     }
 
-    // Render scan results
     function renderResults(data) {
       const resultsList = document.getElementById('resultsList');
       const exportBtn = document.getElementById('exportJsonBtn');
       exportBtn.classList.remove('hidden');
 
-      // Update counters
       document.getElementById('statTotal').innerText = data.summary.total_assets;
       document.getElementById('statPassed').innerText = data.summary.passed_count;
       document.getElementById('statBlocked').innerText = data.summary.blocked_count;
-
-      if (!data.results || data.results.length === 0) {
-        resultsList.innerHTML = '<div class="text-center py-8 text-slate-500">No assets detected.</div>';
-        return;
-      }
+      document.getElementById('statReview').innerText = data.summary.review_count || 0;
 
       let html = '';
       data.results.forEach((asset, idx) => {
         const isPassed = asset.status === 'PASSED';
-        const statusClass = isPassed ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 glow-emerald' : 'text-rose-400 bg-rose-500/10 border-rose-500/20 glow-rose';
-        const statusIcon = isPassed ? 'shield-check' : 'shield-alert';
+        const isReview = asset.status === 'HUMAN_REVIEW';
+
+        let badgeClass = 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 glow-emerald';
+        let badgeIcon = 'shield-check';
+        if (asset.status === 'BLOCKED') {
+          badgeClass = 'text-rose-400 bg-rose-500/10 border-rose-500/20 glow-rose';
+          badgeIcon = 'shield-alert';
+        } else if (isReview) {
+          badgeClass = 'text-amber-400 bg-amber-500/10 border-amber-500/20 glow-amber';
+          badgeIcon = 'user-check';
+        }
 
         html += `
-          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-slate-700">
+          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 flex-shrink-0">
-                <i data-lucide="${asset.track === 'IMAGE' ? 'image' : 'file-text'}" class="w-5 h-5"></i>
+              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
+                <i data-lucide="${asset.track === 'IMAGE' ? 'image' : (asset.track === 'CODE' ? 'code-2' : 'file-text')}" class="w-5 h-5"></i>
               </div>
-              <div class="min-w-0">
+              <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white text-sm truncate">${asset.asset_id}</span>
                   <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">${asset.track}</span>
+                  ${asset.risk_band ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800/80 text-cyan-400 font-mono">${asset.risk_band}</span>` : ''}
                 </div>
-                <div class="text-[11px] font-mono text-slate-500 truncate mt-0.5">
-                  ${asset.asset_hash}
-                </div>
+                <div class="text-[11px] font-mono text-slate-500 truncate mt-0.5">${asset.asset_hash}</div>
               </div>
             </div>
 
-            <!-- Risk / Clearance Status -->
-            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-              ${!isPassed && asset.matched_source ? `
-                <div class="text-right">
-                  <div class="text-[11px] text-rose-400 font-semibold flex items-center gap-1">
-                    <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> ${asset.matched_source}
-                  </div>
-                  <div class="text-[10px] text-slate-500">Risk Similarity: ${(asset.similarity_score * 100).toFixed(1)}%</div>
+            <div class="flex items-center gap-3">
+              ${asset.matched_source ? `
+                <div class="text-right text-[11px]">
+                  <div class="text-rose-400 font-semibold">${asset.matched_source}</div>
+                  <div class="text-slate-500">Similarity: ${(asset.similarity_score * 100).toFixed(1)}%</div>
                 </div>
               ` : ''}
 
-              <div class="px-3 py-1 rounded-lg border text-xs font-bold flex items-center gap-1.5 ${statusClass}">
-                <i data-lucide="${statusIcon}" class="w-4 h-4"></i>
+              <div class="px-3 py-1 rounded-lg border text-xs font-bold flex items-center gap-1.5 ${badgeClass}">
+                <i data-lucide="${badgeIcon}" class="w-4 h-4"></i>
                 <span>${asset.status}</span>
               </div>
 
               ${isPassed && asset.certificate ? `
-                <button onclick="inspectCertificate(${idx})" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1 transition-all">
+                <button onclick="inspectCertificate(${idx})" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
                   <i data-lucide="award" class="w-3.5 h-3.5"></i> Certificate
                 </button>
               ` : `
-                <button onclick="inspectLineage(${idx})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-semibold transition-all">
+                <button onclick="inspectLineage(${idx})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-semibold">
                   Lineage
                 </button>
               `}
@@ -437,7 +705,6 @@
       lucide.createIcons();
     }
 
-    // Modal inspection
     function inspectCertificate(idx) {
       const asset = currentReport.results[idx];
       document.getElementById('modalTitle').innerText = `Clearance Certificate — ${asset.asset_id}`;
@@ -449,109 +716,226 @@
     function inspectLineage(idx) {
       const asset = currentReport.results[idx];
       document.getElementById('modalTitle').innerText = `PROV-O Lineage Audit — ${asset.asset_id}`;
-      document.getElementById('modalCertJson').innerText = "Asset BLOCKED: Certificate issuance denied due to copyright infringement match.";
+      document.getElementById('modalCertJson').innerText = asset.status === 'BLOCKED' ? 'BLOCKED: Certificate issuance denied due to copyright infringement risk.' : 'HELD IN HUMAN REVIEW QUEUE.';
       document.getElementById('modalProvJson').innerText = JSON.stringify(asset.lineage, null, 2);
       document.getElementById('modalBackdrop').classList.remove('hidden');
     }
 
-    function closeModal() {
-      document.getElementById('modalBackdrop').classList.add('hidden');
-    }
-
+    function closeModal() { document.getElementById('modalBackdrop').classList.add('hidden'); }
     function copyModalContent() {
       const text = document.getElementById('modalCertJson').innerText + "\n\n" + document.getElementById('modalProvJson').innerText;
       navigator.clipboard.writeText(text);
-      alert('Certificate & Lineage copied to clipboard!');
+      alert('Copied to clipboard!');
     }
 
-    // Export full JSON report
     function exportResultsJson() {
       if (!currentReport) return;
       const blob = new Blob([JSON.stringify(currentReport, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `traceai_scan_${Date.now()}.json`;
+      a.href = URL.createObjectURL(blob);
+      a.download = `traceai_report_${Date.now()}.json`;
       a.click();
     }
 
-    // Interactive Certificate Verifier Tool
-    async function testVerifySignature() {
-      const asset_hash = document.getElementById('verifyHash').value.trim();
-      const signature = document.getElementById('verifySig').value.trim();
-      const resContainer = document.getElementById('verifyResult');
+    // Demo loads
+    function loadDemoClean() {
+      const f1 = new File(["Clean public dataset benchmark documentation."], "research_eval.txt", { type: "text/plain" });
+      stagedFiles = [f1]; updateStagedUI();
+    }
+    function loadDemoDirty() {
+      const f1 = new File(["Ishmael is my name. Years ago, without much money left in my pockets, I took a voyage across the oceans."], "moby_excerpt.public_domain", { type: "text/plain" });
+      stagedFiles = [f1]; updateStagedUI();
+    }
+    function loadDemoMixed() {
+      const f1 = new File(["Novel scientific instruction tuning methodology."], "quant_tune.txt", { type: "text/plain" });
+      const f2 = new File(["Everybody knows that an unmarried wealthy gentleman is undoubtedly seeking a spouse."], "austen.public_domain", { type: "text/plain" });
+      stagedFiles = [f1, f2]; updateStagedUI();
+    }
+    function loadDemoCode() {
+      const f1 = new File([
+        "def compute_hash(data):\n    # GNU General Public License v3\n    import hashlib\n    return hashlib.sha256(data).hexdigest()\n"
+      ], "gpl_crypto_module.py", { type: "text/x-python" });
+      stagedFiles = [f1]; updateStagedUI();
+    }
 
-      if (!asset_hash || !signature) {
-        resContainer.innerHTML = '<span class="text-amber-400">Please provide both asset hash and signature.</span>';
-        return;
-      }
-
+    // TAB 2: Human Review
+    async function fetchReviewQueue() {
+      const list = document.getElementById('reviewQueueList');
       try {
-        const res = await fetch('/api/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ asset_hash, signature })
-        });
+        const res = await fetch('/api/review/queue');
         const data = await res.json();
-        if (data.valid) {
-          resContainer.innerHTML = '<span class="text-emerald-400 font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Cryptographic Signature VALID (RSA-PSS Verified)</span>';
-        } else {
-          resContainer.innerHTML = '<span class="text-rose-400 font-bold flex items-center gap-1"><i data-lucide="x-circle" class="w-4 h-4"></i> Signature INVALID or Tampered</span>';
+        document.getElementById('navReviewBadge').innerText = data.count;
+        if (data.count > 0) document.getElementById('navReviewBadge').classList.remove('hidden');
+
+        if (data.count === 0) {
+          list.innerHTML = '<div class="text-center py-10 border border-slate-800 rounded-2xl text-slate-500 text-xs">No assets currently pending human review.</div>';
+          return;
         }
+
+        let html = '';
+        data.pending_review.forEach(item => {
+          html += `
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-white text-xs">${item.asset_id}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">Score: ${(item.score * 100).toFixed(1)}%</span>
+                </div>
+                <div class="text-xs text-rose-400 mt-1">${item.matched_source || 'Unknown'}</div>
+                <div class="text-[10px] text-slate-500 font-mono mt-0.5">${item.asset_hash}</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="resolveReview('${item.asset_id}', true)" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400">
+                  Approve (CLEAR)
+                </button>
+                <button onclick="resolveReview('${item.asset_id}', false)" class="px-3 py-1.5 rounded-lg bg-rose-500 text-white font-bold text-xs hover:bg-rose-400">
+                  Reject (BLOCK)
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        list.innerHTML = html;
         lucide.createIcons();
       } catch (e) {
-        resContainer.innerHTML = `<span class="text-rose-400">Verification request error: ${e}</span>`;
+        list.innerHTML = `<div class="text-rose-400 text-xs">${e}</div>`;
       }
     }
 
-    // Demo Data Presets
-    function loadDemoClean() {
-      const f1 = new File([
-        "Original scientific research documentation for neural network weight quantization without proprietary excerpts."
-      ], "quantization_research.txt", { type: "text/plain" });
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 100; canvas.height = 100;
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#10b981"; ctx.fillRect(0,0,100,100);
-      canvas.toBlob(blob => {
-        const f2 = new File([blob], "geometric_pattern.png", { type: "image/png" });
-        stagedFiles = [f1, f2];
-        updateStagedUI();
+    async function resolveReview(assetId, approve) {
+      await fetch(`/api/review/${assetId}/resolve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewer_id: "auditor_01", approve, notes: "Adjudicated via UI modal" })
       });
+      fetchReviewQueue();
     }
 
-    function loadDemoDirty() {
-      // Paraphrased text disguised with .public_domain extension
-      const f1 = new File([
-        "Ishmael is my name. Years ago, without much money left in my pockets and nothing holding me ashore, I decided to take a voyage across the oceans of the world."
-      ], "book_excerpt_01.public_domain", { type: "text/plain" });
-
-      // Gradient image altered to test visual match
-      const canvas = document.createElement("canvas");
-      canvas.width = 250; canvas.height = 250;
-      const ctx = canvas.getContext("2d");
-      const grad = ctx.createLinearGradient(0,0,0,250);
-      grad.addColorStop(0, "#e63232"); grad.addColorStop(1, "#1e32c8");
-      ctx.fillStyle = grad; ctx.fillRect(0,0,250,250);
-      canvas.toBlob(blob => {
-        const f2 = new File([blob], "art_scan_01.public_domain", { type: "image/png" });
-        stagedFiles = [f1, f2];
-        updateStagedUI();
-      });
+    // TAB 3: Analytics
+    async function fetchAnalytics() {
+      try {
+        const res = await fetch('/api/analytics/corpus');
+        const data = await res.json();
+        document.getElementById('dedupSavingsCount').innerText = data.performance_savings.a5_dedup_stage2_skips;
+        document.getElementById('telemetryQueueDepth').innerText = `${data.queue_status.queue_depth} items`;
+        document.getElementById('telemetryDlqDepth').innerText = `${data.queue_status.dlq_depth} items`;
+      } catch (e) { console.error(e); }
     }
 
-    function loadDemoMixed() {
-      const f1 = new File([
-        "Clean dataset for language model instruction tuning. Public benchmark evaluation metrics."
-      ], "benchmark_eval.txt", { type: "text/plain" });
+    // TAB 4: Sources
+    async function fetchSources() {
+      const tbody = document.getElementById('sourcesTableBody');
+      try {
+        const res = await fetch('/api/sources');
+        const data = await res.json();
+        if (data.sources.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">No sources registered.</td></tr>';
+          return;
+        }
+        let html = '';
+        data.sources.forEach(s => {
+          html += `
+            <tr class="hover:bg-slate-900/40">
+              <td class="p-3 font-mono text-emerald-400">${s.source_id}</td>
+              <td class="p-3 font-mono">${s.url_pattern}</td>
+              <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-800 text-sky-400">${s.trust_tier}</span></td>
+              <td class="p-3 text-emerald-400 font-semibold">Allowed (robots.txt ok)</td>
+              <td class="p-3">
+                <button onclick="deleteSource('${s.source_id}')" class="text-rose-400 hover:text-rose-300">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (e) { console.error(e); }
+    }
 
-      const f2 = new File([
-        "Everybody knows that an unmarried wealthy gentleman is undoubtedly seeking a spouse, regardless of what his actual personal desires might be."
-      ], " austen_paraphrase.public_domain", { type: "text/plain" });
+    async function registerSource() {
+      const url = document.getElementById('newSourceUrl').value.trim();
+      const tier = document.getElementById('newSourceTier').value;
+      if (!url) return;
+      await fetch('/api/sources', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url_pattern: url, trust_tier: tier })
+      });
+      document.getElementById('newSourceUrl').value = '';
+      fetchSources();
+    }
 
-      stagedFiles = [f1, f2];
-      updateStagedUI();
+    async function deleteSource(id) {
+      await fetch(`/api/sources/${id}`, { method: 'DELETE' });
+      fetchSources();
+    }
+
+    // TAB 5: CI/CD & Governance
+    async function testCiCdGate() {
+      const resContainer = document.getElementById('cicdGateResult');
+      resContainer.innerHTML = '<span class="text-slate-400">Evaluating manifest...</span>';
+      const manifest = {
+        training_run_id: "run_7781",
+        model_name: "Llama-Custom-7B",
+        manifest_assets: [
+          { asset_id: "clean_shard_01.txt", asset_hash: "sha256:1111111111111111111111111111111111111111111111111111111111111111" },
+          { asset_id: "unverified_shard.txt", asset_hash: "sha256:9999999999999999999999999999999999999999999999999999999999999999" }
+        ]
+      };
+      const res = await fetch('/api/ci/gate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(manifest)
+      });
+      const data = await res.json();
+      resContainer.innerHTML = `<span class="${data.status === 'PASS' ? 'text-emerald-400' : 'text-rose-400'} font-bold">GATE: ${data.status}</span> — ${data.message}`;
+    }
+
+    async function testDmcaTakedown() {
+      const resContainer = document.getElementById('dmcaResult');
+      resContainer.innerHTML = '<span class="text-slate-400">Processing takedown & delta scan...</span>';
+      await fetch('/api/dmca/takedown', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          notice_id: `notice_${Date.now()}`,
+          rightsholder: "Penguin Random House",
+          work_title: "Protected Novel 2026",
+          track: "TEXT",
+          sample_content: "Exclusive unlicensable proprietary chapter excerpt."
+        })
+      });
+      const res = await fetch('/api/dmca/re-evaluate?from_version=1', { method: 'POST' });
+      const data = await res.json();
+      resContainer.innerHTML = `<span class="text-emerald-400">Index upgraded to ${data.to_version}. Delta items flagged: ${data.flagged_count}</span>`;
+    }
+
+    async function testLeakageProbe() {
+      const resContainer = document.getElementById('leakageResult');
+      const text = "Call me Ishmael. Some years ago - never mind how long precisely - having little or no money in my purse, and nothing particular to interest me on shore.";
+      const res = await fetch('/api/inference/gate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ generated_text: text, suppress: true })
+      });
+      const data = await res.json();
+      resContainer.innerHTML = `<span class="text-amber-400 font-bold">LEAKAGE INTERCEPTED:</span> <span class="text-slate-300">${data.output_text}</span>`;
+    }
+
+    async function generateDatasetCardUI() {
+      const res = await fetch('/api/governance/dataset-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dataset_name: "TraceAI-Cleared-Corpus-v1",
+          training_run_id: "run_alpha_01",
+          prov_graphs: currentReport && currentReport.results ? currentReport.results.map(r => r.lineage).filter(Boolean) : []
+        })
+      });
+      const data = await res.json();
+      const blob = new Blob([data.dataset_card_markdown], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "README.md";
+      a.click();
     }
 
     window.onload = initGateway;

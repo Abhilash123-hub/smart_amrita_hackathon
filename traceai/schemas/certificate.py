@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class ProvLineage(BaseModel):
     """Minimal W3C PROV-O JSON-LD representation of asset lineage."""
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
     context: str = Field(
         default="http://www.w3.org/ns/prov#",
@@ -60,4 +60,25 @@ class ClearanceCertificate(BaseModel):
     )
     key_fingerprint: str = Field(
         description="SHA-256 fingerprint of the signing RSA public key",
+    )
+    # Additive enterprise and governance fields (B4, B6, B8, B12)
+    index_version: Optional[str] = Field(
+        default="1.0.0",
+        description="Version of the copyrighted works index queried at scan time",
+    )
+    blockchain_tx_id: Optional[str] = Field(
+        default=None,
+        description="Optional on-chain IBIS ledger transaction hash/anchor",
+    )
+    confidence_score: Optional[float] = Field(
+        default=None,
+        description="Model confidence or lowest distance score",
+    )
+    human_reviewer_id: Optional[str] = Field(
+        default=None,
+        description="Identifier of human reviewer if cleared via Human Review queue",
+    )
+    jurisdiction: Optional[str] = Field(
+        default=None,
+        description="Jurisdiction ruleset applied (e.g., 'EU', 'US', 'DEFAULT')",
     )

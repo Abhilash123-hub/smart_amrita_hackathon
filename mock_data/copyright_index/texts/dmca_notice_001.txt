@@ -1,0 +1,3 @@
+[Scientific Release 2026]
+Exclusive chapter from an upcoming scientific release.
+Copyright (c) Springer Nature

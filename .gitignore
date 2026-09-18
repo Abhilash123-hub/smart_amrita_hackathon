@@ -37,5 +37,7 @@ hf_cache/
 
 # Output data and keys
 *.pem
+*.db
+data/
 output/
 scan_results*.json
