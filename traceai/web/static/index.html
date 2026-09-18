@@ -199,194 +199,179 @@
         </div>
       </div>
 
-      <!-- INGESTION DROPZONE -->
-      <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
-              Inline Multimodal Ingestion Gateway
-            </h2>
-            <p class="text-xs text-slate-400 mt-1">
-              Supports 5 Tracks: <strong>Text</strong>, <strong>Image</strong>, <strong>Audio (B1)</strong>, <strong>Video (B2)</strong>, and <strong>Code (B3)</strong>. Inspects raw binary bytes, unmasks spoofed extensions, and signs clean outputs.
-            </p>
+      <!-- SPLIT PANE TOOLBAR -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 text-xs">
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 font-bold">
+            <i data-lucide="split" class="w-3.5 h-3.5"></i>
+            <span>react-split-pane layout</span>
           </div>
-
-          <!-- DEMO PRESETS -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs text-slate-400 font-medium">Quick-Loads:</span>
-            <button onclick="loadDemoClean()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold transition-all">
-              Clean Batch
-            </button>
-            <button onclick="loadDemoDirty()" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold transition-all">
-              Dirty Batch (.public_domain)
-            </button>
-            <button onclick="loadDemoMixed()" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold transition-all">
-              Mixed Batch
-            </button>
-            <button onclick="loadDemoCode()" class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold transition-all">
-              Code GPL Test (B3)
-            </button>
-          </div>
+          <span class="text-slate-400 text-xs hidden sm:inline">Drag center divider bar to resize panes | Double-click to center (50/50)</span>
         </div>
-
-        <!-- JURISDICTION SELECTOR -->
-        <div class="mb-4 flex items-center gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold flex items-center gap-1.5">
-            <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i> Jurisdiction Ruleset (B12):
-          </span>
-          <select id="jurisdictionSelect" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-emerald-500 font-semibold">
-            <option value="GLOBAL">Global / Default Thresholds</option>
-            <option value="EU">European Union (Strict TDM Opt-Out DSM Art 4)</option>
-            <option value="US">United States (Fair Use Mid-Band Consideration)</option>
-          </select>
+        <div class="flex items-center gap-2">
+          <button onclick="toggleSplitOrientation()" id="toggleSplitBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-1.5 font-mono text-[11px] transition-all" title="Toggle Split Orientation">
+            <i data-lucide="split" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span id="splitModeLabel">Vertical Split</span>
+          </button>
+          <button onclick="resetSplitPane()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white font-mono text-[11px] transition-all" title="Reset split to 50/50">
+            50/50 Reset
+          </button>
+          <button onclick="exportResultsJson()" id="exportJsonBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-mono text-[11px] flex items-center gap-1.5 transition-all">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report
+          </button>
         </div>
+      </div>
 
-        <!-- DROPZONE -->
-        <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-8 text-center transition-all cursor-pointer bg-slate-950/40 group">
-          <input type="file" id="fileInput" multiple class="hidden" />
-          <div class="flex flex-col items-center justify-center gap-3 pointer-events-none">
-            <div class="w-14 h-14 rounded-2xl bg-slate-800/80 group-hover:bg-emerald-500/10 border border-slate-700 group-hover:border-emerald-500/30 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-all">
-              <i data-lucide="file-up" class="w-7 h-7"></i>
+      <!-- MAIN SPLIT PANE CONTAINER -->
+      <div id="splitPaneContainer" class="border border-slate-800 rounded-2xl bg-slate-950/80 shadow-2xl overflow-hidden relative flex flex-col md:flex-row h-[760px]">
+        <!-- LEFT PANE: INGESTION DROPZONE & ASSET STREAM -->
+        <div id="splitPaneLeft" class="h-full overflow-y-auto p-4 space-y-4 flex-shrink-0 w-full md:w-1/2 border-b md:border-b-0 md:border-r border-slate-800/80 bg-slate-900/30">
+          <!-- DROPZONE & CONTROLS -->
+          <div class="space-y-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-xs uppercase font-bold text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-400"></i>
+                Ingestion Dropzone
+              </span>
+              <div class="flex items-center gap-1 text-[10px]">
+                <span class="text-slate-500 font-medium">Quick-Loads:</span>
+                <button onclick="loadDemoMixed()" class="px-2 py-0.5 rounded bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 font-semibold transition-all">Mixed</button>
+                <button onclick="loadDemoDirty()" class="px-2 py-0.5 rounded bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 font-semibold transition-all">Dirty</button>
+                <button onclick="loadDemoClean()" class="px-2 py-0.5 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-semibold transition-all">Clean</button>
+                <button onclick="loadDemoCode()" class="px-2 py-0.5 rounded bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-semibold transition-all">Code</button>
+              </div>
             </div>
-            <div>
-              <span class="text-sm font-bold text-white">Click or drag files here</span>
-              <p class="text-xs text-slate-500 mt-1">Accepts Text (.txt, .md), Images (.png, .jpg), Code (.py, .js), Audio (.mp3, .wav), Video (.mp4)</p>
+
+            <!-- Jurisdiction Selector -->
+            <div class="flex items-center gap-2 text-xs bg-slate-950/70 px-2.5 py-1.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 font-semibold flex items-center gap-1">
+                <i data-lucide="scale" class="w-3.5 h-3.5 text-emerald-400"></i> Jurisdiction:
+              </span>
+              <select id="jurisdictionSelect" class="bg-slate-900 border border-slate-700 text-white rounded px-2 py-0.5 text-xs focus:outline-none focus:border-emerald-500 font-semibold flex-1">
+                <option value="GLOBAL">Global / Default Thresholds</option>
+                <option value="EU">European Union (Strict TDM Opt-Out DSM Art 4)</option>
+                <option value="US">United States (Fair Use Mid-Band Consideration)</option>
+              </select>
             </div>
-          </div>
-        </div>
 
-        <!-- STAGED FILES ACTION BAR -->
-        <div id="stagingArea" class="hidden mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
-          <span id="stagedCount" class="text-xs text-slate-300 font-mono">0 files staged</span>
-          <div class="flex items-center gap-2">
-            <button onclick="clearStaged()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Clear</button>
-            <button id="scanButton" onclick="triggerScan()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
-              <i data-lucide="scan" class="w-4 h-4"></i> Execute Ingestion Scan
-            </button>
-          </div>
-        </div>
+            <!-- Drag & Drop Box -->
+            <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-4 text-center transition-all cursor-pointer bg-slate-950/40 group">
+              <input type="file" id="fileInput" multiple class="hidden" />
+              <div class="flex items-center justify-center gap-3 pointer-events-none">
+                <div class="w-9 h-9 rounded-xl bg-slate-800/80 group-hover:bg-emerald-500/10 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-all">
+                  <i data-lucide="file-up" class="w-4 h-4"></i>
+                </div>
+                <div class="text-left">
+                  <span class="text-xs font-bold text-white">Click or drag files here to scan</span>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Supports Text, Images, Code, Audio, Video (Magic byte sniffer active)</p>
+                </div>
+              </div>
+            </div>
 
-        <!-- SPINNER -->
-        <div id="scanSpinner" class="hidden mt-4 text-center py-4">
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-emerald-400 text-xs font-semibold animate-pulse">
-            Inspecting bytes, querying multimodal indices & generating cryptographic proofs...
-          </div>
-        </div>
-      </section>
+            <!-- Staged Files & Action Bar -->
+            <div id="stagingArea" class="hidden pt-2 border-t border-slate-800/80 flex items-center justify-between">
+              <span id="stagedCount" class="text-xs text-slate-300 font-mono">0 files staged</span>
+              <div class="flex items-center gap-2">
+                <button onclick="clearStaged()" class="px-2 py-1 text-xs text-slate-400 hover:text-white">Clear</button>
+                <button id="scanButton" onclick="triggerScan()" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+                  <i data-lucide="scan" class="w-3.5 h-3.5"></i> Run Scan
+                </button>
+              </div>
+            </div>
 
-      <!-- SPLIT PANE AUDIT LOG & FORENSIC INSPECTOR -->
-      <section class="space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
-              Ingestion & Clearance Audit Log
-            </h3>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
-              react-split-pane view
-            </span>
-          </div>
-
-          <!-- Split Toolbar Controls -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="toggleSplitOrientation()" id="toggleSplitBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-1.5 font-medium transition-all" title="Toggle Split Orientation (Vertical/Horizontal)">
-              <i data-lucide="split" class="w-3.5 h-3.5 text-sky-400"></i>
-              <span id="splitModeLabel">Vertical Split</span>
-            </button>
-            <button onclick="resetSplitPane()" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 transition-all font-mono" title="Reset to 50/50">
-              50/50
-            </button>
-            <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
-            </button>
-          </div>
-        </div>
-
-        <!-- SPLIT CONTAINER -->
-        <div id="splitPaneContainer" class="border border-slate-800 rounded-2xl bg-slate-950/60 overflow-hidden relative flex flex-col md:flex-row h-[640px]">
-          <!-- PANE 1: ASSET STREAM LIST -->
-          <div id="splitPaneLeft" class="h-full overflow-y-auto p-4 space-y-3 flex-shrink-0 w-full md:w-1/2 border-b md:border-b-0 md:border-r border-slate-800/80 bg-slate-900/30">
-            <div id="resultsList" class="space-y-2.5">
-              <div class="text-center py-16 border border-slate-800/80 rounded-xl bg-slate-900/20 text-slate-500 text-xs">
-                No assets evaluated yet. Drag and drop files above or click a Quick-Load preset.
+            <!-- Spinner -->
+            <div id="scanSpinner" class="hidden text-center py-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-800 text-emerald-400 text-xs font-semibold animate-pulse">
+                Evaluating neural similarity & generating cryptographic proofs...
               </div>
             </div>
           </div>
 
-          <!-- RESIZER GUTTER (react-split-pane style) -->
-          <div id="splitResizer" class="Resizer vertical hidden md:flex items-center justify-center cursor-col-resize group" title="Drag to resize / Double-click to reset (50/50)">
-            <div id="resizerHandle" class="w-1 h-8 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></div>
+          <!-- EVALUATED ASSETS STREAM -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between px-1">
+              <span class="text-xs uppercase font-bold text-slate-300 flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i>
+                Evaluated Asset Stream
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Click card to inspect</span>
+            </div>
+            <div id="resultsList" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- RESIZER GUTTER (react-split-pane) -->
+        <div id="splitResizer" class="Resizer vertical hidden md:flex items-center justify-center cursor-col-resize group" title="Drag to resize / Double-click to reset (50/50)">
+          <div id="resizerHandle" class="w-1 h-10 rounded-full bg-slate-600 group-hover:bg-sky-400 group-hover:shadow-[0_0_8px_#38bdf8] transition-all"></div>
+        </div>
+
+        <!-- RIGHT PANE: FORENSIC INSPECTOR & CLEARANCE VAULT -->
+        <div id="splitPaneRight" class="flex-1 h-full overflow-y-auto p-5 bg-slate-950/40">
+          <div id="inspectorEmpty" class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500 text-xs">
+            <i data-lucide="scan-search" class="w-10 h-10 text-slate-700 mb-3"></i>
+            <span class="text-slate-400 font-semibold text-sm">Forensic Evidence & Certificate Inspector</span>
+            <p class="max-w-xs mt-1 text-slate-500">Run a scan and select an asset on the left to inspect its cryptographic signature, evidence comparison, and PROV-O graph.</p>
           </div>
 
-          <!-- PANE 2: FORENSIC INSPECTOR & CLEARANCE VAULT -->
-          <div id="splitPaneRight" class="flex-1 h-full overflow-y-auto p-5 bg-slate-950/40">
-            <div id="inspectorEmpty" class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500 text-xs">
-              <i data-lucide="scan-search" class="w-10 h-10 text-slate-700 mb-3"></i>
-              <span class="text-slate-400 font-semibold text-sm">Forensic Evidence & Certificate Inspector</span>
-              <p class="max-w-xs mt-1 text-slate-500">Run a scan and select an asset on the left to inspect its cryptographic signature, evidence comparison, and PROV-O graph.</p>
-            </div>
-
-            <div id="inspectorContent" class="hidden space-y-5">
-              <!-- Selected Asset Header -->
-              <div class="flex items-start justify-between pb-4 border-b border-slate-800">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span id="inspectAssetId" class="text-base font-bold text-white">AST-0001</span>
-                    <span id="inspectTrackBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">TEXT</span>
-                    <span id="inspectStatusBadge" class="text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
-                      PASSED
-                    </span>
-                  </div>
-                  <div class="text-[11px] font-mono text-slate-500 mt-1 truncate max-w-md" id="inspectHash">sha256:...</div>
-                </div>
-
+          <div id="inspectorContent" class="hidden space-y-5">
+            <!-- Selected Asset Header -->
+            <div class="flex items-start justify-between pb-4 border-b border-slate-800">
+              <div>
                 <div class="flex items-center gap-2">
-                  <button onclick="expandToModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1" title="Expand Fullscreen Modal">
-                    <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Expand
-                  </button>
+                  <span id="inspectAssetId" class="text-base font-bold text-white">AST-0001</span>
+                  <span id="inspectTrackBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">TEXT</span>
+                  <span id="inspectStatusBadge" class="text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
+                    PASSED
+                  </span>
                 </div>
+                <div class="text-[11px] font-mono text-slate-500 mt-1 truncate max-w-md" id="inspectHash">sha256:...</div>
               </div>
 
-              <!-- Threat & Evidence Box -->
-              <div id="inspectEvidenceBox" class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
-                    <i data-lucide="microscope" class="w-4 h-4 text-sky-400"></i> Deep Neural Similarity Evidence
-                  </span>
-                  <span id="inspectSimScore" class="text-xs font-mono font-bold text-emerald-400">0.0%</span>
-                </div>
-                <div id="inspectMatchedSource" class="text-xs text-rose-400 hidden font-semibold"></div>
-                <div id="inspectEvidenceDetail" class="text-xs font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-300 max-h-32 overflow-y-auto whitespace-pre-wrap"></div>
+              <div class="flex items-center gap-2">
+                <button onclick="expandToModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1" title="Expand Fullscreen Modal">
+                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Expand
+                </button>
               </div>
+            </div>
 
-              <!-- Cryptographic Certificate -->
-              <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs uppercase font-bold text-white flex items-center gap-1.5">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> RSASSA-PSS Clearance Certificate
-                  </span>
-                  <span id="inspectCertBadge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">VALID</span>
-                </div>
-                <pre id="inspectCertJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400 max-h-40 overflow-y-auto select-all"></pre>
+            <!-- Threat & Evidence Box -->
+            <div id="inspectEvidenceBox" class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="microscope" class="w-4 h-4 text-sky-400"></i> Deep Neural Similarity Evidence
+                </span>
+                <span id="inspectSimScore" class="text-xs font-mono font-bold text-emerald-400">0.0%</span>
               </div>
+              <div id="inspectMatchedSource" class="text-xs text-rose-400 hidden font-semibold"></div>
+              <div id="inspectEvidenceDetail" class="text-xs font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-300 max-h-32 overflow-y-auto whitespace-pre-wrap"></div>
+            </div>
 
-              <!-- Lineage Graph -->
-              <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
-                    <i data-lucide="git-branch" class="w-4 h-4 text-sky-400"></i> W3C PROV-O Lineage (JSON-LD)
-                  </span>
-                  <button onclick="copyInspectLineage()" class="text-xs text-sky-400 hover:underline font-semibold flex items-center gap-1">
-                    <i data-lucide="copy" class="w-3 h-3"></i> Copy
-                  </button>
-                </div>
-                <pre id="inspectProvJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-sky-400 max-h-40 overflow-y-auto select-all"></pre>
+            <!-- Cryptographic Certificate -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase font-bold text-white flex items-center gap-1.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> RSASSA-PSS Clearance Certificate
+                </span>
+                <span id="inspectCertBadge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">VALID</span>
               </div>
+              <pre id="inspectCertJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400 max-h-40 overflow-y-auto select-all"></pre>
+            </div>
+
+            <!-- Lineage Graph -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="git-branch" class="w-4 h-4 text-sky-400"></i> W3C PROV-O Lineage (JSON-LD)
+                </span>
+                <button onclick="copyInspectLineage()" class="text-xs text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                </button>
+              </div>
+              <pre id="inspectProvJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-sky-400 max-h-40 overflow-y-auto select-all"></pre>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
 
     <!-- ======================================================== -->
@@ -696,9 +681,114 @@
       lucide.createIcons();
     }
 
+    const INITIAL_DEMO_REPORT = {
+      summary: {
+        total_assets: 4,
+        passed_count: 2,
+        blocked_count: 1,
+        review_count: 1
+      },
+      results: [
+        {
+          asset_id: "AST-88219-TXT",
+          asset_hash: "sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b",
+          track: "TEXT",
+          status: "BLOCKED",
+          similarity_score: 0.942,
+          risk_band: "HIGH_RISK",
+          matched_source: "RefCorpus: New York Times 2023 Tech Archive (Doc #994)",
+          matched_chunk: "The proprietary transformer architecture incorporates a multi-tier attention mechanism...",
+          certificate: null,
+          lineage: {
+            "@context": "https://www.w3.org/ns/prov-o#",
+            "@type": "prov:Entity",
+            "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+            "prov:wasInvalidatedBy": "traceai:gate:cross_encoder",
+            "prov:endedAtTime": "2026-09-18T17:15:22Z",
+            "traceai:decision": "BLOCKED",
+            "traceai:score": 0.942
+          }
+        },
+        {
+          asset_id: "AST-88220-IMG",
+          asset_hash: "sha256:77bc09281aef034bce909283741829034871239840192834",
+          track: "IMAGE",
+          status: "PASSED",
+          similarity_score: 0.124,
+          risk_band: "CLEAN",
+          matched_source: null,
+          matched_chunk: null,
+          certificate: {
+            certificate_id: "CERT-77bc0928-1aef",
+            asset_hash: "sha256:77bc09281aef034bce909283741829034871239840192834",
+            algorithm: "RSASSA-PSS-SHA256",
+            key_fingerprint: "rsa2048:8f4c21aa0981e4b3",
+            decision: "PASSED",
+            signature: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0k19...",
+            issued_at: "2026-09-18T17:18:04Z"
+          },
+          lineage: {
+            "@context": "https://www.w3.org/ns/prov-o#",
+            "@type": "prov:Entity",
+            "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+            "prov:wasAssociatedWith": "traceai:signer:rsa_pss",
+            "prov:endedAtTime": "2026-09-18T17:18:04Z",
+            "traceai:decision": "PASSED"
+          }
+        },
+        {
+          asset_id: "AST-88221-COD",
+          asset_hash: "sha256:109923847291823904812390841209384019283471029384",
+          track: "CODE",
+          status: "HUMAN_REVIEW",
+          similarity_score: 0.812,
+          risk_band: "REVIEW_BAND",
+          matched_source: "RefCorpus: GitHub Linux Kernel GPL-2.0 Subsystem",
+          matched_chunk: "static inline int trace_event_raw_event_sched_switch(...)",
+          certificate: null,
+          lineage: {
+            "@context": "https://www.w3.org/ns/prov-o#",
+            "@type": "prov:Entity",
+            "prov:wasGeneratedBy": "traceai:router:confidence_band",
+            "prov:endedAtTime": "2026-09-18T17:21:40Z",
+            "traceai:decision": "HELD_IN_QUEUE",
+            "traceai:score": 0.812
+          }
+        },
+        {
+          asset_id: "AST-88222-TXT",
+          asset_hash: "sha256:998124019283401928340192834019283401928340192834",
+          track: "TEXT",
+          status: "PASSED",
+          similarity_score: 0.083,
+          risk_band: "CLEAN",
+          matched_source: null,
+          matched_chunk: null,
+          certificate: {
+            certificate_id: "CERT-99812401-9283",
+            asset_hash: "sha256:998124019283401928340192834019283401928340192834",
+            algorithm: "RSASSA-PSS-SHA256",
+            key_fingerprint: "rsa2048:8f4c21aa0981e4b3",
+            decision: "PASSED",
+            signature: "MIIBCgKCAQEAu819028301928301928301928301928301928...",
+            issued_at: "2026-09-18T17:24:11Z"
+          },
+          lineage: {
+            "@context": "https://www.w3.org/ns/prov-o#",
+            "@type": "prov:Entity",
+            "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+            "prov:endedAtTime": "2026-09-18T17:24:11Z",
+            "traceai:decision": "PASSED"
+          }
+        }
+      ]
+    };
+
     // Init Gateway
     async function initGateway() {
       initSplitPane();
+      currentReport = INITIAL_DEMO_REPORT;
+      renderResults(INITIAL_DEMO_REPORT);
       try {
         const res = await fetch('/api/info');
         const data = await res.json();
