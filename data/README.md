@@ -8,18 +8,15 @@
 
 ## Purpose
 
-This dataset exists to provide a small, controlled, reproducible demo dataset
-for the TRACEAI hackathon project.
+This dataset exists to provide a small, controlled, reproducible demo dataset for the TRACEAI hackathon project.
 
-TRACEAI traces where an AI training record came from and preserves evidence
-about its SOURCE, LICENCE, TRANSFORMATION, DATASET, TRAINING, and AUDIT trail.
+TRACEAI traces where an AI training record came from and preserves evidence about its SOURCE, LICENCE, TRANSFORMATION, DATASET, TRAINING, and AUDIT trail.
 
 This dataset provides:
 
 1. Sample text and image records for ingestion
 2. Provenance metadata for every record
-3. Controlled similarity levels (LOW / MEDIUM / HIGH) for demonstrating
-   the provenance review workflow
+3. Controlled similarity levels (LOW / MEDIUM / HIGH) for demonstrating the provenance review workflow
 4. A schema and data dictionary for downstream team members to consume
 5. Validation scripts to confirm data integrity
 
@@ -41,14 +38,11 @@ All records in this dataset are **SYNTHETIC / PROJECT-CREATED**.
 
 All records in this dataset are **project-created demo data**.
 
-- license: Project-created demo data
-- license_verified: 	rue (project-created — no external licence to verify)
-- source_url: 
-ull (no external source)
+- `license`: Project-created demo data
+- `license_verified`: `true` (project-created — no external licence to verify)
+- `source_url`: `null` (no external source)
 
-> **IMPORTANT**: This licence status applies ONLY to the demo data files in
-> data/sample/. The copyright index in mock_data/copyright_index/ is
-> governed by its own metadata. Do not confuse the two datasets.
+> **IMPORTANT**: This licence status applies ONLY to the demo data files in `data/sample/`. The copyright index in `mock_data/copyright_index/` is governed by its own metadata. Do not confuse the two datasets.
 
 ---
 
@@ -72,42 +66,39 @@ ull (no external source)
 
 ## Fields
 
-Every record in sample_sources.json contains the following fields:
+Every record in `sample_sources.json` contains the following fields:
 
 | Field | Required | Owner |
 |---|---|---|
-| 
-ecord_id | YES | DATA LAYER |
-| ile_name | YES | DATA LAYER |
-| ile_path | YES | DATA LAYER |
-| 
-ecord_type | YES | DATA LAYER |
-| source | YES | DATA LAYER |
-| source_type | YES | DATA LAYER |
-| source_url | NO | DATA LAYER |
-| license | YES | DATA LAYER |
-| license_verified | YES | DATA LAYER |
-| dataset | YES | DATA LAYER |
-| dataset_version | YES | DATA LAYER |
-| 	ransformation | YES | DATA LAYER |
-| parent_record | NO | DATA LAYER |
-| created_at | YES | DATA LAYER |
-| similarity_demo_category | NO | DATA LAYER |
-| similarity_demo_note | NO | DATA LAYER |
-| 
-otes | NO | DATA LAYER |
-| sha256 | — | DOWNSTREAM (gateway) |
-| phash | — | DOWNSTREAM (AI) |
-| embedding_id | — | DOWNSTREAM (AI/FAISS) |
+| `record_id` | YES | DATA LAYER |
+| `file_name` | YES | DATA LAYER |
+| `file_path` | YES | DATA LAYER |
+| `record_type` | YES | DATA LAYER |
+| `source` | YES | DATA LAYER |
+| `source_type` | YES | DATA LAYER |
+| `source_url` | NO | DATA LAYER |
+| `license` | YES | DATA LAYER |
+| `license_verified` | YES | DATA LAYER |
+| `dataset` | YES | DATA LAYER |
+| `dataset_version` | YES | DATA LAYER |
+| `transformation` | YES | DATA LAYER |
+| `parent_record` | NO | DATA LAYER |
+| `created_at` | YES | DATA LAYER |
+| `similarity_demo_category` | NO | DATA LAYER |
+| `similarity_demo_note` | NO | DATA LAYER |
+| `notes` | NO | DATA LAYER |
+| `sha256` | — | DOWNSTREAM (gateway) |
+| `phash` | — | DOWNSTREAM (AI) |
+| `embedding_id` | — | DOWNSTREAM (AI/FAISS) |
 
-See data/data_dictionary.md for full field documentation.
-See data/schema.json for the machine-readable schema.
+See `data/data_dictionary.md` for full field documentation.  
+See `data/schema.json` for the machine-readable schema.
 
 ---
 
 ## Dataset Structure
 
-`
+```
 data/
 |
 +-- sample/
@@ -130,7 +121,7 @@ data/
 +-- validate_data.py                (data quality validation script)
 +-- check_hashes.py                 (SHA-256 hash verification script)
 +-- DATA_QUALITY_REPORT.md          (validation results report)
-`
+```
 
 ---
 
@@ -138,59 +129,52 @@ data/
 
 ### 1. Ingestion
 
-The TRACEAI ingestion gateway (	raceai/gateway.py) discovers assets by
-scanning a directory. It uses AssetInput.from_file() to:
+The TRACEAI ingestion gateway (`traceai/gateway.py`) discovers assets by scanning a directory. It uses `AssetInput.from_file()` to:
 - Read file bytes
 - Detect MIME type and track (TEXT/IMAGE) via byte inspection
 - Compute SHA-256 hash
 
-The files in data/sample/documents/ and data/sample/images/ are the
-input assets. Point the gateway at data/sample/ or specific subdirectories.
+The files in `data/sample/documents/` and `data/sample/images/` are the input assets. Point the gateway at `data/sample/` or specific subdirectories.
 
 CLI usage:
-`
+```bash
 python main.py scan --input-dir ./data/sample --index-dir ./mock_data/copyright_index
-`
+```
 
 ### 2. Fingerprinting
 
-At ingestion, AssetInput.from_file() computes the SHA-256 hash.
-For images, the AI image track computes a perceptual hash (pHash).
+At ingestion, `AssetInput.from_file()` computes the SHA-256 hash.  
+For images, the AI image track computes a perceptual hash (pHash).  
 These are DOWNSTREAM operations and are NOT pre-computed in the data layer.
 
 ### 3. Similarity Analysis
 
-The text track uses bi-encoder recall + cross-encoder re-ranking against
-the copyright index in mock_data/copyright_index/.
+The text track uses bi-encoder recall + cross-encoder re-ranking against the copyright index in `mock_data/copyright_index/`.
 
 The image track uses pHash Hamming distance + CLIP cosine similarity.
 
-The sample data provides three controlled test cases (LOW/MEDIUM/HIGH)
-to exercise these pipelines.
+The sample data provides three controlled test cases (LOW/MEDIUM/HIGH) to exercise these pipelines.
 
 ### 4. Provenance Tracking
 
-Every record in sample_sources.json carries:
-- source: where the record came from
-- source_type: classification (synthetic/licensed/etc.)
-- source_url: external URL if applicable
-- 	ransformation: how the record was created or derived
-- parent_record: lineage reference
+Every record in `sample_sources.json` carries:
+- `source`: where the record came from
+- `source_type`: classification (synthetic/licensed/etc.)
+- `source_url`: external URL if applicable
+- `transformation`: how the record was created or derived
+- `parent_record`: lineage reference
 
-The W3C PROV-O lineage graph is built downstream by 	raceai/crypto/lineage.py.
-The data layer provides the raw provenance fields that lineage graph uses.
+The W3C PROV-O lineage graph is built downstream by `traceai/crypto/lineage.py`. The data layer provides the raw provenance fields that the lineage graph uses.
 
 ### 5. Licence Metadata Tracking
 
-Every record carries license and license_verified fields.
-These fields allow the audit layer to check licence status before issuing
-a cryptographic clearance certificate.
+Every record carries `license` and `license_verified` fields. These fields allow the audit layer to check licence status before issuing a cryptographic clearance certificate.
 
 ### 6. Lineage
 
-The parent_record field creates a basic lineage graph:
+The `parent_record` field creates a basic lineage graph:
 
-`
+```
 DOC-001 (root)
   |
   +-- DOC-002 (MEDIUM — same template, different domain)
@@ -202,25 +186,23 @@ IMG-001 (root)
   +-- IMG-002 (MEDIUM — same scene, added pond)
   |
   +-- IMG-003 (HIGH — near-duplicate)
-`
+```
 
 ### 7. Evidence / Report Generation
 
-The scan report (ScanReport) produced by the gateway aggregates:
+The scan report (`ScanReport`) produced by the gateway aggregates:
 - Asset status (PASSED / BLOCKED / HUMAN_REVIEW)
 - Matched source
 - Cryptographic certificate (if PASSED)
 - W3C PROV-O lineage graph
 
-The similarity_demo_category and similarity_demo_note fields in
-sample_sources.json document the expected review outcome for each
-demo record.
+The `similarity_demo_category` and `similarity_demo_note` fields in `sample_sources.json` document the expected review outcome for each demo record.
 
 ---
 
 ## Similarity Demonstration
 
-> **IMPORTANT**: LOW / MEDIUM / HIGH are DEMO REVIEW CATEGORIES, NOT legal conclusions.
+> **IMPORTANT**: LOW / MEDIUM / HIGH are DEMO REVIEW CATEGORIES, NOT legal conclusions.  
 > They guide human review. They do not determine copyright infringement.
 
 | Category | Demo Records | Description |
@@ -245,8 +227,7 @@ demo record.
 - Expected review category: HIGH — requires provenance/licence review
 - Purpose: Demonstrates the BLOCKED / HUMAN_REVIEW outcome for highly similar content.
 - Content: Near-duplicate of DOC-001 with minor wording changes.
-- NOTE: The actual gateway outcome depends on similarity thresholds configured in
-  	raceai/config.py. The data layer records the INTENDED demo category only.
+- NOTE: The actual gateway outcome depends on similarity thresholds configured in `traceai/config.py`. The data layer records the INTENDED demo category only.
 
 ---
 
@@ -258,8 +239,7 @@ demo record.
 | 1.x | Metadata corrections or additional fields — backward compatible |
 | 2.0 | Major structural change to the dataset or new record modalities |
 
-To release a new version: update dataset_version in dataset_manifest.json,
-update all records in sample_sources.json, and update this README.
+To release a new version: update `dataset_version` in `dataset_manifest.json`, update all records in `sample_sources.json`, and update this README.
 
 ---
 
@@ -279,20 +259,20 @@ update all records in sample_sources.json, and update this README.
 
 Run the data quality validation script:
 
-`ash
+```bash
 python data/validate_data.py
-`
+```
 
 Run SHA-256 hash verification:
 
-`ash
+```bash
 python data/check_hashes.py
-`
+```
 
-See data/DATA_QUALITY_REPORT.md for the latest validation results.
+See `data/DATA_QUALITY_REPORT.md` for the latest validation results.
 
 ---
 
-*Maintained by: TRACEAI Data Engineer*
-*Dataset: TRACEAI Synthetic Demo Dataset v1.0*
+*Maintained by: TRACEAI Data Engineer*  
+*Dataset: TRACEAI Synthetic Demo Dataset v1.0*  
 *Repository: https://github.com/Abhilash123-hub/smart_amrita_hackathon*

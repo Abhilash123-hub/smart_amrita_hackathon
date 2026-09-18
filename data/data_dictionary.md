@@ -1,20 +1,20 @@
 # TRACEAI Data Dictionary
 
-> **Dataset**: TRACEAI Synthetic Demo Dataset v1.0
-> **Last Updated**: 2026-09-18
+> **Dataset**: TRACEAI Synthetic Demo Dataset v1.0  
+> **Last Updated**: 2026-09-18  
 > **Owned by**: Data Layer (Data Engineer)
 
 ---
 
 ## Overview
 
-This data dictionary documents every metadata field used in data/sample/sample_sources.json.
+This data dictionary documents every metadata field used in `data/sample/sample_sources.json`.
 
 Fields are classified into two ownership categories:
 
 | Category | Meaning |
 |---|---|
-| **DATA LAYER** | Created and maintained by the data engineer. Present in sample_sources.json. |
+| **DATA LAYER** | Created and maintained by the data engineer. Present in `sample_sources.json`. |
 | **DOWNSTREAM** | Populated by the AI / ingestion gateway at runtime. Must NOT be pre-populated with fabricated values. |
 
 ---
@@ -23,44 +23,36 @@ Fields are classified into two ownership categories:
 
 | Field | Type | Required | Immutable | Owner | Description | Example |
 |---|---|---|---|---|---|---|
-| 
-ecord_id | string | YES | YES | DATA LAYER | Unique record identifier. Pattern: DOC-NNN or IMG-NNN. Must be unique across the entire dataset. | DOC-001 |
-| ile_name | string | YES | YES | DATA LAYER | Filename of the data asset (basename only, no directory path). | sample_document_1.txt |
-| ile_path | string | YES | YES | DATA LAYER | Relative path from the repository root to the data file. | data/sample/documents/sample_document_1.txt |
-| 
-ecord_type | string | YES | YES | DATA LAYER | Modality of the record. Must match the actual file type. Allowed values: 	ext, image, udio, ideo, code. | 	ext |
-| source | string | YES | YES | DATA LAYER | Human-readable description of the origin of this record. For synthetic records use the dataset name. | TRACEAI Synthetic Demo Dataset |
-| source_type | string | YES | YES | DATA LAYER | Type classification of the source. Allowed values: synthetic, public_domain, licensed, scraped, unknown. | synthetic |
-| source_url | string / null | NO | YES | DATA LAYER | URL of the external source. Use 
-ull for synthetic records. Do NOT invent URLs. | 
-ull |
-| license | string | YES | NO | DATA LAYER | Licence associated with this record. Do not claim unverified licences. | Project-created demo data |
-| license_verified | boolean | YES | NO | DATA LAYER | Whether the licence claim has been verified. Set to 	rue ONLY for project-created synthetic data or externally confirmed licences. | 	rue |
-| dataset | string | YES | YES | DATA LAYER | Name of the dataset this record belongs to. | TRACEAI Synthetic Demo Dataset |
-| dataset_version | string | YES | NO | DATA LAYER | Version of the dataset this record belongs to. | 1.0 |
-| 	ransformation | string | YES | YES | DATA LAYER | Description of the transformation history applied to this record. | Synthetic text generation |
-| parent_record | string / null | NO | YES | DATA LAYER | 
-ecord_id of the parent record if this is a derived record. Use 
-ull for root records. | DOC-001 |
-| created_at | string | YES | YES | DATA LAYER | Creation date in ISO-8601 YYYY-MM-DD format. | 2026-09-18 |
-| similarity_demo_category | string | NO | YES | DATA LAYER | **DEMO ONLY** — Intended provenance review category. Allowed values: LOW, MEDIUM, HIGH. **NOT a legal conclusion.** | HIGH |
-| similarity_demo_note | string | NO | YES | DATA LAYER | **DEMO ONLY** — Human-readable explanation of the similarity category for this record. | HIGH provenance review signal... |
-| 
-otes | string | NO | NO | DATA LAYER | Free-text additional notes about this record. | Synthetic record created for TRACEAI demonstration. |
+| `record_id` | string | YES | YES | DATA LAYER | Unique record identifier. Pattern: `DOC-NNN` or `IMG-NNN`. Must be unique across the entire dataset. | `DOC-001` |
+| `file_name` | string | YES | YES | DATA LAYER | Filename of the data asset (basename only, no directory path). | `sample_document_1.txt` |
+| `file_path` | string | YES | YES | DATA LAYER | Relative path from the repository root to the data file. | `data/sample/documents/sample_document_1.txt` |
+| `record_type` | string | YES | YES | DATA LAYER | Modality of the record. Must match the actual file type. Allowed values: `text`, `image`, `audio`, `video`, `code`. | `text` |
+| `source` | string | YES | YES | DATA LAYER | Human-readable description of the origin of this record. For synthetic records use the dataset name. | `TRACEAI Synthetic Demo Dataset` |
+| `source_type` | string | YES | YES | DATA LAYER | Type classification of the source. Allowed values: `synthetic`, `public_domain`, `licensed`, `scraped`, `unknown`. | `synthetic` |
+| `source_url` | string / null | NO | YES | DATA LAYER | URL of the external source. Use `null` for synthetic records. Do NOT invent URLs. | `null` |
+| `license` | string | YES | NO | DATA LAYER | Licence associated with this record. Do not claim unverified licences. | `Project-created demo data` |
+| `license_verified` | boolean | YES | NO | DATA LAYER | Whether the licence claim has been verified. Set to `true` ONLY for project-created synthetic data or externally confirmed licences. | `true` |
+| `dataset` | string | YES | YES | DATA LAYER | Name of the dataset this record belongs to. | `TRACEAI Synthetic Demo Dataset` |
+| `dataset_version` | string | YES | NO | DATA LAYER | Version of the dataset this record belongs to. | `1.0` |
+| `transformation` | string | YES | YES | DATA LAYER | Description of the transformation history applied to this record. | `Synthetic text generation` |
+| `parent_record` | string / null | NO | YES | DATA LAYER | `record_id` of the parent record if this is a derived record. Use `null` for root records. | `DOC-001` |
+| `created_at` | string | YES | YES | DATA LAYER | Creation date in ISO-8601 YYYY-MM-DD format. | `2026-09-18` |
+| `similarity_demo_category` | string | NO | YES | DATA LAYER | **DEMO ONLY** — Intended provenance review category. Allowed values: `LOW`, `MEDIUM`, `HIGH`. **NOT a legal conclusion.** | `HIGH` |
+| `similarity_demo_note` | string | NO | YES | DATA LAYER | **DEMO ONLY** — Human-readable explanation of the similarity category for this record. | `HIGH provenance review signal...` |
+| `notes` | string | NO | NO | DATA LAYER | Free-text additional notes about this record. | `Synthetic record created for TRACEAI demonstration.` |
 
 ---
 
 ## Downstream-Generated Fields (DO NOT FABRICATE)
 
 These fields are populated by the AI / ingestion gateway layer at runtime.
-The data layer MUST leave them absent or 
-ull. Pre-populating them with fabricated values is a data integrity violation.
+The data layer MUST leave them absent or `null`. Pre-populating them with fabricated values is a data integrity violation.
 
 | Field | Type | Owner | Generated By | Description |
 |---|---|---|---|---|
-| sha256 | string / null | DOWNSTREAM | Ingestion Gateway (AssetInput.from_file) | SHA-256 hash of the file bytes. Prefixed sha256:<hex>. Used for exact identity / integrity verification. **Not pHash.** |
-| phash | string / null | DOWNSTREAM | AI — Image Track | Perceptual hash for image records only. Used for visual similarity detection (Hamming distance). **Not SHA-256.** |
-| embedding_id | string / null | DOWNSTREAM | AI — Text Track / FAISS | Vector store embedding ID assigned when the record is indexed. |
+| `sha256` | string / null | DOWNSTREAM | Ingestion Gateway (`AssetInput.from_file`) | SHA-256 hash of the file bytes. Prefixed `sha256:<hex>`. Used for exact identity / integrity verification. **Not pHash.** |
+| `phash` | string / null | DOWNSTREAM | AI — Image Track | Perceptual hash for image records only. Used for visual similarity detection (Hamming distance). **Not SHA-256.** |
+| `embedding_id` | string / null | DOWNSTREAM | AI — Text Track / FAISS | Vector store embedding ID assigned when the record is indexed. |
 
 ---
 
@@ -78,18 +70,13 @@ Fields marked **Immutable: NO** may be updated to reflect:
 
 | Consumer | Fields Used |
 |---|---|
-| **Backend (API / Gateway)** | 
-ecord_id, ile_name, ile_path, 
-ecord_type |
-| **AI / Text Track** | 
-ecord_type, source_type, license, embedding_id (downstream) |
-| **AI / Image Track** | 
-ecord_type, source_type, phash (downstream) |
-| **Crypto / Certificate** | sha256 (downstream), 
-ecord_id |
-| **Lineage / Provenance** | parent_record, 	ransformation, dataset, dataset_version, source |
+| **Backend (API / Gateway)** | `record_id`, `file_name`, `file_path`, `record_type` |
+| **AI / Text Track** | `record_type`, `source_type`, `license`, `embedding_id` (downstream) |
+| **AI / Image Track** | `record_type`, `source_type`, `phash` (downstream) |
+| **Crypto / Certificate** | `sha256` (downstream), `record_id` |
+| **Lineage / Provenance** | `parent_record`, `transformation`, `dataset`, `dataset_version`, `source` |
 | **Audit / Report** | All fields |
-| **Demo / Test** | similarity_demo_category, similarity_demo_note |
+| **Demo / Test** | `similarity_demo_category`, `similarity_demo_note` |
 
 ---
 
@@ -101,30 +88,29 @@ ecord_id |
 
 | Category | Meaning | Demo Records |
 |---|---|---|
-| LOW | Record is unrelated to reference. Expected LOW provenance review signal. | DOC-001, IMG-001 |
-| MEDIUM | Record has partial overlap with reference. Expected MEDIUM provenance review signal. | DOC-002, IMG-002 |
-| HIGH | Record is highly similar to reference. Requires provenance/licence review before AI training use. | DOC-003, IMG-003 |
+| **LOW** | Record is unrelated to reference. Expected LOW provenance review signal. | `DOC-001`, `IMG-001` |
+| **MEDIUM** | Record has partial overlap with reference. Expected MEDIUM provenance review signal. | `DOC-002`, `IMG-002` |
+| **HIGH** | Record is highly similar to reference. Requires provenance/licence review before AI training use. | `DOC-003`, `IMG-003` |
 
 ---
 
 ## Licence Strategy
 
 - All records in the TRACEAI Synthetic Demo Dataset are **project-created synthetic data**.
-- license = Project-created demo data
-- license_verified = 	rue (because these records have no external licence to verify — they are entirely created by the project).
-- source_url = 
-ull (no external source).
+- `license` = `Project-created demo data`
+- `license_verified` = `true` (because these records have no external licence to verify — they are entirely created by the project).
+- `source_url` = `null` (no external source).
 - This does **not** mean the records are licensed for any specific purpose beyond internal TRACEAI demonstration.
 
 ---
 
 ## Lineage Strategy
 
-Lineage is represented using the parent_record field and the 	ransformation field.
+Lineage is represented using the `parent_record` field and the `transformation` field.
 
 Example lineage chain for this dataset:
 
-`
+```
 DOC-001 (root)
   parent_record: null
   transformation: Synthetic text generation
@@ -152,9 +138,9 @@ IMG-002
 IMG-003
   parent_record: IMG-001
   transformation: Near-duplicate of IMG-001 with minor brightness adjustment
-`
+```
 
 ---
 
-*This data dictionary is maintained by the TRACEAI Data Engineer.*
+*This data dictionary is maintained by the TRACEAI Data Engineer.*  
 *It covers only the DATA LAYER fields. Downstream fields are documented in the AI/integration layer.*
