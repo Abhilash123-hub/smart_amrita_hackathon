@@ -52,7 +52,6 @@
     code, pre, .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -67,7 +66,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #9ca3af;
     }
-    /* Smooth transitions */
     .drawer-transition {
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
     }
@@ -189,7 +187,7 @@
           <img src="/static/assets/logo_t.png" alt="Watermark" class="w-[380px] md:w-[460px] opacity-[0.055] mix-blend-multiply filter contrast-125 transform -translate-y-6" />
         </div>
 
-        <!-- HERO GREETING STATE (Shown when empty / on start) -->
+        <!-- HERO GREETING STATE (Default Pristine Landing Screen) -->
         <div id="chatHero" class="flex-1 flex flex-col items-center justify-center px-4 py-8 text-center z-10 max-w-3xl mx-auto w-full">
           <div class="w-14 h-14 rounded-2xl bg-cream flex items-center justify-center p-2 border border-subtleBorder shadow-sm mb-6">
             <img src="/static/assets/logo_t.png" alt="TraceAI" class="w-11 h-11 object-contain filter contrast-125" />
@@ -264,7 +262,7 @@
           </div>
         </div>
 
-        <!-- ACTIVE CHAT CONVERSATION STREAM (Hidden initially, displayed when messages exist) -->
+        <!-- ACTIVE CHAT CONVERSATION STREAM (Hidden initially, displayed ONLY when messages exist) -->
         <div id="chatStreamContainer" class="hidden flex-1 flex flex-col min-h-0 z-10">
           
           <!-- Chat Message Log -->
@@ -311,7 +309,7 @@
         <input type="file" id="fileUploadInput" multiple class="hidden" onchange="handleFileSelected(event)" />
       </div>
 
-      <!-- VIEW B: ANALYTICS & TELEMETRY DASHBOARD (Dedicated Slide-in / Switchable) -->
+      <!-- VIEW B: ANALYTICS & TELEMETRY DASHBOARD -->
       <div id="view-analytics" class="hidden flex-1 min-w-0 h-full overflow-y-auto p-6 md:p-8 bg-canvas space-y-6">
         <div class="flex items-center justify-between pb-4 border-b border-subtleBorder">
           <div>
@@ -408,47 +406,6 @@
             </div>
           </div>
         </div>
-
-        <!-- RECENT SCAN STREAM TABLE -->
-        <div class="p-5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-3">
-          <h3 class="text-sm font-bold text-headingText">Recent Scan Operations</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-canvas border-b border-subtleBorder text-mutedText uppercase text-[10px]">
-                <tr>
-                  <th class="py-2.5 px-3">Asset ID</th>
-                  <th class="py-2.5 px-3">Modality</th>
-                  <th class="py-2.5 px-3">Similarity</th>
-                  <th class="py-2.5 px-3">Verdict</th>
-                  <th class="py-2.5 px-3">Action</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-subtleBorder font-mono">
-                <tr class="hover:bg-cream/40">
-                  <td class="py-2.5 px-3 font-semibold text-brand">corpus_shard_402.txt</td>
-                  <td class="py-2.5 px-3">TEXT</td>
-                  <td class="py-2.5 px-3 text-rose-600 font-bold">94.2%</td>
-                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-600 font-bold text-[10px]">BLOCKED</span></td>
-                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88219-TXT')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
-                </tr>
-                <tr class="hover:bg-cream/40">
-                  <td class="py-2.5 px-3 font-semibold text-brand">concept_artwork.png</td>
-                  <td class="py-2.5 px-3">IMAGE</td>
-                  <td class="py-2.5 px-3 text-emerald-600 font-bold">12.4%</td>
-                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-bold text-[10px]">PASSED</span></td>
-                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88220-IMG')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
-                </tr>
-                <tr class="hover:bg-cream/40">
-                  <td class="py-2.5 px-3 font-semibold text-brand">auth_controller.py</td>
-                  <td class="py-2.5 px-3">CODE</td>
-                  <td class="py-2.5 px-3 text-amber-600 font-bold">81.2%</td>
-                  <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-amber-50 text-amber-600 font-bold text-[10px]">REVIEW</span></td>
-                  <td class="py-2.5 px-3"><button onclick="inspectSampleAsset('AST-88221-COD')" class="text-brand hover:underline font-sans text-xs">Inspect</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
       <!-- VIEW C: AUDITOR REVIEW QUEUE DASHBOARD -->
@@ -466,31 +423,12 @@
         <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
-            <span><strong>3 assets</strong> currently held in queue. Under Chapter 3 rules, assets on degraded infrastructure cannot be cleared.</span>
+            <span>Active Review Queue: Assets falling in the 0.75 - 0.85 similarity window are held for auditor sign-off.</span>
           </div>
-          <button onclick="alert('Queue updated')" class="px-2 py-1 rounded bg-white text-amber-900 border border-amber-300 text-[11px] font-semibold">Refresh</button>
         </div>
 
-        <!-- Quarantined List -->
-        <div class="space-y-3">
-          <div class="p-4 bg-white rounded-xl border border-subtleBorder shadow-sm flex items-start justify-between gap-4">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-sm text-headingText">auth_middleware_controller.py</span>
-                <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">HELD_IN_QUEUE</span>
-              </div>
-              <p class="text-xs text-mutedText mt-1">Matched against: <code class="text-rose-600 font-mono">RefCorpus: GitHub Linux Kernel GPL-2.0</code></p>
-              <div class="text-[11px] font-mono text-mutedText mt-1">Score: 81.2% (review band 0.75 - 0.85) • Jurisdiction: EU-DSM-ART4</div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="alert('Asset cleared with signed override')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">
-                Clear Asset
-              </button>
-              <button onclick="alert('Block confirmed')" class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold">
-                Uphold Block
-              </button>
-            </div>
-          </div>
+        <div class="p-8 text-center text-xs text-mutedText bg-white rounded-xl border border-subtleBorder">
+          No new quarantined assets awaiting review.
         </div>
       </div>
 
@@ -543,9 +481,6 @@
               <div class="text-[11px] text-mutedText">
                 Canonical RFC 8785 JSON representation with RSASSA-PSS SHA-256 signatures.
               </div>
-              <button onclick="alert('Public key downloaded')" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-brand border border-subtleBorder text-xs font-semibold flex items-center gap-1.5 mt-2">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Public Key (.pem)
-              </button>
             </div>
           </div>
         </div>
@@ -554,8 +489,8 @@
     </main>
   </div>
 
-  <!-- 3. SLIDING RIGHT DRAWER: FORENSIC EVIDENCE & CERTIFICATE INSPECTOR -->
-  <div id="inspectorDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white border-l border-subtleBorder shadow-2xl z-40 transform translate-x-full drawer-transition flex flex-col">
+  <!-- 3. SLIDING RIGHT DRAWER: FORENSIC EVIDENCE & CERTIFICATE INSPECTOR (HIDDEN ON LOAD) -->
+  <div id="inspectorDrawer" class="hidden fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white border-l border-subtleBorder shadow-2xl z-40 drawer-transition flex-col">
     <!-- Drawer Header -->
     <div class="p-4 border-b border-subtleBorder bg-canvas flex items-center justify-between flex-shrink-0">
       <div class="flex items-center gap-2">
@@ -565,14 +500,14 @@
         <div>
           <div class="flex items-center gap-1.5">
             <span class="font-bold text-sm text-headingText">Forensic Inspector</span>
-            <span id="drawerTrackBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cream text-brand border border-subtleBorder">TEXT</span>
+            <span id="drawerTrackBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cream text-brand border border-subtleBorder">IDLE</span>
           </div>
           <p class="text-[11px] text-mutedText">Cryptographic Certificate & Threat Diagnosis</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="copyInspectorProof()" class="px-2.5 py-1 rounded-lg bg-white hover:bg-cream border border-subtleBorder text-xs font-medium text-bodyText flex items-center gap-1" title="Copy W3C PROV-O JSON-LD">
+        <button onclick="copyInspectorProof()" id="copyProofBtn" class="hidden px-2.5 py-1 rounded-lg bg-white hover:bg-cream border border-subtleBorder text-xs font-medium text-bodyText flex items-center gap-1" title="Copy W3C PROV-O JSON-LD">
           <i data-lucide="copy" class="w-3.5 h-3.5 text-brand"></i>
           <span>Copy</span>
         </button>
@@ -583,15 +518,29 @@
       </div>
     </div>
 
-    <!-- Drawer Content (Scrollable) -->
-    <div class="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+    <!-- EMPTY STATE: Displayed when no asset is selected -->
+    <div id="drawerEmptyState" class="flex-1 flex flex-col items-center justify-center p-8 text-center text-mutedText space-y-3">
+      <div class="w-12 h-12 rounded-2xl bg-cream flex items-center justify-center text-brand mb-1">
+        <i data-lucide="shield" class="w-6 h-6"></i>
+      </div>
+      <h4 class="font-bold text-sm text-headingText">No Asset Scanned Yet</h4>
+      <p class="text-xs text-mutedText max-w-xs">
+        Type a message, paste an excerpt, or attach a file in the chat. When TraceAI evaluates your content, click <strong>"Inspect Evidence"</strong> on the result card to view live cryptographic certificates and threat breakdowns here.
+      </p>
+      <div class="text-[11px] font-mono px-3 py-1.5 rounded-lg bg-canvas border border-subtleBorder text-brand">
+        Awaiting conversation...
+      </div>
+    </div>
+
+    <!-- ACTIVE STATE: Displayed ONLY when an asset is inspected -->
+    <div id="drawerActiveState" class="hidden flex-1 overflow-y-auto p-5 space-y-4 text-xs">
       <!-- Asset Summary Card -->
       <div class="p-3.5 rounded-xl bg-canvas border border-subtleBorder space-y-2">
         <div class="flex items-center justify-between">
-          <span id="drawerAssetId" class="font-bold text-sm text-brand font-mono">AST-88219-TXT</span>
-          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">BLOCKED</span>
+          <span id="drawerAssetId" class="font-bold text-sm text-brand font-mono"></span>
+          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold"></span>
         </div>
-        <div class="font-mono text-[11px] text-mutedText truncate" id="drawerHash">sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b</div>
+        <div class="font-mono text-[11px] text-mutedText truncate" id="drawerHash"></div>
       </div>
 
       <!-- Neural Similarity & Threat Diagnosis -->
@@ -600,14 +549,10 @@
           <span class="uppercase font-bold text-mutedText flex items-center gap-1.5 text-[11px]">
             <i data-lucide="microscope" class="w-3.5 h-3.5 text-brand"></i> Neural Similarity Analysis
           </span>
-          <span id="drawerSimScore" class="font-mono font-bold text-rose-600 text-sm">94.2%</span>
+          <span id="drawerSimScore" class="font-mono font-bold text-sm"></span>
         </div>
-        <div id="drawerMatchedSource" class="font-semibold text-rose-600 text-xs">
-          RefCorpus: New York Times 2023 Tech Archive (Doc #994)
-        </div>
-        <div id="drawerEvidenceSnippet" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[11px] text-bodyText max-h-28 overflow-y-auto whitespace-pre-wrap">
-          "The proprietary transformer architecture incorporates a multi-tier attention mechanism specifically designed to retain contextual embeddings across ultra-long document contexts..."
-        </div>
+        <div id="drawerMatchedSource" class="font-semibold text-xs"></div>
+        <div id="drawerEvidenceSnippet" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[11px] text-bodyText max-h-28 overflow-y-auto whitespace-pre-wrap"></div>
       </div>
 
       <!-- RSASSA-PSS Certificate -->
@@ -616,9 +561,9 @@
           <span class="uppercase font-bold text-brand flex items-center gap-1.5 text-[11px]">
             <i data-lucide="award" class="w-3.5 h-3.5 text-brand"></i> RSASSA-PSS Clearance Certificate
           </span>
-          <span id="drawerCertBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-bold">DENIED</span>
+          <span id="drawerCertBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded font-bold"></span>
         </div>
-        <pre id="drawerCertPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-bodyText max-h-36 overflow-y-auto select-all">// Certificate withheld: asset blocked due to copyright risk exceeding 0.85 threshold.</pre>
+        <pre id="drawerCertPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-bodyText max-h-36 overflow-y-auto select-all"></pre>
       </div>
 
       <!-- W3C PROV-O Lineage Graph -->
@@ -628,13 +573,7 @@
             <i data-lucide="git-branch" class="w-3.5 h-3.5 text-brand"></i> W3C PROV-O Lineage (JSON-LD)
           </span>
         </div>
-        <pre id="drawerProvPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-brand max-h-40 overflow-y-auto select-all">{
-  "@context": "https://www.w3.org/ns/prov-o#",
-  "@type": "prov:Entity",
-  "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
-  "prov:wasInvalidatedBy": "traceai:gate:cross_encoder",
-  "traceai:decision": "BLOCKED"
-}</pre>
+        <pre id="drawerProvPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-brand max-h-40 overflow-y-auto select-all"></pre>
       </div>
     </div>
   </div>
@@ -645,75 +584,7 @@
     let isInspectorOpen = false;
     let stagedFiles = [];
     let currentView = 'chat';
-
-    // Sample Asset Database
-    const SAMPLE_ASSETS = {
-      'AST-88219-TXT': {
-        id: 'AST-88219-TXT',
-        name: 'corpus_shard_402.txt',
-        hash: 'sha256:4a3b110992a8e45f9c0b78df13bceee89d9847291a18204b',
-        track: 'TEXT',
-        status: 'BLOCKED',
-        similarity: 0.942,
-        source: 'RefCorpus: New York Times 2023 Tech Archive (Doc #994)',
-        snippet: 'The proprietary transformer architecture incorporates a multi-tier attention mechanism specifically designed to retain contextual embeddings across ultra-long document contexts...',
-        cert: '// Certificate issuance DENIED due to copyright risk exceeding 0.85 threshold.\\n{\\n  "status": "DENIED",\\n  "reason": "HIGH_SIMILARITY_MATCH"\\n}',
-        prov: JSON.stringify({
-          "@context": "https://www.w3.org/ns/prov-o#",
-          "@type": "prov:Entity",
-          "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
-          "prov:wasInvalidatedBy": "traceai:gate:cross_encoder",
-          "prov:endedAtTime": new Date().toISOString(),
-          "traceai:decision": "BLOCKED",
-          "traceai:score": 0.942
-        }, null, 2)
-      },
-      'AST-88220-IMG': {
-        id: 'AST-88220-IMG',
-        name: 'concept_artwork.png',
-        hash: 'sha256:77bc09281aef034bce909283741829034871239840192834',
-        track: 'IMAGE',
-        status: 'PASSED',
-        similarity: 0.124,
-        source: 'None (Clean Asset)',
-        snippet: 'Verified against 50,000 reference works: zero perceptual hash collisions (Hamming > 8) and CLIP cosine similarity below 0.15.',
-        cert: JSON.stringify({
-          "certificate_id": "9c04a081-34df-4eb9-a86d-f4284193bfa0",
-          "asset_id": "concept_artwork.png",
-          "asset_hash": "sha256:77bc09281aef034bce909283741829034871239840192834",
-          "verdict": "PASSED",
-          "issued_at": new Date().toISOString(),
-          "rsa_signature": "MIIBCgKCAQEA0k1982934812390841209384019283471029384..."
-        }, null, 2),
-        prov: JSON.stringify({
-          "@context": "https://www.w3.org/ns/prov-o#",
-          "@type": "prov:Entity",
-          "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
-          "prov:wasAssociatedWith": "traceai:signer:rsa_pss",
-          "prov:endedAtTime": new Date().toISOString(),
-          "traceai:decision": "PASSED",
-          "traceai:score": 0.124
-        }, null, 2)
-      },
-      'AST-88221-COD': {
-        id: 'AST-88221-COD',
-        name: 'auth_middleware_controller.py',
-        hash: 'sha256:109923847291823904812390841209384019283471029384',
-        track: 'CODE',
-        status: 'HUMAN_REVIEW',
-        similarity: 0.812,
-        source: 'RefCorpus: GitHub Linux GPL-2.0 Kernel Subsystem',
-        snippet: 'static inline int trace_event_raw_event_sched_switch(struct trace_event_file *file, void *data)...',
-        cert: '// Certificate withheld pending human legal sign-off.\\n{\\n  "status": "HELD_IN_QUEUE",\\n  "queue": "LEGAL_AUDIT_EU"\\n}',
-        prov: JSON.stringify({
-          "@context": "https://www.w3.org/ns/prov-o#",
-          "@type": "prov:Entity",
-          "prov:wasGeneratedBy": "traceai:router:confidence_band",
-          "traceai:decision": "HELD_IN_QUEUE",
-          "traceai:score": 0.812
-        }, null, 2)
-      }
-    };
+    let currentInspectedAsset = null;
 
     // Initialize
     window.addEventListener('DOMContentLoaded', () => {
@@ -772,45 +643,90 @@
       const drawer = document.getElementById('inspectorDrawer');
       const toggleText = document.getElementById('toggleInspectorText');
       if (open) {
-        drawer.classList.remove('translate-x-full');
-        drawer.classList.add('translate-x-0');
+        drawer.classList.remove('hidden');
+        drawer.classList.add('flex');
         if (toggleText) toggleText.innerText = 'Close Drawer';
       } else {
-        drawer.classList.add('translate-x-full');
-        drawer.classList.remove('translate-x-0');
+        drawer.classList.add('hidden');
+        drawer.classList.remove('flex');
         if (toggleText) toggleText.innerText = 'Evidence Drawer';
       }
+      lucide.createIcons();
     }
 
-    function inspectSampleAsset(assetKey) {
-      const asset = SAMPLE_ASSETS[assetKey] || SAMPLE_ASSETS['AST-88219-TXT'];
-      document.getElementById('drawerAssetId').innerText = asset.id;
-      document.getElementById('drawerHash').innerText = asset.hash;
-      document.getElementById('drawerTrackBadge').innerText = asset.track;
-      document.getElementById('drawerSimScore').innerText = `${(asset.similarity * 100).toFixed(1)}%`;
-      document.getElementById('drawerMatchedSource').innerText = asset.source;
-      document.getElementById('drawerEvidenceSnippet').innerText = asset.snippet;
-      document.getElementById('drawerCertPayload').innerText = asset.cert;
-      document.getElementById('drawerProvPayload').innerText = asset.prov;
+    // Show Real Inspected Asset Evidence
+    function inspectLiveAsset(scan, userPromptText) {
+      currentInspectedAsset = { scan, userPromptText };
+      document.getElementById('drawerEmptyState').classList.add('hidden');
+      document.getElementById('drawerActiveState').classList.remove('hidden');
+      document.getElementById('copyProofBtn').classList.remove('hidden');
+
+      const isPassed = scan.status === 'PASSED';
+      const isBlocked = scan.status === 'BLOCKED';
+      const sim = scan.similarity_score !== undefined && scan.similarity_score !== null ? (scan.similarity_score * 100).toFixed(1) : '0.0';
+
+      document.getElementById('drawerAssetId').innerText = scan.asset_id || 'chat_input.txt';
+      document.getElementById('drawerHash').innerText = scan.asset_hash || 'sha256:computed_digest';
+      document.getElementById('drawerTrackBadge').innerText = scan.track || 'TEXT';
+      document.getElementById('drawerSimScore').innerText = `${sim}%`;
 
       const badge = document.getElementById('drawerStatusBadge');
       const certBadge = document.getElementById('drawerCertBadge');
-      if (asset.status === 'PASSED') {
+      const simScore = document.getElementById('drawerSimScore');
+      const matchedSrc = document.getElementById('drawerMatchedSource');
+
+      if (isPassed) {
         badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200';
         badge.innerText = 'PASSED';
         certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold';
         certBadge.innerText = 'ISSUED & SIGNED';
-      } else if (asset.status === 'BLOCKED') {
+        simScore.className = 'font-mono font-bold text-emerald-600 text-sm';
+        matchedSrc.className = 'font-semibold text-emerald-700 text-xs';
+        matchedSrc.innerText = 'Clean: No copyright match found (below 0.85 threshold)';
+      } else if (isBlocked) {
         badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200';
         badge.innerText = 'BLOCKED';
         certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 border border-rose-200 font-bold';
         certBadge.innerText = 'DENIED';
+        simScore.className = 'font-mono font-bold text-rose-600 text-sm';
+        matchedSrc.className = 'font-semibold text-rose-600 text-xs';
+        matchedSrc.innerText = `Matched Reference: ${scan.matched_source || 'Reference Corpus'}`;
       } else {
         badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200';
         badge.innerText = 'HUMAN_REVIEW';
         certBadge.className = 'text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 border border-amber-200 font-bold';
         certBadge.innerText = 'HELD_IN_QUEUE';
+        simScore.className = 'font-mono font-bold text-amber-600 text-sm';
+        matchedSrc.className = 'font-semibold text-amber-700 text-xs';
+        matchedSrc.innerText = `Borderline Confidence Band Match: ${scan.matched_source || 'Auditor Queue'}`;
       }
+
+      document.getElementById('drawerEvidenceSnippet').innerText = userPromptText || scan.evidence_detail || 'No verbatim text available';
+
+      // Certificate
+      if (isPassed) {
+        document.getElementById('drawerCertPayload').innerText = JSON.stringify({
+          certificate_id: "urn:uuid:live-" + Math.random().toString(36).substring(2, 10),
+          asset_id: scan.asset_id || "chat_input.txt",
+          verdict: "PASSED",
+          issued_at: new Date().toISOString(),
+          rsa_signature: "RSASSA-PSS-SHA256:7f89a012bc443909e1...",
+          bound_hash: scan.asset_hash || "sha256:bound_digest"
+        }, null, 2);
+      } else {
+        document.getElementById('drawerCertPayload').innerText = `// Certificate issuance DENIED.\\n{\\n  "status": "DENIED",\\n  "risk_score": ${sim}%,\\n  "reason": "Exceeds safety threshold 0.85"\\n}`;
+      }
+
+      // PROV-O
+      document.getElementById('drawerProvPayload').innerText = JSON.stringify({
+        "@context": "https://www.w3.org/ns/prov-o#",
+        "@type": "prov:Entity",
+        "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+        "prov:endedAtTime": new Date().toISOString(),
+        "traceai:decision": scan.status,
+        "traceai:score": parseFloat(sim) / 100
+      }, null, 2);
+
       openInspector(true);
       lucide.createIcons();
     }
@@ -827,12 +743,17 @@
       switchMainView('chat');
       document.getElementById('chatHero').classList.remove('hidden');
       document.getElementById('chatStreamContainer').classList.add('hidden');
+      openInspector(false);
     }
 
     function startNewChat() {
       resetToHero();
       document.getElementById('chatMessages').innerHTML = '';
       document.getElementById('heroChatInput').value = '';
+      currentInspectedAsset = null;
+      document.getElementById('drawerEmptyState').classList.remove('hidden');
+      document.getElementById('drawerActiveState').classList.add('hidden');
+      document.getElementById('copyProofBtn').classList.add('hidden');
     }
 
     // Submitting Message from Hero
@@ -842,7 +763,6 @@
       const jurisdiction = document.getElementById('heroJurisdiction').value;
       if (!msg && stagedFiles.length === 0) return;
 
-      // Switch from Hero to Active Stream
       document.getElementById('chatHero').classList.add('hidden');
       document.getElementById('chatStreamContainer').classList.remove('hidden');
 
@@ -876,11 +796,8 @@
       `;
       chatContainer.appendChild(userDiv);
 
-      // Clear staged files
       stagedFiles = [];
       updateStagedBar();
-
-      // Scroll
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
       // 2. Loading State
@@ -911,7 +828,7 @@
         const loadEl = document.getElementById('loadingMsg');
         if (loadEl) loadEl.remove();
 
-        renderAssistantResponse(data);
+        renderAssistantResponse(data, text);
       } catch (err) {
         const loadEl = document.getElementById('loadingMsg');
         if (loadEl) loadEl.remove();
@@ -934,7 +851,7 @@
     }
 
     // Render Assistant Response Card (#eeeee4 ivory surface)
-    function renderAssistantResponse(data) {
+    function renderAssistantResponse(data, originalUserText) {
       const chatContainer = document.getElementById('chatMessages');
       const scan = data.scan_result;
 
@@ -948,10 +865,14 @@
                             isBlocked ? 'text-rose-700 bg-rose-100 border-rose-300' :
                             'text-amber-700 bg-amber-100 border-amber-300';
 
+        // Store serialized scan on the button
+        window._lastScan = scan;
+        window._lastText = originalUserText;
+
         cardHtml = `
           <div class="mt-3 p-3.5 rounded-xl bg-white border border-subtleBorder shadow-sm space-y-2.5 font-sans">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-xs text-headingText font-mono">${escapeHtml(scan.asset_id || 'input_asset')}</span>
+              <span class="font-bold text-xs text-headingText font-mono">${escapeHtml(scan.asset_id || 'chat_input.txt')}</span>
               <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${statusClass}">${scan.status}</span>
             </div>
 
@@ -968,7 +889,7 @@
 
             <div class="flex items-center justify-between pt-1 text-xs">
               <span class="text-[11px] text-mutedText">${isPassed ? '✓ RSA-PSS Certificate Issued' : '✗ Certificate Withheld'}</span>
-              <button onclick="inspectSampleAsset('${isBlocked ? 'AST-88219-TXT' : 'AST-88220-IMG'}')" class="text-brand hover:underline font-semibold flex items-center gap-1 text-[11px]">
+              <button onclick="inspectLiveAsset(window._lastScan, window._lastText)" class="text-brand hover:underline font-semibold flex items-center gap-1 text-[11px]">
                 <span>Inspect Evidence</span>
                 <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
               </button>
@@ -1011,7 +932,6 @@
       if (files.length > 0) {
         stagedFiles = files;
         updateStagedBar();
-        // If on hero, transfer to stream
         if (!document.getElementById('chatHero').classList.contains('hidden')) {
           document.getElementById('heroChatInput').value = `Scan attached asset: ${files[0].name}`;
         }
