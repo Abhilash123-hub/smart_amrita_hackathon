@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TraceAI — Multimodal Ingestion Gateway & Cryptographic Provenance</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            },
+            darkbg: '#090d16',
+            darkpanel: '#111827',
+            darkcard: '#161f33',
+            bordercolor: '#1f293d'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #090d16;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+    }
+    .glow-rose {
+      box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35);
+    }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP NAVIGATION -->
+  <header class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-lg font-bold tracking-tight text-white">TraceAI</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v0.1.0 MVP</span>
+          </div>
+          <p class="text-xs text-slate-400">Inline Multimodal Ingestion Gateway</p>
+        </div>
+      </div>
+
+      <!-- System Status Indicators -->
+      <div class="flex items-center gap-4 text-xs">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-300 font-medium">Gateway: Active</span>
+          <span class="text-slate-500 font-mono text-[11px]" id="keyFingerprintShort">key: loading...</span>
+        </div>
+        <a href="/docs" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors font-medium">
+          <i data-lucide="file-code-2" class="w-4 h-4"></i>
+          <span>API Docs</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-8 w-full">
+
+    <!-- HERO METRICS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Total Ingested
+        </span>
+        <div class="mt-2 text-2xl font-extrabold text-white" id="statTotal">0</div>
+        <div class="text-[11px] text-slate-500">Multimodal assets evaluated</div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="badge-check" class="w-4 h-4 text-emerald-400"></i> Passed (Clean)
+        </span>
+        <div class="mt-2 text-2xl font-extrabold text-emerald-400" id="statPassed">0</div>
+        <div class="text-[11px] text-emerald-500/80">RSA-PSS Signed Certificates</div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i> Blocked (Risk)
+        </span>
+        <div class="mt-2 text-2xl font-extrabold text-rose-400" id="statBlocked">0</div>
+        <div class="text-[11px] text-rose-500/80">Copyright infringements intercepted</div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="cpu" class="w-4 h-4 text-sky-400"></i> Tracks Active
+        </span>
+        <div class="mt-2 text-sm font-semibold text-sky-300">Text & Image</div>
+        <div class="text-[11px] text-slate-500">Bi/Cross-Encoder & pHash/CLIP</div>
+      </div>
+    </div>
+
+    <!-- INGESTION GATEWAY DROPZONE & DEMO BAR -->
+    <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
+            Inline Ingestion Gateway
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Drop raw files directly into the gateway. Inspects actual bytes, detects spoofed extensions, and signs clean outputs.
+          </p>
+        </div>
+
+        <!-- QUICK DEMO PRESETS -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs text-slate-400 font-medium mr-1">Demo Quick-Loads:</span>
+          <button onclick="loadDemoClean()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium transition-all flex items-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i> Clean Batch
+          </button>
+          <button onclick="loadDemoDirty()" class="text-xs px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium transition-all flex items-center gap-1.5">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Dirty Batch (.public_domain)
+          </button>
+          <button onclick="loadDemoMixed()" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium transition-all flex items-center gap-1.5">
+            <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> Mixed Test
+          </button>
+        </div>
+      </div>
+
+      <!-- DROPZONE BOX -->
+      <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/80 rounded-xl p-8 text-center transition-all cursor-pointer bg-slate-950/40 group">
+        <input type="file" id="fileInput" multiple class="hidden" />
+        <div class="flex flex-col items-center justify-center gap-3 pointer-events-none">
+          <div class="w-14 h-14 rounded-2xl bg-slate-800/80 group-hover:bg-emerald-500/10 border border-slate-700 group-hover:border-emerald-500/30 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-all">
+            <i data-lucide="file-up" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <span class="text-sm font-semibold text-white">Click to upload</span> or drag and drop files here
+            <p class="text-xs text-slate-500 mt-1">Supports Text (.txt, .md, .csv) and Images (.png, .jpg, .webp, .public_domain)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELECTED FILES & SCAN TRIGGER -->
+      <div id="stagingArea" class="hidden mt-4 pt-4 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-sm text-slate-300">
+          <i data-lucide="files" class="w-4 h-4 text-emerald-400"></i>
+          <span id="stagedCount">0 files staged</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="clearStaged()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors">Clear</button>
+          <button id="scanButton" onclick="triggerScan()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all">
+            <i data-lucide="scan" class="w-4 h-4"></i>
+            <span>Execute Ingestion Scan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SCANNING SPINNER -->
+      <div id="scanSpinner" class="hidden mt-6 text-center py-6">
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400 text-sm font-medium">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          Analyzing raw bytes & computing cryptographic hashes...
+        </div>
+      </div>
+    </section>
+
+    <!-- EVALUATION RESULTS GRID -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
+          Ingestion & Clearance Audit Log
+        </h3>
+        <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-colors">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
+        </button>
+      </div>
+
+      <!-- RESULTS CONTAINER -->
+      <div id="resultsList" class="space-y-3">
+        <div class="text-center py-12 border border-slate-800/80 rounded-2xl bg-slate-900/20 text-slate-500">
+          <i data-lucide="inbox" class="w-10 h-10 mx-auto text-slate-600 mb-2"></i>
+          <p class="text-sm">No assets evaluated yet. Upload files or click a Demo Quick-Load preset above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRYPTOGRAPHIC VERIFIER SECTION -->
+    <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="key-round" class="w-5 h-5 text-emerald-400"></i>
+          Cryptographic Certificate Verifier
+        </h3>
+        <p class="text-xs text-slate-400 mt-1">
+          Verify any clearance certificate independently using the Gateway's RSA-PSS public key.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Asset SHA-256 Hash</label>
+          <input type="text" id="verifyHash" placeholder="sha256:..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Base64 Signature</label>
+          <input type="text" id="verifySig" placeholder="RSA-PSS signature base64..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <div id="verifyResult" class="text-xs font-medium"></div>
+        <button onclick="testVerifySignature()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors flex items-center gap-1.5">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> Verify Signature
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: CERTIFICATE & PROVENANCE INSPECTOR -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="award" class="w-5 h-5 text-emerald-400"></i>
+          <h4 class="text-base font-bold text-white" id="modalTitle">Clearance Certificate</h4>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-4 text-xs font-mono">
+        <div>
+          <span class="text-slate-400 block font-sans text-xs uppercase font-semibold mb-1">Cryptographic Certificate Payload:</span>
+          <pre id="modalCertJson" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-emerald-400 whitespace-pre-wrap select-all overflow-x-auto"></pre>
+        </div>
+        <div>
+          <span class="text-slate-400 block font-sans text-xs uppercase font-semibold mb-1">W3C PROV-O Lineage (JSON-LD):</span>
+          <pre id="modalProvJson" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-sky-400 whitespace-pre-wrap select-all overflow-x-auto"></pre>
+        </div>
+      </div>
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/50 flex justify-end gap-2">
+        <button onclick="copyModalContent()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">Copy Payload</button>
+        <button onclick="closeModal()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold transition-colors">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let stagedFiles = [];
+    let currentReport = null;
+
+    // Initialize Gateway metadata on load
+    async function initGateway() {
+      try {
+        const res = await fetch('/api/info');
+        const data = await res.json();
+        document.getElementById('keyFingerprintShort').innerText = data.public_key_fingerprint ? data.public_key_fingerprint.slice(0, 18) + '...' : 'ready';
+      } catch (e) {
+        console.error('Failed to contact gateway:', e);
+      }
+      lucide.createIcons();
+    }
+
+    // Dropzone logic
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-emerald-500', 'bg-emerald-500/5');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
+      if (e.dataTransfer.files.length) {
+        addFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) {
+        addFiles(Array.from(e.target.files));
+      }
+    });
+
+    function addFiles(files) {
+      stagedFiles = [...stagedFiles, ...files];
+      updateStagedUI();
+    }
+
+    function clearStaged() {
+      stagedFiles = [];
+      fileInput.value = '';
+      updateStagedUI();
+    }
+
+    function updateStagedUI() {
+      const stagingArea = document.getElementById('stagingArea');
+      const stagedCount = document.getElementById('stagedCount');
+      if (stagedFiles.length > 0) {
+        stagingArea.classList.remove('hidden');
+        stagedCount.innerText = `${stagedFiles.length} asset${stagedFiles.length > 1 ? 's' : ''} staged for scan`;
+      } else {
+        stagingArea.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    // Execute scan
+    async function triggerScan() {
+      if (stagedFiles.length === 0) return;
+
+      const scanBtn = document.getElementById('scanButton');
+      const spinner = document.getElementById('scanSpinner');
+      scanBtn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      const formData = new FormData();
+      stagedFiles.forEach(f => formData.append('files', f));
+      formData.append('use_mock_index', 'true');
+
+      try {
+        const res = await fetch('/api/scan', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        currentReport = data;
+        renderResults(data);
+      } catch (err) {
+        alert('Scan execution error: ' + err);
+      } finally {
+        scanBtn.disabled = false;
+        spinner.classList.add('hidden');
+        clearStaged();
+      }
+    }
+
+    // Render scan results
+    function renderResults(data) {
+      const resultsList = document.getElementById('resultsList');
+      const exportBtn = document.getElementById('exportJsonBtn');
+      exportBtn.classList.remove('hidden');
+
+      // Update counters
+      document.getElementById('statTotal').innerText = data.summary.total_assets;
+      document.getElementById('statPassed').innerText = data.summary.passed_count;
+      document.getElementById('statBlocked').innerText = data.summary.blocked_count;
+
+      if (!data.results || data.results.length === 0) {
+        resultsList.innerHTML = '<div class="text-center py-8 text-slate-500">No assets detected.</div>';
+        return;
+      }
+
+      let html = '';
+      data.results.forEach((asset, idx) => {
+        const isPassed = asset.status === 'PASSED';
+        const statusClass = isPassed ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 glow-emerald' : 'text-rose-400 bg-rose-500/10 border-rose-500/20 glow-rose';
+        const statusIcon = isPassed ? 'shield-check' : 'shield-alert';
+
+        html += `
+          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:border-slate-700">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 flex-shrink-0">
+                <i data-lucide="${asset.track === 'IMAGE' ? 'image' : 'file-text'}" class="w-5 h-5"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-white text-sm truncate">${asset.asset_id}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">${asset.track}</span>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 truncate mt-0.5">
+                  ${asset.asset_hash}
+                </div>
+              </div>
+            </div>
+
+            <!-- Risk / Clearance Status -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+              ${!isPassed && asset.matched_source ? `
+                <div class="text-right">
+                  <div class="text-[11px] text-rose-400 font-semibold flex items-center gap-1">
+                    <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> ${asset.matched_source}
+                  </div>
+                  <div class="text-[10px] text-slate-500">Risk Similarity: ${(asset.similarity_score * 100).toFixed(1)}%</div>
+                </div>
+              ` : ''}
+
+              <div class="px-3 py-1 rounded-lg border text-xs font-bold flex items-center gap-1.5 ${statusClass}">
+                <i data-lucide="${statusIcon}" class="w-4 h-4"></i>
+                <span>${asset.status}</span>
+              </div>
+
+              ${isPassed && asset.certificate ? `
+                <button onclick="inspectCertificate(${idx})" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1 transition-all">
+                  <i data-lucide="award" class="w-3.5 h-3.5"></i> Certificate
+                </button>
+              ` : `
+                <button onclick="inspectLineage(${idx})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-semibold transition-all">
+                  Lineage
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      resultsList.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // Modal inspection
+    function inspectCertificate(idx) {
+      const asset = currentReport.results[idx];
+      document.getElementById('modalTitle').innerText = `Clearance Certificate — ${asset.asset_id}`;
+      document.getElementById('modalCertJson').innerText = JSON.stringify(asset.certificate, null, 2);
+      document.getElementById('modalProvJson').innerText = JSON.stringify(asset.lineage, null, 2);
+      document.getElementById('modalBackdrop').classList.remove('hidden');
+    }
+
+    function inspectLineage(idx) {
+      const asset = currentReport.results[idx];
+      document.getElementById('modalTitle').innerText = `PROV-O Lineage Audit — ${asset.asset_id}`;
+      document.getElementById('modalCertJson').innerText = "Asset BLOCKED: Certificate issuance denied due to copyright infringement match.";
+      document.getElementById('modalProvJson').innerText = JSON.stringify(asset.lineage, null, 2);
+      document.getElementById('modalBackdrop').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.add('hidden');
+    }
+
+    function copyModalContent() {
+      const text = document.getElementById('modalCertJson').innerText + "\n\n" + document.getElementById('modalProvJson').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Certificate & Lineage copied to clipboard!');
+    }
+
+    // Export full JSON report
+    function exportResultsJson() {
+      if (!currentReport) return;
+      const blob = new Blob([JSON.stringify(currentReport, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `traceai_scan_${Date.now()}.json`;
+      a.click();
+    }
+
+    // Interactive Certificate Verifier Tool
+    async function testVerifySignature() {
+      const asset_hash = document.getElementById('verifyHash').value.trim();
+      const signature = document.getElementById('verifySig').value.trim();
+      const resContainer = document.getElementById('verifyResult');
+
+      if (!asset_hash || !signature) {
+        resContainer.innerHTML = '<span class="text-amber-400">Please provide both asset hash and signature.</span>';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ asset_hash, signature })
+        });
+        const data = await res.json();
+        if (data.valid) {
+          resContainer.innerHTML = '<span class="text-emerald-400 font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> Cryptographic Signature VALID (RSA-PSS Verified)</span>';
+        } else {
+          resContainer.innerHTML = '<span class="text-rose-400 font-bold flex items-center gap-1"><i data-lucide="x-circle" class="w-4 h-4"></i> Signature INVALID or Tampered</span>';
+        }
+        lucide.createIcons();
+      } catch (e) {
+        resContainer.innerHTML = `<span class="text-rose-400">Verification request error: ${e}</span>`;
+      }
+    }
+
+    // Demo Data Presets
+    function loadDemoClean() {
+      const f1 = new File([
+        "Original scientific research documentation for neural network weight quantization without proprietary excerpts."
+      ], "quantization_research.txt", { type: "text/plain" });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 100; canvas.height = 100;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#10b981"; ctx.fillRect(0,0,100,100);
+      canvas.toBlob(blob => {
+        const f2 = new File([blob], "geometric_pattern.png", { type: "image/png" });
+        stagedFiles = [f1, f2];
+        updateStagedUI();
+      });
+    }
+
+    function loadDemoDirty() {
+      // Paraphrased text disguised with .public_domain extension
+      const f1 = new File([
+        "Ishmael is my name. Years ago, without much money left in my pockets and nothing holding me ashore, I decided to take a voyage across the oceans of the world."
+      ], "book_excerpt_01.public_domain", { type: "text/plain" });
+
+      // Gradient image altered to test visual match
+      const canvas = document.createElement("canvas");
+      canvas.width = 250; canvas.height = 250;
+      const ctx = canvas.getContext("2d");
+      const grad = ctx.createLinearGradient(0,0,0,250);
+      grad.addColorStop(0, "#e63232"); grad.addColorStop(1, "#1e32c8");
+      ctx.fillStyle = grad; ctx.fillRect(0,0,250,250);
+      canvas.toBlob(blob => {
+        const f2 = new File([blob], "art_scan_01.public_domain", { type: "image/png" });
+        stagedFiles = [f1, f2];
+        updateStagedUI();
+      });
+    }
+
+    function loadDemoMixed() {
+      const f1 = new File([
+        "Clean dataset for language model instruction tuning. Public benchmark evaluation metrics."
+      ], "benchmark_eval.txt", { type: "text/plain" });
+
+      const f2 = new File([
+        "Everybody knows that an unmarried wealthy gentleman is undoubtedly seeking a spouse, regardless of what his actual personal desires might be."
+      ], " austen_paraphrase.public_domain", { type: "text/plain" });
+
+      stagedFiles = [f1, f2];
+      updateStagedUI();
+    }
+
+    window.onload = initGateway;
+  </script>
+</body>
+</html>

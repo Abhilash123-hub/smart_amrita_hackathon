@@ -1,0 +1,556 @@
+{
+  "texts": [
+    {
+      "id": "work_txt_001",
+      "file": "copyright_work_001.txt",
+      "source": "\u00a9 Moby Dick by Herman Melville",
+      "sample": "Call me Ishmael. Some years ago - never mind how long precisely - having little "
+    },
+    {
+      "id": "work_txt_002",
+      "file": "copyright_work_002.txt",
+      "source": "\u00a9 Pride and Prejudice by Jane Austen",
+      "sample": "It is a truth universally acknowledged, that a single man in possession of a goo"
+    },
+    {
+      "id": "work_txt_003",
+      "file": "copyright_work_003.txt",
+      "source": "\u00a9 Tale of Two Cities by Charles Dickens",
+      "sample": "It was the best of times, it was the worst of times, it was the age of wisdom, i"
+    },
+    {
+      "id": "work_txt_004",
+      "file": "copyright_work_004.txt",
+      "source": "\u00a9 Frankenstein by Mary Shelley",
+      "sample": "You will rejoice to hear that no disaster has accompanied the commencement of an"
+    },
+    {
+      "id": "work_txt_005",
+      "file": "copyright_work_005.txt",
+      "source": "\u00a9 The Great Gatsby by F. Scott Fitzgerald",
+      "sample": "In my younger and more vulnerable years my father gave me some advice that I've "
+    },
+    {
+      "id": "work_txt_006",
+      "file": "copyright_work_006.txt",
+      "source": "\u00a9 The Odyssey by Homer",
+      "sample": "Sing to me of the man, Muse, the man of twists and turns driven time and again o"
+    },
+    {
+      "id": "work_txt_007",
+      "file": "copyright_work_007.txt",
+      "source": "\u00a9 1984 by George Orwell",
+      "sample": "It was a bright cold day in April, and the clocks were striking thirteen. Winsto"
+    },
+    {
+      "id": "work_txt_008",
+      "file": "copyright_work_008.txt",
+      "source": "\u00a9 The Metamorphosis by Franz Kafka",
+      "sample": "One morning, when Gregor Samsa woke from troubled dreams, he found himself trans"
+    },
+    {
+      "id": "work_txt_009",
+      "file": "copyright_work_009.txt",
+      "source": "\u00a9 The Raven by Edgar Allan Poe",
+      "sample": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quain"
+    },
+    {
+      "id": "work_txt_010",
+      "file": "copyright_work_010.txt",
+      "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
+      "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    },
+    {
+      "id": "work_txt_011",
+      "file": "copyright_work_011.txt",
+      "source": "\u00a9 Moby Dick by Herman Melville",
+      "sample": "Call me Ishmael. Some years ago - never mind how long precisely - having little "
+    },
+    {
+      "id": "work_txt_012",
+      "file": "copyright_work_012.txt",
+      "source": "\u00a9 Pride and Prejudice by Jane Austen",
+      "sample": "It is a truth universally acknowledged, that a single man in possession of a goo"
+    },
+    {
+      "id": "work_txt_013",
+      "file": "copyright_work_013.txt",
+      "source": "\u00a9 Tale of Two Cities by Charles Dickens",
+      "sample": "It was the best of times, it was the worst of times, it was the age of wisdom, i"
+    },
+    {
+      "id": "work_txt_014",
+      "file": "copyright_work_014.txt",
+      "source": "\u00a9 Frankenstein by Mary Shelley",
+      "sample": "You will rejoice to hear that no disaster has accompanied the commencement of an"
+    },
+    {
+      "id": "work_txt_015",
+      "file": "copyright_work_015.txt",
+      "source": "\u00a9 The Great Gatsby by F. Scott Fitzgerald",
+      "sample": "In my younger and more vulnerable years my father gave me some advice that I've "
+    },
+    {
+      "id": "work_txt_016",
+      "file": "copyright_work_016.txt",
+      "source": "\u00a9 The Odyssey by Homer",
+      "sample": "Sing to me of the man, Muse, the man of twists and turns driven time and again o"
+    },
+    {
+      "id": "work_txt_017",
+      "file": "copyright_work_017.txt",
+      "source": "\u00a9 1984 by George Orwell",
+      "sample": "It was a bright cold day in April, and the clocks were striking thirteen. Winsto"
+    },
+    {
+      "id": "work_txt_018",
+      "file": "copyright_work_018.txt",
+      "source": "\u00a9 The Metamorphosis by Franz Kafka",
+      "sample": "One morning, when Gregor Samsa woke from troubled dreams, he found himself trans"
+    },
+    {
+      "id": "work_txt_019",
+      "file": "copyright_work_019.txt",
+      "source": "\u00a9 The Raven by Edgar Allan Poe",
+      "sample": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quain"
+    },
+    {
+      "id": "work_txt_020",
+      "file": "copyright_work_020.txt",
+      "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
+      "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    },
+    {
+      "id": "work_txt_021",
+      "file": "copyright_work_021.txt",
+      "source": "\u00a9 Moby Dick by Herman Melville",
+      "sample": "Call me Ishmael. Some years ago - never mind how long precisely - having little "
+    },
+    {
+      "id": "work_txt_022",
+      "file": "copyright_work_022.txt",
+      "source": "\u00a9 Pride and Prejudice by Jane Austen",
+      "sample": "It is a truth universally acknowledged, that a single man in possession of a goo"
+    },
+    {
+      "id": "work_txt_023",
+      "file": "copyright_work_023.txt",
+      "source": "\u00a9 Tale of Two Cities by Charles Dickens",
+      "sample": "It was the best of times, it was the worst of times, it was the age of wisdom, i"
+    },
+    {
+      "id": "work_txt_024",
+      "file": "copyright_work_024.txt",
+      "source": "\u00a9 Frankenstein by Mary Shelley",
+      "sample": "You will rejoice to hear that no disaster has accompanied the commencement of an"
+    },
+    {
+      "id": "work_txt_025",
+      "file": "copyright_work_025.txt",
+      "source": "\u00a9 The Great Gatsby by F. Scott Fitzgerald",
+      "sample": "In my younger and more vulnerable years my father gave me some advice that I've "
+    },
+    {
+      "id": "work_txt_026",
+      "file": "copyright_work_026.txt",
+      "source": "\u00a9 The Odyssey by Homer",
+      "sample": "Sing to me of the man, Muse, the man of twists and turns driven time and again o"
+    },
+    {
+      "id": "work_txt_027",
+      "file": "copyright_work_027.txt",
+      "source": "\u00a9 1984 by George Orwell",
+      "sample": "It was a bright cold day in April, and the clocks were striking thirteen. Winsto"
+    },
+    {
+      "id": "work_txt_028",
+      "file": "copyright_work_028.txt",
+      "source": "\u00a9 The Metamorphosis by Franz Kafka",
+      "sample": "One morning, when Gregor Samsa woke from troubled dreams, he found himself trans"
+    },
+    {
+      "id": "work_txt_029",
+      "file": "copyright_work_029.txt",
+      "source": "\u00a9 The Raven by Edgar Allan Poe",
+      "sample": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quain"
+    },
+    {
+      "id": "work_txt_030",
+      "file": "copyright_work_030.txt",
+      "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
+      "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    },
+    {
+      "id": "work_txt_031",
+      "file": "copyright_work_031.txt",
+      "source": "\u00a9 Moby Dick by Herman Melville",
+      "sample": "Call me Ishmael. Some years ago - never mind how long precisely - having little "
+    },
+    {
+      "id": "work_txt_032",
+      "file": "copyright_work_032.txt",
+      "source": "\u00a9 Pride and Prejudice by Jane Austen",
+      "sample": "It is a truth universally acknowledged, that a single man in possession of a goo"
+    },
+    {
+      "id": "work_txt_033",
+      "file": "copyright_work_033.txt",
+      "source": "\u00a9 Tale of Two Cities by Charles Dickens",
+      "sample": "It was the best of times, it was the worst of times, it was the age of wisdom, i"
+    },
+    {
+      "id": "work_txt_034",
+      "file": "copyright_work_034.txt",
+      "source": "\u00a9 Frankenstein by Mary Shelley",
+      "sample": "You will rejoice to hear that no disaster has accompanied the commencement of an"
+    },
+    {
+      "id": "work_txt_035",
+      "file": "copyright_work_035.txt",
+      "source": "\u00a9 The Great Gatsby by F. Scott Fitzgerald",
+      "sample": "In my younger and more vulnerable years my father gave me some advice that I've "
+    },
+    {
+      "id": "work_txt_036",
+      "file": "copyright_work_036.txt",
+      "source": "\u00a9 The Odyssey by Homer",
+      "sample": "Sing to me of the man, Muse, the man of twists and turns driven time and again o"
+    },
+    {
+      "id": "work_txt_037",
+      "file": "copyright_work_037.txt",
+      "source": "\u00a9 1984 by George Orwell",
+      "sample": "It was a bright cold day in April, and the clocks were striking thirteen. Winsto"
+    },
+    {
+      "id": "work_txt_038",
+      "file": "copyright_work_038.txt",
+      "source": "\u00a9 The Metamorphosis by Franz Kafka",
+      "sample": "One morning, when Gregor Samsa woke from troubled dreams, he found himself trans"
+    },
+    {
+      "id": "work_txt_039",
+      "file": "copyright_work_039.txt",
+      "source": "\u00a9 The Raven by Edgar Allan Poe",
+      "sample": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quain"
+    },
+    {
+      "id": "work_txt_040",
+      "file": "copyright_work_040.txt",
+      "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
+      "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    },
+    {
+      "id": "work_txt_041",
+      "file": "copyright_work_041.txt",
+      "source": "\u00a9 Moby Dick by Herman Melville",
+      "sample": "Call me Ishmael. Some years ago - never mind how long precisely - having little "
+    },
+    {
+      "id": "work_txt_042",
+      "file": "copyright_work_042.txt",
+      "source": "\u00a9 Pride and Prejudice by Jane Austen",
+      "sample": "It is a truth universally acknowledged, that a single man in possession of a goo"
+    },
+    {
+      "id": "work_txt_043",
+      "file": "copyright_work_043.txt",
+      "source": "\u00a9 Tale of Two Cities by Charles Dickens",
+      "sample": "It was the best of times, it was the worst of times, it was the age of wisdom, i"
+    },
+    {
+      "id": "work_txt_044",
+      "file": "copyright_work_044.txt",
+      "source": "\u00a9 Frankenstein by Mary Shelley",
+      "sample": "You will rejoice to hear that no disaster has accompanied the commencement of an"
+    },
+    {
+      "id": "work_txt_045",
+      "file": "copyright_work_045.txt",
+      "source": "\u00a9 The Great Gatsby by F. Scott Fitzgerald",
+      "sample": "In my younger and more vulnerable years my father gave me some advice that I've "
+    },
+    {
+      "id": "work_txt_046",
+      "file": "copyright_work_046.txt",
+      "source": "\u00a9 The Odyssey by Homer",
+      "sample": "Sing to me of the man, Muse, the man of twists and turns driven time and again o"
+    },
+    {
+      "id": "work_txt_047",
+      "file": "copyright_work_047.txt",
+      "source": "\u00a9 1984 by George Orwell",
+      "sample": "It was a bright cold day in April, and the clocks were striking thirteen. Winsto"
+    },
+    {
+      "id": "work_txt_048",
+      "file": "copyright_work_048.txt",
+      "source": "\u00a9 The Metamorphosis by Franz Kafka",
+      "sample": "One morning, when Gregor Samsa woke from troubled dreams, he found himself trans"
+    },
+    {
+      "id": "work_txt_049",
+      "file": "copyright_work_049.txt",
+      "source": "\u00a9 The Raven by Edgar Allan Poe",
+      "sample": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quain"
+    },
+    {
+      "id": "work_txt_050",
+      "file": "copyright_work_050.txt",
+      "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
+      "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    }
+  ],
+  "images": [
+    {
+      "id": "work_img_001",
+      "file": "copyright_img_001.png",
+      "source": "\u00a9 Visual Arts Archive #1"
+    },
+    {
+      "id": "work_img_002",
+      "file": "copyright_img_002.png",
+      "source": "\u00a9 Visual Arts Archive #2"
+    },
+    {
+      "id": "work_img_003",
+      "file": "copyright_img_003.png",
+      "source": "\u00a9 Visual Arts Archive #3"
+    },
+    {
+      "id": "work_img_004",
+      "file": "copyright_img_004.png",
+      "source": "\u00a9 Visual Arts Archive #4"
+    },
+    {
+      "id": "work_img_005",
+      "file": "copyright_img_005.png",
+      "source": "\u00a9 Visual Arts Archive #5"
+    },
+    {
+      "id": "work_img_006",
+      "file": "copyright_img_006.png",
+      "source": "\u00a9 Visual Arts Archive #6"
+    },
+    {
+      "id": "work_img_007",
+      "file": "copyright_img_007.png",
+      "source": "\u00a9 Visual Arts Archive #7"
+    },
+    {
+      "id": "work_img_008",
+      "file": "copyright_img_008.png",
+      "source": "\u00a9 Visual Arts Archive #8"
+    },
+    {
+      "id": "work_img_009",
+      "file": "copyright_img_009.png",
+      "source": "\u00a9 Visual Arts Archive #9"
+    },
+    {
+      "id": "work_img_010",
+      "file": "copyright_img_010.png",
+      "source": "\u00a9 Visual Arts Archive #10"
+    },
+    {
+      "id": "work_img_011",
+      "file": "copyright_img_011.png",
+      "source": "\u00a9 Visual Arts Archive #11"
+    },
+    {
+      "id": "work_img_012",
+      "file": "copyright_img_012.png",
+      "source": "\u00a9 Visual Arts Archive #12"
+    },
+    {
+      "id": "work_img_013",
+      "file": "copyright_img_013.png",
+      "source": "\u00a9 Visual Arts Archive #13"
+    },
+    {
+      "id": "work_img_014",
+      "file": "copyright_img_014.png",
+      "source": "\u00a9 Visual Arts Archive #14"
+    },
+    {
+      "id": "work_img_015",
+      "file": "copyright_img_015.png",
+      "source": "\u00a9 Visual Arts Archive #15"
+    },
+    {
+      "id": "work_img_016",
+      "file": "copyright_img_016.png",
+      "source": "\u00a9 Visual Arts Archive #16"
+    },
+    {
+      "id": "work_img_017",
+      "file": "copyright_img_017.png",
+      "source": "\u00a9 Visual Arts Archive #17"
+    },
+    {
+      "id": "work_img_018",
+      "file": "copyright_img_018.png",
+      "source": "\u00a9 Visual Arts Archive #18"
+    },
+    {
+      "id": "work_img_019",
+      "file": "copyright_img_019.png",
+      "source": "\u00a9 Visual Arts Archive #19"
+    },
+    {
+      "id": "work_img_020",
+      "file": "copyright_img_020.png",
+      "source": "\u00a9 Visual Arts Archive #20"
+    },
+    {
+      "id": "work_img_021",
+      "file": "copyright_img_021.png",
+      "source": "\u00a9 Visual Arts Archive #21"
+    },
+    {
+      "id": "work_img_022",
+      "file": "copyright_img_022.png",
+      "source": "\u00a9 Visual Arts Archive #22"
+    },
+    {
+      "id": "work_img_023",
+      "file": "copyright_img_023.png",
+      "source": "\u00a9 Visual Arts Archive #23"
+    },
+    {
+      "id": "work_img_024",
+      "file": "copyright_img_024.png",
+      "source": "\u00a9 Visual Arts Archive #24"
+    },
+    {
+      "id": "work_img_025",
+      "file": "copyright_img_025.png",
+      "source": "\u00a9 Visual Arts Archive #25"
+    },
+    {
+      "id": "work_img_026",
+      "file": "copyright_img_026.png",
+      "source": "\u00a9 Visual Arts Archive #26"
+    },
+    {
+      "id": "work_img_027",
+      "file": "copyright_img_027.png",
+      "source": "\u00a9 Visual Arts Archive #27"
+    },
+    {
+      "id": "work_img_028",
+      "file": "copyright_img_028.png",
+      "source": "\u00a9 Visual Arts Archive #28"
+    },
+    {
+      "id": "work_img_029",
+      "file": "copyright_img_029.png",
+      "source": "\u00a9 Visual Arts Archive #29"
+    },
+    {
+      "id": "work_img_030",
+      "file": "copyright_img_030.png",
+      "source": "\u00a9 Visual Arts Archive #30"
+    },
+    {
+      "id": "work_img_031",
+      "file": "copyright_img_031.png",
+      "source": "\u00a9 Visual Arts Archive #31"
+    },
+    {
+      "id": "work_img_032",
+      "file": "copyright_img_032.png",
+      "source": "\u00a9 Visual Arts Archive #32"
+    },
+    {
+      "id": "work_img_033",
+      "file": "copyright_img_033.png",
+      "source": "\u00a9 Visual Arts Archive #33"
+    },
+    {
+      "id": "work_img_034",
+      "file": "copyright_img_034.png",
+      "source": "\u00a9 Visual Arts Archive #34"
+    },
+    {
+      "id": "work_img_035",
+      "file": "copyright_img_035.png",
+      "source": "\u00a9 Visual Arts Archive #35"
+    },
+    {
+      "id": "work_img_036",
+      "file": "copyright_img_036.png",
+      "source": "\u00a9 Visual Arts Archive #36"
+    },
+    {
+      "id": "work_img_037",
+      "file": "copyright_img_037.png",
+      "source": "\u00a9 Visual Arts Archive #37"
+    },
+    {
+      "id": "work_img_038",
+      "file": "copyright_img_038.png",
+      "source": "\u00a9 Visual Arts Archive #38"
+    },
+    {
+      "id": "work_img_039",
+      "file": "copyright_img_039.png",
+      "source": "\u00a9 Visual Arts Archive #39"
+    },
+    {
+      "id": "work_img_040",
+      "file": "copyright_img_040.png",
+      "source": "\u00a9 Visual Arts Archive #40"
+    },
+    {
+      "id": "work_img_041",
+      "file": "copyright_img_041.png",
+      "source": "\u00a9 Visual Arts Archive #41"
+    },
+    {
+      "id": "work_img_042",
+      "file": "copyright_img_042.png",
+      "source": "\u00a9 Visual Arts Archive #42"
+    },
+    {
+      "id": "work_img_043",
+      "file": "copyright_img_043.png",
+      "source": "\u00a9 Visual Arts Archive #43"
+    },
+    {
+      "id": "work_img_044",
+      "file": "copyright_img_044.png",
+      "source": "\u00a9 Visual Arts Archive #44"
+    },
+    {
+      "id": "work_img_045",
+      "file": "copyright_img_045.png",
+      "source": "\u00a9 Visual Arts Archive #45"
+    },
+    {
+      "id": "work_img_046",
+      "file": "copyright_img_046.png",
+      "source": "\u00a9 Visual Arts Archive #46"
+    },
+    {
+      "id": "work_img_047",
+      "file": "copyright_img_047.png",
+      "source": "\u00a9 Visual Arts Archive #47"
+    },
+    {
+      "id": "work_img_048",
+      "file": "copyright_img_048.png",
+      "source": "\u00a9 Visual Arts Archive #48"
+    },
+    {
+      "id": "work_img_049",
+      "file": "copyright_img_049.png",
+      "source": "\u00a9 Visual Arts Archive #49"
+    },
+    {
+      "id": "work_img_050",
+      "file": "copyright_img_050.png",
+      "source": "\u00a9 Visual Arts Archive #50"
+    }
+  ]
+}

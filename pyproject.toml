@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "traceai"
+version = "0.1.0"
+description = "Multimodal Ingestion Gateway for Copyright Detection & Cryptographic Provenance"
+authors = [{ name = "TraceAI Engineering" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.5.0",
+    "cryptography>=42.0.0",
+    "Pillow>=10.2.0",
+    "imagehash>=4.3.1",
+    "numpy>=1.24.0,<2.0.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "sentence-transformers>=2.3.0",
+    "transformers>=4.37.0",
+    "torch>=2.2.0",
+    "faiss-cpu>=1.8.0",
+    "opencv-python>=4.9.0",
+]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+traceai = "traceai.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["traceai*"]
