@@ -31,7 +31,9 @@ ENV/
 hf_cache/
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 .idea/
 *.swp
 

@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "TraceAI: Run Web Dashboard",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "/app.py",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "TraceAI: Run Gateway CLI serve",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "traceai.cli",
+      "args": [
+        "serve",
+        "--port",
+        "8000"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "TraceAI: Run Doctor Check",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "traceai.cli",
+      "args": [
+        "doctor"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "TraceAI: Run All Tests (pytest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-v"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}
