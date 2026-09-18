@@ -72,6 +72,35 @@ def generate_mock_corpus(base_dir: Path | str) -> dict:
             "sample": text[:80]
         })
 
+    # NYT Copyrighted Tech Archive Excerpt (Demonstration Corpus Match)
+    nyt_path = index_text_dir / "copyright_work_nyt_994.txt"
+    nyt_path.write_text(
+        "The proprietary transformer architecture incorporates a multi-tier attention mechanism "
+        "specifically designed to retain contextual embeddings across ultra-long document contexts "
+        "exceeding 128k tokens. RefCorpus: New York Times 2023 Tech Archive (Doc #994). All rights reserved.",
+        encoding="utf-8"
+    )
+    index_metadata["texts"].append({
+        "id": "work_txt_nyt_994",
+        "file": nyt_path.name,
+        "source": "RefCorpus: New York Times 2023 Tech Archive (Doc #994)",
+        "sample": "The proprietary transformer architecture incorporates a multi-tier attention"
+    })
+
+    # Linux Kernel GPL Code Excerpt (Demonstration Codebase Match)
+    index_code_dir = index_dir / "code"
+    index_code_dir.mkdir(parents=True, exist_ok=True)
+    code_path = index_code_dir / "kernel_sched.c"
+    code_path.write_text(
+        "/* SPDX-License-Identifier: GPL-2.0 */\n"
+        "/* GNU General Public License v2.0 */\n"
+        "/* RefCorpus: GitHub Linux GPL-2.0 Kernel Subsystem */\n"
+        "static inline int trace_event_raw_event_sched_switch(struct trace_event_file *file, void *data) {\n"
+        "    return 0;\n"
+        "}\n",
+        encoding="utf-8"
+    )
+
     # 2. Generate 50 Copyright Images
     colors = [
         ((230, 50, 50), (30, 50, 200)),

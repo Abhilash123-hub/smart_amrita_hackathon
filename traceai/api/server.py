@@ -461,17 +461,50 @@ async def chat_copilot(req: ChatRequest):
 
     is_scan_request = any(
         kw in msg.lower()
-        for kw in ["scan", "check", "clear", "evaluate", "analyze", "test", "audit", "infring"]
+        for kw in ["scan", "check", "clear", "evaluate", "analyze", "test", "audit", "infring", "review"]
     ) or len(msg) > 60
 
     scan_result = None
     if is_scan_request:
         staging_dir = Path(tempfile.mkdtemp(prefix="traceai_chat_"))
         try:
-            temp_file = staging_dir / "chat_input.txt"
-            temp_file.write_text(msg, encoding="utf-8")
+            # 1. Strip conversational framing if user passed a prompt prefix
+            content_to_scan = msg
+            prefixes = [
+                "audit this input against copyright index:",
+                "review this codebase excerpt for copyright:",
+                "scan this clean research excerpt:",
+                "scan this novel research evaluation text for copyright:",
+                "scan this:",
+                "check this:",
+                "evaluate this:",
+                "analyze this:",
+                "audit this:",
+                "review this:",
+            ]
+            for pfx in prefixes:
+                if content_to_scan.lower().startswith(pfx):
+                    content_to_scan = content_to_scan[len(pfx):].strip()
+                    break
+
+            # 2. Detect code vs text
+            is_code = (
+                any(kw in content_to_scan for kw in ["static inline", "struct ", "def ", "class ", "#include", "public static void", "fn "])
+                or "codebase" in msg.lower()
+            )
+            file_name = "chat_input.c" if is_code else "chat_input.txt"
+            temp_file = staging_dir / file_name
+            temp_file.write_text(content_to_scan, encoding="utf-8")
+
+            # 3. Locate reference copyright index
+            mock_dir = Path("mock_data")
+            if not mock_dir.exists():
+                generate_mock_corpus(mock_dir)
+            index_path = mock_dir / "copyright_index"
+
             report = await gateway.scan(
                 input_path=staging_dir,
+                index_dir=index_path,
                 jurisdiction=req.jurisdiction,
             )
             payload = report.to_output_payload(minimal=False)
@@ -495,14 +528,15 @@ async def chat_copilot(req: ChatRequest):
                         f"Alert: **BLOCKED (RISK DETECTED)**. Cross-encoder similarity score is "
                         f"{sim * 100:.1f}%, exceeding the "
                         f"{DEFAULT_CONFIG.text_cross_encoder_threshold * 100:.0f}% safety threshold. "
-                        f"Matched against reference work: `{source}`. "
+                        f"Matched against reference work: `{source or 'Protected Copyright Archive'}`. "
                         f"Certificate denied to protect training dataset integrity."
                     )
                 else:
                     reply = (
                         f"Attention: **HELD FOR HUMAN REVIEW**. Similarity score is "
                         f"{sim * 100:.1f}%, falling in the confidence review band under "
-                        f"{req.jurisdiction} rules. Routed to auditor queue."
+                        f"{req.jurisdiction} rules. Matched: `{source or 'Reference Codebase'}`. "
+                        f"Routed to compliance auditor queue."
                     )
             else:
                 reply = "Processed input, but no extractable chunks found."

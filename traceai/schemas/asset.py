@@ -79,7 +79,10 @@ def sniff_mime_and_track_from_bytes(file_path: Path, header_bytes: bytes) -> tup
         try:
             text_peek = header_bytes.decode("utf-8", errors="ignore")
             # Heuristic for code vs plain text
-            code_keywords = ["def ", "class ", "function ", "import ", "export ", "fn ", "package ", "public static void"]
+            code_keywords = [
+                "def ", "class ", "function ", "import ", "export ", "fn ",
+                "package ", "public static void", "static inline", "struct ", "#include "
+            ]
             if any(kw in text_peek for kw in code_keywords):
                 return TrackType.CODE, "text/x-code"
             return TrackType.TEXT, "text/plain"

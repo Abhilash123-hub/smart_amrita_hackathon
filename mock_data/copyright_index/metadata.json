@@ -299,6 +299,12 @@
       "file": "copyright_work_050.txt",
       "source": "\u00a9 Alice in Wonderland by Lewis Carroll",
       "sample": "Alice was beginning to get very tired of sitting by her sister on the bank, and "
+    },
+    {
+      "id": "work_txt_nyt_994",
+      "file": "copyright_work_nyt_994.txt",
+      "source": "RefCorpus: New York Times 2023 Tech Archive (Doc #994)",
+      "sample": "The proprietary transformer architecture incorporates a multi-tier attention"
     }
   ],
   "images": [

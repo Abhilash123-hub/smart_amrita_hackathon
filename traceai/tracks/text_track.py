@@ -145,6 +145,7 @@ class TextTrack(BaseTrack):
 
         return MatchResult(
             is_match=False,
+            matched_source=best_source if best_score > 0 else None,
             similarity_score=round(best_score, 4) if best_score > 0 else None,
             details="Highest text similarity below copyright risk threshold",
             candidates=top_candidates,

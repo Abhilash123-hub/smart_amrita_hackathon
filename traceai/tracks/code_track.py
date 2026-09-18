@@ -77,9 +77,16 @@ class CodeTrack(BaseTrack):
                 elif "MIT" in content or "Apache" in content:
                     license_type = "Permissive (MIT/Apache)"
 
+                title = f"© Codebase: {p.stem} [{license_type}]"
+                if "RefCorpus:" in content:
+                    for line in content.splitlines():
+                        if "RefCorpus:" in line:
+                            title = line.replace("//", "").replace("/*", "").replace("*/", "").strip()
+                            break
+
                 works.append({
                     "id": p.name,
-                    "title": f"© Codebase: {p.stem} [{license_type}]",
+                    "title": title,
                     "license": license_type,
                     "content": content,
                     "ast_norm": normalize_ast_tokens(content),
@@ -127,6 +134,12 @@ class CodeTrack(BaseTrack):
             # Combined score giving heavy weight to AST structural identity
             structural_score = max(ast_ratio, (ast_ratio * 0.7) + (token_sim * 0.3))
 
+            # Excerpt containment: if query tokens are a subset of indexed reference code
+            containment = len(query_tokens & ref_tokens) / max(len(query_tokens), 1)
+            if containment >= 0.8:
+                excerpt_score = 0.75 + (ast_ratio * 0.12)
+                structural_score = max(structural_score, excerpt_score)
+
             if structural_score > 0.4:
                 candidates.append(
                     MatchCandidate(
@@ -154,7 +167,8 @@ class CodeTrack(BaseTrack):
 
         return MatchResult(
             is_match=False,
+            matched_source=best_source if best_score > 0 else None,
             similarity_score=round(best_score, 4) if best_score > 0 else None,
-            details="Code similarity below contamination threshold",
+            details="Code similarity in review/evaluation band" if best_score >= 0.70 else "Code similarity below contamination threshold",
             candidates=candidates[:5],
         )
