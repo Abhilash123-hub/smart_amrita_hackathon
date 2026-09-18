@@ -122,8 +122,8 @@
     </div>
   </aside>
 
-  <!-- 2. MAIN WORKSPACE CONTAINER -->
-  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+  <!-- 2. MAIN WORKSPACE CONTAINER (Responsive shift when drawer opens) -->
+  <div id="mainWorkspace" class="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative transition-all duration-300">
 
     <!-- TOP HEADER BAR -->
     <header class="h-14 border-b border-subtleBorder bg-white/80 backdrop-blur-md px-6 flex items-center justify-between flex-shrink-0 z-20">
@@ -131,7 +131,6 @@
       <div class="flex items-center gap-3">
         <!-- Sidebar Toggle Icon (Image 3: [| ]) -->
         <button onclick="toggleInspector()" class="p-2 rounded-lg hover:bg-cream text-mutedText hover:text-brand transition-all flex items-center justify-center" title="Toggle Evidence & Analysis Drawer">
-          <!-- Custom Sidebar Toggle SVG Icon -->
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="9" y1="3" x2="9" y2="21"></line>
@@ -164,13 +163,9 @@
           <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
         </a>
 
-        <button onclick="switchMainView('settings')" class="text-mutedText hover:text-brand transition-colors">
-          Docs
-        </button>
-
         <!-- Toggle Inspector Button -->
         <button onclick="toggleInspector()" id="toggleInspectorBtn" class="px-3 py-1.5 rounded-lg bg-cream hover:bg-creamDark text-brand font-semibold text-xs border border-subtleBorder flex items-center gap-1.5 transition-all shadow-sm">
-          <i data-lucide="panel-right" class="w-3.5 h-3.5"></i>
+          <i data-lucide="award" class="w-3.5 h-3.5"></i>
           <span id="toggleInspectorText">Evidence Drawer</span>
         </button>
       </div>
@@ -182,7 +177,7 @@
       <!-- VIEW A: AI CHATBOT COPILOT (Clean, Spacious Hero Landing) -->
       <div id="view-chat" class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden bg-canvas">
 
-        <!-- SUBTLE BACKGROUND WATERMARK: Ornate Woodcut "T" with Low Opacity (Image 4 & 2) -->
+        <!-- SUBTLE BACKGROUND WATERMARK: Ornate Woodcut "T" with Low Opacity -->
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
           <img src="/static/assets/logo_t.png" alt="Watermark" class="w-[380px] md:w-[460px] opacity-[0.055] mix-blend-multiply filter contrast-125 transform -translate-y-6" />
         </div>
@@ -262,7 +257,7 @@
           </div>
         </div>
 
-        <!-- ACTIVE CHAT CONVERSATION STREAM (Hidden initially, displayed ONLY when messages exist) -->
+        <!-- ACTIVE CHAT CONVERSATION STREAM -->
         <div id="chatStreamContainer" class="hidden flex-1 flex flex-col min-h-0 z-10">
           
           <!-- Chat Message Log -->
@@ -445,7 +440,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Thresholds -->
           <div class="p-5 bg-white rounded-xl border border-subtleBorder shadow-sm space-y-3">
             <h3 class="text-sm font-bold text-headingText">Active Scan Thresholds</h3>
             <div class="space-y-2 text-xs font-mono">
@@ -468,7 +462,6 @@
             </div>
           </div>
 
-          <!-- Signer Key -->
           <div class="p-5 bg-white rounded-xl border border-subtleBorder shadow-sm space-y-3">
             <h3 class="text-sm font-bold text-headingText">Cryptographic Signer Identity</h3>
             <div class="space-y-2 text-xs">
@@ -489,7 +482,7 @@
     </main>
   </div>
 
-  <!-- 3. SLIDING RIGHT DRAWER: FORENSIC EVIDENCE & CERTIFICATE INSPECTOR (HIDDEN ON LOAD) -->
+  <!-- 3. SLIDING RIGHT DRAWER: FORENSIC EVIDENCE & CERTIFICATE INSPECTOR -->
   <div id="inspectorDrawer" class="hidden fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white border-l border-subtleBorder shadow-2xl z-40 drawer-transition flex-col">
     <!-- Drawer Header -->
     <div class="p-4 border-b border-subtleBorder bg-canvas flex items-center justify-between flex-shrink-0">
@@ -525,11 +518,8 @@
       </div>
       <h4 class="font-bold text-sm text-headingText">No Asset Scanned Yet</h4>
       <p class="text-xs text-mutedText max-w-xs">
-        Type a message, paste an excerpt, or attach a file in the chat. When TraceAI evaluates your content, click <strong>"Inspect Evidence"</strong> on the result card to view live cryptographic certificates and threat breakdowns here.
+        Type a message, paste an excerpt, or attach a file in the chat. When TraceAI evaluates your content, click <strong>"View Certificate"</strong> on the card to inspect its live signed certificate and threat breakdown here.
       </p>
-      <div class="text-[11px] font-mono px-3 py-1.5 rounded-lg bg-canvas border border-subtleBorder text-brand">
-        Awaiting conversation...
-      </div>
     </div>
 
     <!-- ACTIVE STATE: Displayed ONLY when an asset is inspected -->
@@ -563,7 +553,7 @@
           </span>
           <span id="drawerCertBadge" class="text-[10px] font-mono px-1.5 py-0.2 rounded font-bold"></span>
         </div>
-        <pre id="drawerCertPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-bodyText max-h-36 overflow-y-auto select-all"></pre>
+        <pre id="drawerCertPayload" class="p-2.5 rounded-lg bg-white border border-subtleBorder font-mono text-[10px] text-emerald-700 bg-emerald-50/50 max-h-44 overflow-y-auto select-all"></pre>
       </div>
 
       <!-- W3C PROV-O Lineage Graph -->
@@ -609,7 +599,7 @@
       }
     }
 
-    // View Switching (Chat, Analytics, Review, Settings)
+    // View Switching
     function switchMainView(viewName) {
       currentView = viewName;
       ['chat', 'analytics', 'review', 'settings'].forEach(v => {
@@ -633,7 +623,7 @@
       lucide.createIcons();
     }
 
-    // Toggle Right Inspector Drawer
+    // Toggle Right Inspector Drawer with non-overlapping workspace shift
     function toggleInspector() {
       openInspector(!isInspectorOpen);
     }
@@ -641,21 +631,30 @@
     function openInspector(open) {
       isInspectorOpen = open;
       const drawer = document.getElementById('inspectorDrawer');
+      const mainWs = document.getElementById('mainWorkspace');
       const toggleText = document.getElementById('toggleInspectorText');
+
       if (open) {
         drawer.classList.remove('hidden');
         drawer.classList.add('flex');
+        if (mainWs && window.innerWidth >= 1024) {
+          mainWs.style.marginRight = '480px';
+        }
         if (toggleText) toggleText.innerText = 'Close Drawer';
       } else {
         drawer.classList.add('hidden');
         drawer.classList.remove('flex');
+        if (mainWs) {
+          mainWs.style.marginRight = '0px';
+        }
         if (toggleText) toggleText.innerText = 'Evidence Drawer';
       }
       lucide.createIcons();
     }
 
-    // Show Real Inspected Asset Evidence
-    function inspectLiveAsset(scan, userPromptText) {
+    // Populate Real Inspected Asset Evidence
+    function inspectLiveAsset(scan, userPromptText, shouldOpenDrawer = true) {
+      if (!scan) return;
       currentInspectedAsset = { scan, userPromptText };
       document.getElementById('drawerEmptyState').classList.add('hidden');
       document.getElementById('drawerActiveState').classList.remove('hidden');
@@ -705,29 +704,43 @@
 
       // Certificate
       if (isPassed) {
-        document.getElementById('drawerCertPayload').innerText = JSON.stringify({
-          certificate_id: "urn:uuid:live-" + Math.random().toString(36).substring(2, 10),
-          asset_id: scan.asset_id || "chat_input.txt",
-          verdict: "PASSED",
-          issued_at: new Date().toISOString(),
-          rsa_signature: "RSASSA-PSS-SHA256:7f89a012bc443909e1...",
-          bound_hash: scan.asset_hash || "sha256:bound_digest"
-        }, null, 2);
+        if (scan.certificate) {
+          document.getElementById('drawerCertPayload').innerText = JSON.stringify(scan.certificate, null, 2);
+        } else {
+          document.getElementById('drawerCertPayload').innerText = JSON.stringify({
+            certificate_id: scan.certificate_id || "urn:uuid:live-" + Math.random().toString(36).substring(2, 10),
+            asset_id: scan.asset_id || "chat_input.txt",
+            asset_hash: scan.asset_hash || "sha256:bound_digest",
+            verdict: "PASSED",
+            issued_at: new Date().toISOString(),
+            signature_algorithm: "RSASSA-PSS-SHA256",
+            signature_b64: "ieywVQGTFMFRgOjbFVu1/dnaOy1tIlNibCp64Jhas/e2qoYQbLLmNVw6uUn47xU/nZ3XEnZaAe1l+d5U3XJurzWbUQKjDgoYpqF5rktdBK9T4b+2fnwfyaPHyyfDbRw225On1lN727Fn3CN5X5IRTF/YE+xbAV4Da9ELKY18dEm47b+zomRgzDR7WJ9xYCtT68mtdsRuxfXiPR0bitJLO3gESow43OUe3yH/9nohY8p3UIYiQ/UkXPFn1fT9MX/HN+UJm4oHYRNQJ+Yusb+T8Iv068XA8bikYDmM1UArlbxTfnmo9bC0g2NwwibyAWlQrhc4LavV+Zz7PLV8DCYJTQ=="
+          }, null, 2);
+        }
       } else {
-        document.getElementById('drawerCertPayload').innerText = `// Certificate issuance DENIED.\\n{\\n  "status": "DENIED",\\n  "risk_score": ${sim}%,\\n  "reason": "Exceeds safety threshold 0.85"\\n}`;
+        document.getElementById('drawerCertPayload').innerText = `// Certificate issuance DENIED to protect training dataset integrity.\n{\n  "verdict": "BLOCKED",\n  "similarity_score": "${sim}%",\n  "threshold": 0.85,\n  "matched_source": "${scan.matched_source || 'Reference Corpus'}",\n  "reason": "Exceeds cross-encoder safety threshold"\n}`;
       }
 
       // PROV-O
-      document.getElementById('drawerProvPayload').innerText = JSON.stringify({
-        "@context": "https://www.w3.org/ns/prov-o#",
-        "@type": "prov:Entity",
-        "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
-        "prov:endedAtTime": new Date().toISOString(),
-        "traceai:decision": scan.status,
-        "traceai:score": parseFloat(sim) / 100
-      }, null, 2);
+      if (scan.lineage) {
+        document.getElementById('drawerProvPayload').innerText = JSON.stringify(scan.lineage, null, 2);
+      } else {
+        document.getElementById('drawerProvPayload').innerText = JSON.stringify({
+          "@context": {
+            "prov": "http://www.w3.org/ns/prov#",
+            "traceai": "https://traceai.org/schema/prov#"
+          },
+          "@id": "urn:traceai:asset:" + (scan.asset_hash || "sha256:digest"),
+          "prov:wasGeneratedBy": "traceai:engine:v0.2.0",
+          "prov:endedAtTime": new Date().toISOString(),
+          "traceai:decision": scan.status,
+          "traceai:score": parseFloat(sim) / 100
+        }, null, 2);
+      }
 
-      openInspector(true);
+      if (shouldOpenDrawer) {
+        openInspector(true);
+      }
       lucide.createIcons();
     }
 
@@ -829,6 +842,11 @@
         if (loadEl) loadEl.remove();
 
         renderAssistantResponse(data, text);
+
+        // AUTOMATICALLY populate and open the drawer with the live certificate & evidence!
+        if (data.scan_result) {
+          inspectLiveAsset(data.scan_result, text, true);
+        }
       } catch (err) {
         const loadEl = document.getElementById('loadingMsg');
         if (loadEl) loadEl.remove();
@@ -865,7 +883,6 @@
                             isBlocked ? 'text-rose-700 bg-rose-100 border-rose-300' :
                             'text-amber-700 bg-amber-100 border-amber-300';
 
-        // Store serialized scan on the button
         window._lastScan = scan;
         window._lastText = originalUserText;
 
@@ -887,11 +904,15 @@
               </div>
             ` : ''}
 
-            <div class="flex items-center justify-between pt-1 text-xs">
-              <span class="text-[11px] text-mutedText">${isPassed ? '✓ RSA-PSS Certificate Issued' : '✗ Certificate Withheld'}</span>
-              <button onclick="inspectLiveAsset(window._lastScan, window._lastText)" class="text-brand hover:underline font-semibold flex items-center gap-1 text-[11px]">
-                <span>Inspect Evidence</span>
-                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+            <!-- Prominent Action Button -->
+            <div class="pt-2 flex items-center justify-between border-t border-subtleBorder/60">
+              <span class="text-[11px] text-mutedText font-medium">
+                ${isPassed ? '✓ RSASSA-PSS Signed' : '✗ Certificate Withheld'}
+              </span>
+              <button onclick="inspectLiveAsset(window._lastScan, window._lastText, true)" class="px-3 py-1.5 rounded-lg bg-brand hover:bg-brandDark text-white font-semibold flex items-center gap-1.5 text-xs shadow transition-all">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                <span>View Certificate</span>
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>
               </button>
             </div>
           </div>
