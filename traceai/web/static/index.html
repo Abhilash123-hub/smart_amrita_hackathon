@@ -57,6 +57,46 @@
     .glow-rose {
       box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35);
     }
+
+    /* react-split-pane core Resizer styling */
+    .Resizer {
+      background: #1E2A3E;
+      opacity: 0.9;
+      z-index: 10;
+      box-sizing: border-box;
+      background-clip: padding-box;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      position: relative;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .Resizer.vertical {
+      width: 11px;
+      margin: 0 -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      cursor: col-resize;
+    }
+    .Resizer.vertical:hover,
+    .Resizer.vertical.active {
+      border-left: 5px solid rgba(56, 189, 248, 0.2);
+      border-right: 5px solid rgba(56, 189, 248, 0.2);
+      background: #38BDF8;
+    }
+    .Resizer.horizontal {
+      height: 11px;
+      margin: -5px 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      cursor: row-resize;
+      width: 100%;
+    }
+    .Resizer.horizontal:hover,
+    .Resizer.horizontal.active {
+      border-top: 5px solid rgba(56, 189, 248, 0.2);
+      border-bottom: 5px solid rgba(56, 189, 248, 0.2);
+      background: #38BDF8;
+    }
   </style>
 </head>
 <body class="text-slate-200 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
@@ -235,21 +275,115 @@
         </div>
       </section>
 
-      <!-- RESULTS LIST -->
+      <!-- SPLIT PANE AUDIT LOG & FORENSIC INSPECTOR -->
       <section class="space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
-            Ingestion & Clearance Audit Log
-          </h3>
-          <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
-          </button>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
+              Ingestion & Clearance Audit Log
+            </h3>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
+              react-split-pane view
+            </span>
+          </div>
+
+          <!-- Split Toolbar Controls -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="toggleSplitOrientation()" id="toggleSplitBtn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center gap-1.5 font-medium transition-all" title="Toggle Split Orientation (Vertical/Horizontal)">
+              <i data-lucide="split" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span id="splitModeLabel">Vertical Split</span>
+            </button>
+            <button onclick="resetSplitPane()" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 transition-all font-mono" title="Reset to 50/50">
+              50/50
+            </button>
+            <button id="exportJsonBtn" onclick="exportResultsJson()" class="hidden text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Export Report (JSON)
+            </button>
+          </div>
         </div>
 
-        <div id="resultsList" class="space-y-3">
-          <div class="text-center py-10 border border-slate-800/80 rounded-2xl bg-slate-900/20 text-slate-500 text-xs">
-            No assets evaluated yet. Drag and drop files above or click a Quick-Load preset.
+        <!-- SPLIT CONTAINER -->
+        <div id="splitPaneContainer" class="border border-slate-800 rounded-2xl bg-slate-950/60 overflow-hidden relative flex flex-col md:flex-row h-[640px]">
+          <!-- PANE 1: ASSET STREAM LIST -->
+          <div id="splitPaneLeft" class="h-full overflow-y-auto p-4 space-y-3 flex-shrink-0 w-full md:w-1/2 border-b md:border-b-0 md:border-r border-slate-800/80 bg-slate-900/30">
+            <div id="resultsList" class="space-y-2.5">
+              <div class="text-center py-16 border border-slate-800/80 rounded-xl bg-slate-900/20 text-slate-500 text-xs">
+                No assets evaluated yet. Drag and drop files above or click a Quick-Load preset.
+              </div>
+            </div>
+          </div>
+
+          <!-- RESIZER GUTTER (react-split-pane style) -->
+          <div id="splitResizer" class="Resizer vertical hidden md:flex items-center justify-center cursor-col-resize group" title="Drag to resize / Double-click to reset (50/50)">
+            <div id="resizerHandle" class="w-1 h-8 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all"></div>
+          </div>
+
+          <!-- PANE 2: FORENSIC INSPECTOR & CLEARANCE VAULT -->
+          <div id="splitPaneRight" class="flex-1 h-full overflow-y-auto p-5 bg-slate-950/40">
+            <div id="inspectorEmpty" class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500 text-xs">
+              <i data-lucide="scan-search" class="w-10 h-10 text-slate-700 mb-3"></i>
+              <span class="text-slate-400 font-semibold text-sm">Forensic Evidence & Certificate Inspector</span>
+              <p class="max-w-xs mt-1 text-slate-500">Run a scan and select an asset on the left to inspect its cryptographic signature, evidence comparison, and PROV-O graph.</p>
+            </div>
+
+            <div id="inspectorContent" class="hidden space-y-5">
+              <!-- Selected Asset Header -->
+              <div class="flex items-start justify-between pb-4 border-b border-slate-800">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span id="inspectAssetId" class="text-base font-bold text-white">AST-0001</span>
+                    <span id="inspectTrackBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">TEXT</span>
+                    <span id="inspectStatusBadge" class="text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
+                      PASSED
+                    </span>
+                  </div>
+                  <div class="text-[11px] font-mono text-slate-500 mt-1 truncate max-w-md" id="inspectHash">sha256:...</div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button onclick="expandToModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1" title="Expand Fullscreen Modal">
+                    <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Expand
+                  </button>
+                </div>
+              </div>
+
+              <!-- Threat & Evidence Box -->
+              <div id="inspectEvidenceBox" class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="microscope" class="w-4 h-4 text-sky-400"></i> Deep Neural Similarity Evidence
+                  </span>
+                  <span id="inspectSimScore" class="text-xs font-mono font-bold text-emerald-400">0.0%</span>
+                </div>
+                <div id="inspectMatchedSource" class="text-xs text-rose-400 hidden font-semibold"></div>
+                <div id="inspectEvidenceDetail" class="text-xs font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-300 max-h-32 overflow-y-auto whitespace-pre-wrap"></div>
+              </div>
+
+              <!-- Cryptographic Certificate -->
+              <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs uppercase font-bold text-white flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> RSASSA-PSS Clearance Certificate
+                  </span>
+                  <span id="inspectCertBadge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">VALID</span>
+                </div>
+                <pre id="inspectCertJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400 max-h-40 overflow-y-auto select-all"></pre>
+              </div>
+
+              <!-- Lineage Graph -->
+              <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs uppercase font-bold text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="git-branch" class="w-4 h-4 text-sky-400"></i> W3C PROV-O Lineage (JSON-LD)
+                  </span>
+                  <button onclick="copyInspectLineage()" class="text-xs text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                    <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                  </button>
+                </div>
+                <pre id="inspectProvJson" class="text-[11px] font-mono bg-slate-950 p-3 rounded-lg border border-slate-800 text-sky-400 max-h-40 overflow-y-auto select-all"></pre>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -564,6 +698,7 @@
 
     // Init Gateway
     async function initGateway() {
+      initSplitPane();
       try {
         const res = await fetch('/api/info');
         const data = await res.json();
@@ -644,6 +779,189 @@
       }
     }
 
+    let selectedAssetIdx = 0;
+    let isSplitVertical = true;
+    let isSplitDragging = false;
+
+    function initSplitPane() {
+      const resizer = document.getElementById('splitResizer');
+      const container = document.getElementById('splitPaneContainer');
+      const leftPane = document.getElementById('splitPaneLeft');
+
+      if (!resizer || !container || !leftPane) return;
+
+      resizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isSplitDragging = true;
+        resizer.classList.add('active');
+        document.body.style.cursor = isSplitVertical ? 'col-resize' : 'row-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      resizer.addEventListener('dblclick', () => {
+        resetSplitPane();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isSplitDragging) return;
+        const rect = container.getBoundingClientRect();
+        if (isSplitVertical) {
+          let newWidth = e.clientX - rect.left;
+          const minW = 280;
+          const maxW = rect.width - 280;
+          if (newWidth < minW) newWidth = minW;
+          if (newWidth > maxW) newWidth = maxW;
+          leftPane.style.width = `${newWidth}px`;
+          leftPane.style.flexShrink = '0';
+        } else {
+          let newHeight = e.clientY - rect.top;
+          const minH = 180;
+          const maxH = rect.height - 180;
+          if (newHeight < minH) newHeight = minH;
+          if (newHeight > maxH) newHeight = maxH;
+          leftPane.style.height = `${newHeight}px`;
+          leftPane.style.flexShrink = '0';
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isSplitDragging) {
+          isSplitDragging = false;
+          resizer.classList.remove('active');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      });
+    }
+
+    function toggleSplitOrientation() {
+      isSplitVertical = !isSplitVertical;
+      const container = document.getElementById('splitPaneContainer');
+      const resizer = document.getElementById('splitResizer');
+      const leftPane = document.getElementById('splitPaneLeft');
+      const label = document.getElementById('splitModeLabel');
+      const resizerHandle = document.getElementById('resizerHandle');
+
+      if (isSplitVertical) {
+        container.classList.remove('flex-col');
+        container.classList.add('flex-row');
+        resizer.classList.remove('horizontal');
+        resizer.classList.add('vertical');
+        resizer.style.cursor = 'col-resize';
+        leftPane.classList.remove('border-b');
+        leftPane.classList.add('border-r');
+        leftPane.style.width = '50%';
+        leftPane.style.height = '100%';
+        resizerHandle.className = 'w-1 h-8 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all';
+        label.innerText = 'Vertical Split';
+      } else {
+        container.classList.remove('flex-row');
+        container.classList.add('flex-col');
+        resizer.classList.remove('vertical');
+        resizer.classList.add('horizontal');
+        resizer.style.cursor = 'row-resize';
+        leftPane.classList.remove('border-r');
+        leftPane.classList.add('border-b');
+        leftPane.style.height = '45%';
+        leftPane.style.width = '100%';
+        resizerHandle.className = 'h-1 w-8 rounded-full bg-slate-600 group-hover:bg-sky-400 transition-all';
+        label.innerText = 'Horizontal Split';
+      }
+      lucide.createIcons();
+    }
+
+    function resetSplitPane() {
+      const leftPane = document.getElementById('splitPaneLeft');
+      if (isSplitVertical) {
+        leftPane.style.width = '50%';
+        leftPane.style.height = '100%';
+      } else {
+        leftPane.style.height = '50%';
+        leftPane.style.width = '100%';
+      }
+    }
+
+    function selectAsset(idx) {
+      if (!currentReport || !currentReport.results || !currentReport.results[idx]) return;
+      selectedAssetIdx = idx;
+
+      document.querySelectorAll('.asset-card').forEach((el, i) => {
+        if (i === idx) {
+          el.classList.add('border-sky-500', 'bg-slate-800/80');
+          el.classList.remove('border-slate-800', 'bg-slate-900/60');
+        } else {
+          el.classList.remove('border-sky-500', 'bg-slate-800/80');
+          el.classList.add('border-slate-800', 'bg-slate-900/60');
+        }
+      });
+
+      const asset = currentReport.results[idx];
+      renderInspector(asset);
+    }
+
+    function renderInspector(asset) {
+      document.getElementById('inspectorEmpty').classList.add('hidden');
+      document.getElementById('inspectorContent').classList.remove('hidden');
+
+      document.getElementById('inspectAssetId').innerText = asset.asset_id;
+      document.getElementById('inspectTrackBadge').innerText = asset.track;
+      document.getElementById('inspectHash').innerText = asset.asset_hash;
+
+      const statusBadge = document.getElementById('inspectStatusBadge');
+      if (asset.status === 'PASSED') {
+        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+        statusBadge.innerText = 'PASSED';
+      } else if (asset.status === 'BLOCKED') {
+        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-rose-400 bg-rose-500/10 border-rose-500/30';
+        statusBadge.innerText = 'BLOCKED';
+      } else {
+        statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-lg border font-bold flex items-center gap-1 text-amber-400 bg-amber-500/10 border-amber-500/30';
+        statusBadge.innerText = 'HUMAN_REVIEW';
+      }
+
+      const simPct = (asset.similarity_score * 100).toFixed(1);
+      document.getElementById('inspectSimScore').innerText = `${simPct}% Similarity`;
+
+      const matchedSourceEl = document.getElementById('inspectMatchedSource');
+      const detailEl = document.getElementById('inspectEvidenceDetail');
+
+      if (asset.matched_source) {
+        matchedSourceEl.classList.remove('hidden');
+        matchedSourceEl.innerText = `Infringement matched: ${asset.matched_source}`;
+        detailEl.innerText = asset.matched_chunk || `Deep similarity matched reference vector in index with score ${simPct}% (threshold exceeded).`;
+      } else {
+        matchedSourceEl.classList.add('hidden');
+        detailEl.innerText = `Clean asset. Sub-threshold score (${simPct}%). No copyright infringement found.`;
+      }
+
+      const certBadge = document.getElementById('inspectCertBadge');
+      const certJson = document.getElementById('inspectCertJson');
+      if (asset.certificate) {
+        certBadge.className = 'text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20';
+        certBadge.innerText = 'ISSUED & SIGNED';
+        certJson.innerText = JSON.stringify(asset.certificate, null, 2);
+      } else {
+        certBadge.className = 'text-[10px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20';
+        certBadge.innerText = 'DENIED';
+        certJson.innerText = asset.status === 'BLOCKED' ? '// Certificate denied: Risk score exceeded clearance threshold.' : '// Held in Confidence Band Review Queue.';
+      }
+
+      document.getElementById('inspectProvJson').innerText = JSON.stringify(asset.lineage, null, 2);
+      lucide.createIcons();
+    }
+
+    function expandToModal() {
+      if (!currentReport || !currentReport.results) return;
+      inspectCertificate(selectedAssetIdx);
+    }
+
+    function copyInspectLineage() {
+      if (!currentReport || !currentReport.results) return;
+      const asset = currentReport.results[selectedAssetIdx];
+      navigator.clipboard.writeText(JSON.stringify(asset.lineage, null, 2));
+      alert('PROV-O Lineage JSON-LD copied to clipboard!');
+    }
+
     function renderResults(data) {
       const resultsList = document.getElementById('resultsList');
       const exportBtn = document.getElementById('exportJsonBtn');
@@ -670,43 +988,26 @@
         }
 
         html += `
-          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
-                <i data-lucide="${asset.track === 'IMAGE' ? 'image' : (asset.track === 'CODE' ? 'code-2' : 'file-text')}" class="w-5 h-5"></i>
+          <div onclick="selectAsset(${idx})" class="asset-card cursor-pointer bg-slate-900/60 hover:bg-slate-800/60 border border-slate-800 rounded-xl p-3.5 flex items-start justify-between gap-3 transition-all ${idx === 0 ? 'border-sky-500 bg-slate-800/80' : ''}">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 flex-shrink-0">
+                <i data-lucide="${asset.track === 'IMAGE' ? 'image' : (asset.track === 'CODE' ? 'code-2' : 'file-text')}" class="w-4 h-4"></i>
               </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-white text-sm truncate">${asset.asset_id}</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">${asset.track}</span>
-                  ${asset.risk_band ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800/80 text-cyan-400 font-mono">${asset.risk_band}</span>` : ''}
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-white text-xs truncate">${asset.asset_id}</span>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">${asset.track}</span>
+                  ${asset.risk_band ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800/80 text-sky-400 font-mono">${asset.risk_band}</span>` : ''}
                 </div>
-                <div class="text-[11px] font-mono text-slate-500 truncate mt-0.5">${asset.asset_hash}</div>
+                <div class="text-[10px] font-mono text-slate-500 truncate mt-0.5">${asset.asset_hash}</div>
               </div>
             </div>
 
-            <div class="flex items-center gap-3">
-              ${asset.matched_source ? `
-                <div class="text-right text-[11px]">
-                  <div class="text-rose-400 font-semibold">${asset.matched_source}</div>
-                  <div class="text-slate-500">Similarity: ${(asset.similarity_score * 100).toFixed(1)}%</div>
-                </div>
-              ` : ''}
-
-              <div class="px-3 py-1 rounded-lg border text-xs font-bold flex items-center gap-1.5 ${badgeClass}">
-                <i data-lucide="${badgeIcon}" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <div class="px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 ${badgeClass}">
+                <i data-lucide="${badgeIcon}" class="w-3 h-3"></i>
                 <span>${asset.status}</span>
               </div>
-
-              ${isPassed && asset.certificate ? `
-                <button onclick="inspectCertificate(${idx})" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
-                  <i data-lucide="award" class="w-3.5 h-3.5"></i> Certificate
-                </button>
-              ` : `
-                <button onclick="inspectLineage(${idx})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-semibold">
-                  Lineage
-                </button>
-              `}
             </div>
           </div>
         `;
@@ -714,6 +1015,10 @@
 
       resultsList.innerHTML = html;
       lucide.createIcons();
+
+      if (data.results && data.results.length > 0) {
+        selectAsset(0);
+      }
     }
 
     function inspectCertificate(idx) {

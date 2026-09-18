@@ -32,3 +32,55 @@ body {
   color: var(--text-body);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+/* react-split-pane core Resizer styling */
+.Resizer {
+  background: var(--border-subtle);
+  opacity: 0.9;
+  z-index: 10;
+  box-sizing: border-box;
+  background-clip: padding-box;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.Resizer.vertical {
+  width: 11px;
+  margin: 0 -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  cursor: col-resize;
+}
+
+.Resizer.vertical:hover,
+.Resizer.vertical.active {
+  border-left: 5px solid rgba(56, 189, 248, 0.15);
+  border-right: 5px solid rgba(56, 189, 248, 0.15);
+  background: var(--accent-brand);
+}
+
+.Resizer.horizontal {
+  height: 11px;
+  margin: -5px 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  cursor: row-resize;
+  width: 100%;
+}
+
+.Resizer.horizontal:hover,
+.Resizer.horizontal.active {
+  border-top: 5px solid rgba(56, 189, 248, 0.15);
+  border-bottom: 5px solid rgba(56, 189, 248, 0.15);
+  background: var(--accent-brand);
+}
+
+.Resizer.disabled {
+  cursor: not-allowed;
+}
+
+.Resizer.disabled:hover {
+  border-color: transparent;
+  background: var(--border-subtle);
+}
+
