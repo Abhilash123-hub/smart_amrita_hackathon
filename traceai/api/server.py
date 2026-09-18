@@ -1,5 +1,6 @@
 """FastAPI REST API Application for TraceAI Gateway with Automated Web Ingestion and Capability Expansions."""
 
+import hashlib
 import shutil
 import tempfile
 from pathlib import Path
@@ -441,6 +442,87 @@ async def get_dirty_files():
                 "is_image": p.suffix == ".png" or p.name.startswith("art_"),
             })
     return {"files": files}
+
+
+class ChatRequest(BaseModel):
+    message: str
+    jurisdiction: str = "GLOBAL"
+
+
+@app.post("/api/chat")
+async def chat_copilot(req: ChatRequest):
+    """Conversational AI Ingestion Copilot for copyright clearance and queries."""
+    msg = req.message.strip()
+    if not msg:
+        return {
+            "reply": "Hello! I am your TraceAI Copyright Clearance Copilot. Paste any text or describe assets you would like me to evaluate.",
+            "scan_result": None,
+        }
+
+    is_scan_request = any(
+        kw in msg.lower()
+        for kw in ["scan", "check", "clear", "evaluate", "analyze", "test", "audit", "infring"]
+    ) or len(msg) > 60
+
+    scan_result = None
+    if is_scan_request:
+        staging_dir = Path(tempfile.mkdtemp(prefix="traceai_chat_"))
+        try:
+            temp_file = staging_dir / "chat_input.txt"
+            temp_file.write_text(msg, encoding="utf-8")
+            report = await gateway.scan(
+                input_path=staging_dir,
+                jurisdiction=req.jurisdiction,
+            )
+            payload = report.to_output_payload(minimal=False)
+            if payload["results"]:
+                scan_result = payload["results"][0]
+                status = scan_result["status"]
+                sim = scan_result.get("similarity_score")
+                if sim is None:
+                    sim = 0.0
+                source = scan_result.get("matched_source")
+
+                if status == "PASSED":
+                    reply = (
+                        f"Verified: **CLEARED (PASSED)**. No copyright infringement detected. "
+                        f"Max neural similarity is {sim * 100:.1f}%, well below the "
+                        f"{DEFAULT_CONFIG.text_cross_encoder_threshold * 100:.0f}% threshold. "
+                        f"An RSASSA-PSS-SHA256 clearance certificate has been issued and bound to SHA-256."
+                    )
+                elif status == "BLOCKED":
+                    reply = (
+                        f"Alert: **BLOCKED (RISK DETECTED)**. Cross-encoder similarity score is "
+                        f"{sim * 100:.1f}%, exceeding the "
+                        f"{DEFAULT_CONFIG.text_cross_encoder_threshold * 100:.0f}% safety threshold. "
+                        f"Matched against reference work: `{source}`. "
+                        f"Certificate denied to protect training dataset integrity."
+                    )
+                else:
+                    reply = (
+                        f"Attention: **HELD FOR HUMAN REVIEW**. Similarity score is "
+                        f"{sim * 100:.1f}%, falling in the confidence review band under "
+                        f"{req.jurisdiction} rules. Routed to auditor queue."
+                    )
+            else:
+                reply = "Processed input, but no extractable chunks found."
+        except Exception as e:
+            reply = f"Error evaluating asset: {e}"
+        finally:
+            shutil.rmtree(staging_dir, ignore_errors=True)
+    else:
+        reply = (
+            f"TraceAI Copilot is online and ready. Active thresholds: "
+            f"Text Cross-Encoder = {DEFAULT_CONFIG.text_cross_encoder_threshold}, "
+            f"Image CLIP = {DEFAULT_CONFIG.image_clip_cosine_threshold}. "
+            f"Paste text, attach files, or use quick presets to scan."
+        )
+
+    return {
+        "reply": reply,
+        "scan_result": scan_result,
+        "jurisdiction": req.jurisdiction,
+    }
 
 
 if STATIC_DIR.exists():

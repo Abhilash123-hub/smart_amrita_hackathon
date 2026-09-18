@@ -3,28 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* Table 13.1 - Core surface and text tokens (dark-only theme) */
-  --bg-root: #0B1220;
-  --bg-panel: #111C30;
-  --bg-panel-2: #0E1729;
-  --bg-elevated: #13233C;
-  --border-subtle: #1E2A3E;
-  --border-strong: #24344E;
-  --text-primary: #E6EEF7;
-  --text-body: #C8D6E5;
-  --text-muted: #9FB2C8;
-  --text-faint: #7C8FA8;
-  --accent-brand: #38BDF8;
-  --accent-secondary: #818CF8;
+  /* User requested palette: #1e81b0 (oceanic blue) & #eeeee4 (warm alabaster/cream) */
+  --bg-root: #f6f6f2;
+  --bg-panel: #ffffff;
+  --bg-panel-2: #eeeee4;
+  --bg-elevated: #eaf4f9;
+  --border-subtle: #dcdccf;
+  --border-strong: #bfbfad;
+  --text-primary: #0f172a;
+  --text-body: #1e293b;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --accent-brand: #1e81b0;
+  --accent-secondary: #15658c;
 
-  /* Table 13.2 - Signal and status colors (semantic, never decorative) */
-  --status-blocked: #F87171;
-  --status-review: #FBBF24;
-  --status-passed: #34D399;
-  --status-info: #38BDF8;
-  --risk-high: #EF4444;
-  --risk-mid: #F59E0B;
-  --risk-low: #10B981;
+  /* Semantic status indicators */
+  --status-blocked: #ef4444;
+  --status-review: #f59e0b;
+  --status-passed: #10b981;
+  --status-info: #1e81b0;
+  --risk-high: #ef4444;
+  --risk-mid: #f59e0b;
+  --risk-low: #10b981;
 }
 
 body {
@@ -54,8 +54,8 @@ body {
 
 .Resizer.vertical:hover,
 .Resizer.vertical.active {
-  border-left: 5px solid rgba(56, 189, 248, 0.15);
-  border-right: 5px solid rgba(56, 189, 248, 0.15);
+  border-left: 5px solid rgba(30, 129, 176, 0.2);
+  border-right: 5px solid rgba(30, 129, 176, 0.2);
   background: var(--accent-brand);
 }
 
@@ -70,8 +70,8 @@ body {
 
 .Resizer.horizontal:hover,
 .Resizer.horizontal.active {
-  border-top: 5px solid rgba(56, 189, 248, 0.15);
-  border-bottom: 5px solid rgba(56, 189, 248, 0.15);
+  border-top: 5px solid rgba(30, 129, 176, 0.2);
+  border-bottom: 5px solid rgba(30, 129, 176, 0.2);
   background: var(--accent-brand);
 }
 

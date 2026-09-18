@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import SplitPane from "../components/SplitPane";
@@ -158,22 +158,22 @@ export default function HomePage() {
   return (
     <div className="h-screen flex flex-col bg-bg-root text-text-body overflow-hidden selection:bg-accent-brand selection:text-bg-root">
       {/* HEADER BAR */}
-      <header className="h-14 border-b border-border-subtle bg-bg-panel px-4 flex items-center justify-between flex-shrink-0 z-20">
+      <header className="h-14 bg-accent-brand text-white px-4 flex items-center justify-between flex-shrink-0 z-20 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-accent-brand to-accent-secondary text-bg-root flex items-center justify-center font-black shadow-[0_0_12px_rgba(56,189,248,0.3)]">
-            <ShieldCheck className="w-5 h-5 text-bg-root" />
+          <div className="w-8 h-8 rounded-lg bg-white text-accent-brand flex items-center justify-center font-black shadow">
+            <ShieldCheck className="w-5 h-5 text-accent-brand" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold tracking-tight text-text-primary">
-                TraceAI Enterprise
+              <span className="text-sm font-bold tracking-tight text-white">
+                TraceAI Copilot
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-accent-brand/10 border border-accent-brand/30 text-accent-brand">
-                SPLIT-PANE UI
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/20 border border-white/30 text-white font-bold">
+                AI CHATBOT & EVIDENCE
               </span>
             </div>
-            <p className="text-[11px] text-text-faint">
-              SecOps Multimodal Ingestion Gateway & Evidence Inspector
+            <p className="text-[11px] text-white/80">
+              Multimodal Copyright Fingerprinting & Cryptographic Clearance
             </p>
           </div>
         </div>

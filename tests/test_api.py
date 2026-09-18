@@ -63,3 +63,20 @@ def test_api_mock_init_and_list():
     assert res_list.status_code == 200
     files = res_list.json()["files"]
     assert len(files) >= 10
+
+
+def test_api_chat_copilot():
+    # Test conversational query
+    res_chat = client.post("/api/chat", json={"message": "What are your copyright clearance thresholds?"})
+    assert res_chat.status_code == 200
+    data = res_chat.json()
+    assert "reply" in data
+    assert "0.85" in data["reply"] or "85%" in data["reply"]
+
+    # Test text scan via chat
+    res_scan = client.post("/api/chat", json={"message": "Please scan this novel research evaluation text for copyright."})
+    assert res_scan.status_code == 200
+    scan_data = res_scan.json()
+    assert scan_data["scan_result"] is not None
+    assert scan_data["scan_result"]["status"] in ["PASSED", "BLOCKED", "HUMAN_REVIEW"]
+
