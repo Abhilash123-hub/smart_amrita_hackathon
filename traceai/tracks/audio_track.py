@@ -49,7 +49,7 @@ class AudioTrack(BaseTrack):
         for p in audio_paths:
             try:
                 data = p.read_bytes()
-                works.append((p.name, f"© Audio Master: {p.stem}", data))
+                works.append((p.name, f"RefCorpus: Audio Master [{p.stem}]", data))
             except Exception:
                 pass
         return works

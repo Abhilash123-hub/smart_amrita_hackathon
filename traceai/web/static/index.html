@@ -809,6 +809,7 @@
       `;
       chatContainer.appendChild(userDiv);
 
+      const filesToUpload = stagedFiles.slice();
       stagedFiles = [];
       updateStagedBar();
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -829,40 +830,89 @@
       chatContainer.appendChild(loadingDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
-      // 3. Backend Call to /api/chat (supports both http:// and direct file:/// previews)
-      const apiEndpoint = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8000/api/chat' : '/api/chat';
-      try {
-        const res = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, jurisdiction: jurisdiction })
-        });
+      // 3. Backend Call: Multimodal /api/scan for attached files OR /api/chat for text
+      if (filesToUpload.length > 0) {
+        const formData = new FormData();
+        filesToUpload.forEach(f => formData.append('files', f));
+        formData.append('jurisdiction', jurisdiction);
 
-        const data = await res.json();
-        const loadEl = document.getElementById('loadingMsg');
-        if (loadEl) loadEl.remove();
+        const scanApi = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8000/api/scan' : '/api/scan';
+        try {
+          const res = await fetch(scanApi, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          const loadEl = document.getElementById('loadingMsg');
+          if (loadEl) loadEl.remove();
 
-        renderAssistantResponse(data, text);
+          const firstResult = (data.results && data.results.length > 0) ? data.results[0] : null;
+          let replyMsg = `Evaluated binary asset **${filesToUpload[0].name}** across designated modality engine.`;
+          if (firstResult) {
+            const sim = firstResult.similarity_score !== undefined && firstResult.similarity_score !== null ? (firstResult.similarity_score * 100).toFixed(1) : '0.0';
+            if (firstResult.status === 'PASSED') {
+              replyMsg = `Verified: **CLEARED (PASSED)**. No copyright infringement detected for **${filesToUpload[0].name}** (${firstResult.track} modality). Neural similarity is ${sim}%. RSASSA-PSS-SHA256 Clearance Certificate issued and bound to SHA-256 digest.`;
+            } else if (firstResult.status === 'BLOCKED') {
+              replyMsg = `Alert: **BLOCKED (COPYRIGHT DETECTED)**. High copyright similarity (${sim}%) detected for **${filesToUpload[0].name}** (${firstResult.track} modality) against reference master: \`${firstResult.matched_source || 'Reference Index'}\`. Certificate denied.`;
+            } else {
+              replyMsg = `Attention: **HELD FOR HUMAN REVIEW**. Asset **${filesToUpload[0].name}** scored ${sim}% in confidence boundary band under ${jurisdiction} rules. Routed to compliance auditor queue.`;
+            }
+          }
 
-        // AUTOMATICALLY populate and open the drawer with the live certificate & evidence!
-        if (data.scan_result) {
-          inspectLiveAsset(data.scan_result, text, true);
+          renderAssistantResponse({ reply: replyMsg, scan_result: firstResult }, text || filesToUpload[0].name);
+          if (firstResult) {
+            inspectLiveAsset(firstResult, text || filesToUpload[0].name, true);
+          }
+        } catch (err) {
+          const loadEl = document.getElementById('loadingMsg');
+          if (loadEl) loadEl.remove();
+          const errDiv = document.createElement('div');
+          errDiv.className = 'flex items-start gap-3';
+          errDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0">
+              <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
+            </div>
+            <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl rounded-tl-sm text-xs max-w-lg">
+              Error scanning file: ${err}
+            </div>
+          `;
+          chatContainer.appendChild(errDiv);
         }
-      } catch (err) {
-        const loadEl = document.getElementById('loadingMsg');
-        if (loadEl) loadEl.remove();
+      } else {
+        const apiEndpoint = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8000/api/chat' : '/api/chat';
+        try {
+          const res = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text, jurisdiction: jurisdiction })
+          });
 
-        const errDiv = document.createElement('div');
-        errDiv.className = 'flex items-start gap-3';
-        errDiv.innerHTML = `
-          <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0">
-            <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
-          </div>
-          <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl rounded-tl-sm text-xs max-w-lg">
-            Error contacting TraceAI Copilot: ${err}
-          </div>
-        `;
-        chatContainer.appendChild(errDiv);
+          const data = await res.json();
+          const loadEl = document.getElementById('loadingMsg');
+          if (loadEl) loadEl.remove();
+
+          renderAssistantResponse(data, text);
+
+          // AUTOMATICALLY populate and open the drawer with the live certificate & evidence!
+          if (data.scan_result) {
+            inspectLiveAsset(data.scan_result, text, true);
+          }
+        } catch (err) {
+          const loadEl = document.getElementById('loadingMsg');
+          if (loadEl) loadEl.remove();
+
+          const errDiv = document.createElement('div');
+          errDiv.className = 'flex items-start gap-3';
+          errDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-xl bg-cream flex items-center justify-center p-1 border border-subtleBorder flex-shrink-0">
+              <img src="/static/assets/logo_t.png" class="w-6 h-6 object-contain" />
+            </div>
+            <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-2xl rounded-tl-sm text-xs max-w-lg">
+              Error contacting TraceAI Copilot: ${err}
+            </div>
+          `;
+          chatContainer.appendChild(errDiv);
+        }
       }
 
       chatContainer.scrollTop = chatContainer.scrollHeight;
