@@ -1,0 +1,44 @@
+==============================================================
+TRACEAI SYNTHETIC DEMO RECORD -- DOC-001
+Record Type   : text
+Dataset       : TRACEAI Synthetic Demo Dataset v1.0
+Source        : SYNTHETIC -- Project-created demo data
+Licence       : Project-created demo data (not externally sourced)
+Created       : 2026-09-18
+Similarity Category : LOW (unrelated reference document)
+==============================================================
+
+OCEAN THERMAL SENSOR DEPLOYMENT REPORT
+Station Gamma-7 | North Atlantic Monitoring Array
+
+Abstract:
+This report summarises oceanographic temperature readings collected by
+autonomous underwater sensor buoys deployed at Station Gamma-7 in the
+North Atlantic monitoring array. Sensor units recorded surface and
+mid-depth thermal profiles at fifteen-minute intervals across a 90-day
+observation window.
+
+Key Findings:
+- Average sea-surface temperature: 14.3 degrees C (range: 11.1 to 17.8 degrees C)
+- Thermocline depth: 85-110 m below surface
+- Anomalous cold-water upwelling detected on days 42-51
+- Salinity variance remained within normal operating bounds
+- No instrument calibration drift detected across the full period
+
+Methodology:
+CTD (Conductivity, Temperature, Depth) probes were deployed via surface
+tether at fixed coordinates 47.2 N, 31.5 W. Data was transmitted via
+satellite uplink every four hours and stored in the monitoring database.
+
+Conclusions:
+Station Gamma-7 data is consistent with expected seasonal thermal
+patterns. The upwelling event warrants further investigation in the
+subsequent monitoring cycle.
+
+Data Custodian Note:
+This is a SYNTHETIC demo document created for TRACEAI provenance testing.
+It is not derived from any real oceanographic dataset.
+All values are illustrative and do not represent actual sensor readings.
+==============================================================
+END OF SYNTHETIC RECORD DOC-001
+==============================================================

@@ -1,0 +1,53 @@
+{
+  "dataset_name": "TRACEAI Synthetic Demo Dataset",
+  "dataset_version": "1.0",
+  "created_date": "2026-09-18",
+  "description": "Small synthetic dataset for demonstrating TRACEAI provenance tracking, similarity analysis, and evidence trail generation. All records are project-created and clearly labelled SYNTHETIC.",
+  "record_count": 6,
+  "text_record_count": 3,
+  "image_record_count": 3,
+  "formats": [
+    "TXT",
+    "PNG",
+    "JSON"
+  ],
+  "source_type": "synthetic",
+  "license": "Project-created demo data",
+  "records": [
+    "DOC-001",
+    "DOC-002",
+    "DOC-003",
+    "IMG-001",
+    "IMG-002",
+    "IMG-003"
+  ],
+  "similarity_demo_mapping": {
+    "LOW": [
+      "DOC-001",
+      "IMG-001"
+    ],
+    "MEDIUM": [
+      "DOC-002",
+      "IMG-002"
+    ],
+    "HIGH": [
+      "DOC-003",
+      "IMG-003"
+    ]
+  },
+  "similarity_demo_note": "LOW/MEDIUM/HIGH are DEMO REVIEW CATEGORIES only. They are NOT legal conclusions. HIGH means the record requires provenance and licence review before use in AI training.",
+  "versioning_policy": {
+    "1.0": "Initial synthetic demo dataset (2026-09-18)",
+    "future_1.x": "Metadata corrections or field additions \u2014 backward compatible",
+    "future_2.0": "Major structural change to dataset or new record modalities"
+  },
+  "limitations": [
+    "Small demonstration dataset \u2014 6 records total",
+    "All records are synthetic and project-created",
+    "Not representative of enterprise-scale AI training datasets",
+    "Does not establish legal ownership or copyright compliance",
+    "Does not verify or claim any external licence",
+    "Similarity categories are review indicators only \u2014 not legal determinations",
+    "External source verification is required before production use"
+  ]
+}

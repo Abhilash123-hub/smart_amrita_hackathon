@@ -1,0 +1,46 @@
+==============================================================
+TRACEAI SYNTHETIC DEMO RECORD -- DOC-002
+Record Type   : text
+Dataset       : TRACEAI Synthetic Demo Dataset v1.0
+Source        : SYNTHETIC -- Project-created demo data
+Licence       : Project-created demo data (not externally sourced)
+Created       : 2026-09-18
+Similarity Category : MEDIUM (partial overlap with DOC-001 domain)
+Parent Record : DOC-001
+==============================================================
+
+AGRICULTURAL SOIL MOISTURE SENSOR DEPLOYMENT REPORT
+Field Station Delta-3 | Northern Plains Monitoring Array
+
+Abstract:
+This report summarises soil moisture readings collected by autonomous
+ground-based sensor units deployed at Field Station Delta-3 in the
+Northern Plains monitoring array. Sensor units recorded surface and
+sub-surface moisture profiles at fifteen-minute intervals across a
+60-day observation window.
+
+Key Findings:
+- Average topsoil moisture content: 28.4 percent (range: 14.2 to 41.6 percent)
+- Dry-layer depth: 30-50 cm below surface
+- Anomalous moisture retention detected in plots 7-9 following precipitation event
+- Nutrient variance remained within expected agricultural bounds
+- No instrument calibration drift detected across the monitoring period
+
+Methodology:
+TDR (Time Domain Reflectometry) probes were deployed at fixed grid
+coordinates across the study area. Data was transmitted via cellular
+uplink every four hours and stored in the agricultural monitoring database.
+
+Conclusions:
+Field Station Delta-3 data shows moderate correlation with seasonal
+precipitation patterns. The retention event in plots 7-9 warrants
+agronomic review in the subsequent growing cycle.
+
+Data Custodian Note:
+This is a SYNTHETIC demo document created for TRACEAI provenance testing.
+It is partially derived from the same document template as DOC-001, with
+modifications to the subject domain. It demonstrates MEDIUM similarity.
+All values are illustrative and do not represent actual sensor readings.
+==============================================================
+END OF SYNTHETIC RECORD DOC-002
+==============================================================

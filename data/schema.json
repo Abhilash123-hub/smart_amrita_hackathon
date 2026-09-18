@@ -1,0 +1,313 @@
+{
+  "schema_ref": "http://json-schema.org/draft-07/schema#",
+  "title": "TRACEAI Data Record Schema",
+  "description": "Schema defining the structure of a TRACEAI provenance metadata record.",
+  "version": "1.0",
+  "type": "object",
+  "field_ownership": {
+    "data_layer_fields": [
+      "record_id",
+      "file_name",
+      "file_path",
+      "record_type",
+      "source",
+      "source_type",
+      "source_url",
+      "license",
+      "license_verified",
+      "dataset",
+      "dataset_version",
+      "transformation",
+      "parent_record",
+      "created_at",
+      "similarity_demo_category",
+      "similarity_demo_note",
+      "notes"
+    ],
+    "downstream_generated_fields": [
+      "sha256",
+      "phash",
+      "embedding_id"
+    ],
+    "note": "Fields in data_layer_fields are created and owned by the data layer. Fields in downstream_generated_fields are populated by the AI/integration layer at ingestion time and must NOT be fabricated in the data layer."
+  },
+  "required": [
+    "record_id",
+    "file_name",
+    "file_path",
+    "record_type",
+    "source",
+    "source_type",
+    "license",
+    "license_verified",
+    "dataset",
+    "dataset_version",
+    "transformation",
+    "created_at"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "description": "Unique identifier for the record. Must be unique across the entire dataset.",
+      "pattern": "^(DOC|IMG|AUD|VID)-[0-9]{3,}$",
+      "examples": [
+        "DOC-001",
+        "IMG-001"
+      ],
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "backend",
+        "AI",
+        "database",
+        "audit"
+      ]
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Filename of the data asset (basename only, no path).",
+      "examples": [
+        "sample_document_1.txt",
+        "sample_image_1.png"
+      ],
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "backend",
+        "gateway"
+      ]
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Relative file path from the repository root.",
+      "examples": [
+        "data/sample/documents/sample_document_1.txt"
+      ],
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "backend",
+        "gateway"
+      ]
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "video",
+        "code"
+      ],
+      "description": "Modality of the record. Must match the actual file type.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "gateway",
+        "AI"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Human-readable description of the origin of this record.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "public_domain",
+        "licensed",
+        "scraped",
+        "unknown"
+      ],
+      "description": "Type classification of the source. Use synthetic for project-created records.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "AI",
+        "audit"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "URL of the external source if applicable. null for synthetic records.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "license": {
+      "type": "string",
+      "description": "Licence associated with this record. Do not claim unverified licences.",
+      "immutable": false,
+      "mutable_note": "May be updated if licence is later verified or corrected.",
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report",
+        "AI"
+      ]
+    },
+    "license_verified": {
+      "type": "boolean",
+      "description": "Whether the licence claim has been verified. True ONLY for project-created synthetic data or when external licence is confirmed.",
+      "immutable": false,
+      "mutable_note": "May be updated after external verification.",
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "dataset": {
+      "type": "string",
+      "description": "Name of the dataset this record belongs to.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "dataset_version": {
+      "type": "string",
+      "description": "Version of the dataset this record belongs to.",
+      "examples": [
+        "1.0",
+        "1.1",
+        "2.0"
+      ],
+      "immutable": false,
+      "mutable_note": "Updated when the record is migrated to a new dataset version.",
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "transformation": {
+      "type": "string",
+      "description": "Description of the transformation history applied to this record.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "lineage",
+        "audit"
+      ]
+    },
+    "parent_record": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "record_id of the parent record if this is a derived record. null for root records.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "lineage",
+        "audit"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Creation date in ISO-8601 YYYY-MM-DD format.",
+      "examples": [
+        "2026-09-18"
+      ],
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "similarity_demo_category": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "description": "DEMO ONLY -- Intended provenance review category for demonstration purposes. NOT a legal conclusion. HIGH means requires provenance/licence review.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "test",
+        "demo"
+      ]
+    },
+    "similarity_demo_note": {
+      "type": "string",
+      "description": "DEMO ONLY -- Explanation of the similarity category for this record.",
+      "immutable": true,
+      "created_by": "data_layer",
+      "consumed_by": [
+        "test",
+        "demo",
+        "report"
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text additional notes about this record.",
+      "immutable": false,
+      "mutable_note": "May be updated for clarification.",
+      "created_by": "data_layer",
+      "consumed_by": [
+        "audit",
+        "report"
+      ]
+    },
+    "sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "DOWNSTREAM FIELD -- SHA-256 hash of the file bytes, prefixed sha256:<hex>. Calculated by the ingestion gateway at runtime. Must NOT be pre-populated with fabricated values in the data layer.",
+      "created_by": "downstream_gateway",
+      "consumed_by": [
+        "AI",
+        "crypto",
+        "audit"
+      ]
+    },
+    "phash": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "DOWNSTREAM FIELD -- Perceptual hash (pHash) for image records only. Calculated by the AI/image track at runtime. Must NOT be pre-populated with fabricated values in the data layer.",
+      "created_by": "downstream_AI",
+      "consumed_by": [
+        "AI",
+        "image_track",
+        "audit"
+      ]
+    },
+    "embedding_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "DOWNSTREAM FIELD -- FAISS/vector store embedding ID assigned at indexing time. Must NOT be pre-populated with fabricated values in the data layer.",
+      "created_by": "downstream_AI",
+      "consumed_by": [
+        "AI",
+        "text_track",
+        "audit"
+      ]
+    }
+  }
+}

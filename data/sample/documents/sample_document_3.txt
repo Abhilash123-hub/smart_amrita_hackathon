@@ -1,0 +1,52 @@
+==============================================================
+TRACEAI SYNTHETIC DEMO RECORD -- DOC-003
+Record Type   : text
+Dataset       : TRACEAI Synthetic Demo Dataset v1.0
+Source        : SYNTHETIC -- Project-created demo data
+Licence       : Project-created demo data (not externally sourced)
+Created       : 2026-09-18
+Similarity Category : HIGH (requires provenance/licence review)
+Parent Record : DOC-001
+==============================================================
+
+OCEAN THERMAL SENSOR DEPLOYMENT REPORT
+Station Gamma-7 | North Atlantic Monitoring Array
+
+Abstract:
+This document summarises oceanographic temperature readings collected by
+autonomous underwater sensor buoys deployed at Station Gamma-7 in the
+North Atlantic monitoring array. Sensor units recorded surface and
+mid-depth thermal profiles at 15-minute intervals across a 90-day
+observation window.
+
+Key Findings:
+- Mean sea-surface temperature: 14.3 degrees C (range: 11.1 to 17.8 degrees C)
+- Thermocline depth: 85-110 m below surface
+- Cold-water upwelling anomaly detected on days 42-51
+- Salinity variance remained within normal operating bounds
+- No calibration drift detected in instruments across the full period
+
+Methodology:
+CTD (Conductivity, Temperature, Depth) sensors were deployed via surface
+tether at fixed coordinates 47.2 N, 31.5 W. Data was transmitted via
+satellite link every 4 hours and stored in the monitoring system database.
+
+Conclusions:
+Station Gamma-7 data is consistent with expected seasonal thermal trends.
+The upwelling anomaly requires further analysis in the subsequent cycle.
+
+IMPORTANT NOTICE -- TRACEAI PROVENANCE REVIEW INDICATOR:
+This record has HIGH textual overlap with DOC-001. This is a SYNTHETIC
+demonstration of a provenance/licence review scenario.
+This review indicator is NOT a legal conclusion.
+It signals that the provenance and licence chain should be verified
+before this record is used in AI training.
+
+Data Custodian Note:
+This is a SYNTHETIC demo document created for TRACEAI provenance testing.
+It intentionally contains high textual similarity to DOC-001 to demonstrate
+the HIGH provenance review scenario.
+All values are illustrative and do not represent actual sensor readings.
+==============================================================
+END OF SYNTHETIC RECORD DOC-003
+==============================================================
