@@ -77,11 +77,20 @@ pip install -e .
 
 ### 2. Launch the AI Web Dashboard
 
+**Option A (One-Click Windows Launcher):**
+Just double-click `run_app.bat` in the root folder, or run:
+```powershell
+.\run_app.ps1
+```
+
+**Option B (Command Line):**
 ```bash
 python app.py
 ```
 Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
 API documentation is available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
+
+*(Note: Both the FastAPI engine on port 8000 and the Next.js frontend in `ui/` on port 3000 are 100% synchronized with the modern AI Copilot Chatbot interface).*
 
 ---
 
